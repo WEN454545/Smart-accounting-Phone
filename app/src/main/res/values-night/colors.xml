@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 暗色模式基础颜色 -->
+    <color name="bar_background">#121212</color>
+    <color name="white">#1e1e1e</color>
+    <color name="text_white">#ffffff</color>
+    <color name="text_primary">#f1f5f9</color>
+    <color name="text_secondary">#94a3b8</color>
+    <color name="text_hint">#64748b</color>
+    <color name="text_divider">#555555</color>
+    <color name="divider">#333333</color>
+    <color name="app_background">#121212</color>
+    <color name="input_bg">#2a2a2a</color>
+    <color name="cat_unselected_bg">#2a2a2a</color>
+    <color name="cat_unselected_text">#f1f5f9</color>
+    <color name="cat_selected_text">#ffffff</color>
+    <color name="icon_secondary">#94a3b8</color>
+    <color name="switch_track_off">#555555</color>
+
+    <!-- 主题色（保持与浅色模式一致） -->
+    <color name="primary">#0d9488</color>
+    <color name="primary_dark">#0f766e</color>
+    <color name="primary_light">#134e4a</color>
+    <color name="income">#4ade80</color>
+    <color name="expense">#f87171</color>
+    <color name="income_bg">#14532d</color>
+    <color name="expense_bg">#7f1d1d</color>
+    <color name="bg">#1a1a2e</color>
+    <color name="surface">#1e1e1e</color>
+    <color name="ink">#f1f5f9</color>
+    <color name="muted">#94a3b8</color>
+    <color name="rule">#333333</color>
+
+    <!-- 分类颜色（暗色适配） -->
+    <color name="cat_food">#422006</color>
+    <color name="cat_transport">#1e3a5f</color>
+    <color name="cat_shopping">#471a33</color>
+    <color name="cat_entertainment">#1e1b4b</color>
+    <color name="cat_housing">#052e16</color>
+    <color name="cat_medical">#450a0a</color>
+    <color name="cat_income">#052e16</color>
+    <color name="cat_other">#1e293b</color>
+    <color name="cat_travel">#172554</color>
+    <color name="cat_communication">#2e1065</color>
+    <color name="cat_social">#4c0519</color>
+    <color name="cat_education">#1a2e05</color>
+    <color name="cat_beauty">#471a33</color>
+    <color name="cat_transfer">#1e3a5f</color>
+    <color name="cat_redpacket">#450a0a</color>
+    <color name="cat_refund">#052e16</color>
+</resources>

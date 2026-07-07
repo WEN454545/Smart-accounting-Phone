@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- 悬浮窗权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- 前台服务权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- 电池优化权限 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".ui.auth.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.MyApplication">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".ui.auth.UserManageActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- 无障碍服务 — 屏幕自动记账 -->
+        <service
+            android:name="com.google.android.accessibility.selecttospeak.SelectToSpeakService"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:foregroundServiceType="dataSync">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- 自动记账中间页 -->
+        <activity
+            android:name="com.example.autobookkeep.ui.AutoSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AutoBookkeep" />
+
+        <!-- 月度预算设置 -->
+        <activity
+            android:name="com.example.autobookkeep.ui.BudgetSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AutoBookkeep" />
+
+        <!-- 自动记账设置页 -->
+        <activity
+            android:name="com.example.autobookkeep.ui.AssistantManagerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AutoBookkeep" />
+
+        <!-- 分类预设 -->
+        <activity
+            android:name="com.example.autobookkeep.ui.CategorySettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AutoBookkeep" />
+
+        <!-- CSV导入预览 -->
+        <activity
+            android:name=".ui.stats.CsvImportPreviewActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <!-- 适配日志查看页 -->
+        <activity
+            android:name="com.example.autobookkeep.ui.AutoTrackLogActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AutoBookkeep" />
+
+    </application>
+
+</manifest>

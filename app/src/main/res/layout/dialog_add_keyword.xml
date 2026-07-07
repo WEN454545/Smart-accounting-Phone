@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="选择应用" android:textColor="@color/text_primary" android:textSize="14sp"
+        android:layout_marginBottom="4dp" />
+
+    <Spinner android:id="@+id/sp_app" android:layout_width="match_parent"
+        android:layout_height="48dp" android:background="@drawable/bg_input_field" />
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="关键字" android:textColor="@color/text_primary" android:textSize="14sp"
+        android:layout_marginTop="12dp" android:layout_marginBottom="4dp" />
+
+    <EditText android:id="@+id/et_keyword" android:layout_width="match_parent"
+        android:layout_height="48dp" android:hint="如: 美团外卖" android:paddingHorizontal="12dp"
+        android:background="@drawable/bg_input_field" android:inputType="text" />
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="类型" android:textColor="@color/text_primary" android:textSize="14sp"
+        android:layout_marginTop="12dp" android:layout_marginBottom="4dp" />
+
+    <RadioGroup android:id="@+id/rg_type" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="horizontal">
+
+        <RadioButton android:id="@+id/rb_expense" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="支出" android:checked="true" />
+
+        <RadioButton android:id="@+id/rb_income" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="收入" />
+    </RadioGroup>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginTop="16dp" android:gravity="end">
+
+        <Button android:id="@+id/btn_cancel" android:layout_width="wrap_content"
+            android:layout_height="44dp" android:text="取消" android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/cat_unselected_bg" android:textColor="@color/text_secondary" />
+
+        <Button android:id="@+id/btn_confirm" android:layout_width="wrap_content"
+            android:layout_height="44dp" android:text="添加"
+            android:backgroundTint="@color/app_blue" android:textColor="@color/white" />
+    </LinearLayout>
+</LinearLayout>

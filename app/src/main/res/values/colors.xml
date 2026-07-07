@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- AutoBookkeep 迁移颜色 -->
+    <color name="text_white">#FFFFFFFF</color>
+    <color name="app_blue">#327ffc</color>
+    <color name="app_background">#FFFFFF</color>
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#757575</color>
+    <color name="input_bg">#F5F5F5</color>
+    <color name="cat_unselected_bg">#F5F5F5</color>
+    <color name="cat_unselected_text">#333333</color>
+    <color name="cat_selected_text">#FFFFFF</color>
+    <color name="icon_secondary">#888888</color>
+    <color name="switch_track_off">#E9E9EA</color>
+    <color name="income_red">#C62828</color>
+    <color name="expense_green">#2E7D32</color>
+    <color name="bar_background">#F7F7F7</color>
+    <color name="bottom_selected">#327ffc</color>
+    <color name="bottom_unselected">#757575</color>
+    <color name="text_hint">#888888</color>
+    <color name="text_divider">#CCCCCC</color>
+    <color name="divider">#1F888888</color>
+
+    <color name="primary">#0d9488</color>
+    <color name="primary_dark">#0f766e</color>
+    <color name="primary_light">#ccfbf1</color>
+    <color name="income">#22c55e</color>
+    <color name="expense">#ef4444</color>
+    <color name="income_bg">#f0fdf4</color>
+    <color name="expense_bg">#fef2f2</color>
+    <color name="bg">#f0f4f8</color>
+    <color name="surface">#ffffff</color>
+    <color name="ink">#1e293b</color>
+    <color name="muted">#64748b</color>
+    <color name="rule">#e2e8f0</color>
+
+    <color name="cat_food">#fef3c7</color>
+    <color name="cat_transport">#dbeafe</color>
+    <color name="cat_shopping">#fce7f3</color>
+    <color name="cat_entertainment">#e0e7ff</color>
+    <color name="cat_housing">#dcfce7</color>
+    <color name="cat_medical">#fee2e2</color>
+    <color name="cat_income">#dcfce7</color>
+    <color name="cat_other">#f1f5f9</color>
+    <color name="cat_travel">#e0f2fe</color>
+    <color name="cat_communication">#f3e8ff</color>
+    <color name="cat_social">#ffe4e6</color>
+    <color name="cat_education">#ecfccb</color>
+    <color name="cat_beauty">#fce7f3</color>
+    <color name="cat_transfer">#dbeafe</color>
+    <color name="cat_redpacket">#fee2e2</color>
+    <color name="cat_refund">#dcfce7</color>
+</resources>
