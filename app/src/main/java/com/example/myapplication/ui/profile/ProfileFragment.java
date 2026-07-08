@@ -38,6 +38,7 @@ import com.example.myapplication.data.NotificationSettings;
 import com.example.myapplication.data.SessionManager;
 import com.example.myapplication.data.entity.Bill;
 import com.example.myapplication.data.repository.BillRepository;
+import com.example.myapplication.ui.auth.ScalableVideoView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,6 +63,7 @@ public class ProfileFragment extends Fragment {
     private SharedPreferences profilePrefs;
     private ImageView ivAvatar;
     private SwitchCompat switchNotify;
+    private ScalableVideoView profileVideo;
     private boolean isSettingSwitchProgrammatically;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
@@ -84,6 +86,8 @@ public class ProfileFragment extends Fragment {
 
         ivAvatar = view.findViewById(R.id.iv_avatar);
         switchNotify = view.findViewById(R.id.switch_notify);
+        profileVideo = view.findViewById(R.id.profile_video);
+        setupVideo();
 
         // Load saved avatar
         loadAvatar();
@@ -150,6 +154,32 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void setupVideo() {
+        Uri videoUri = Uri.parse("android.resource://" + requireContext().getPackageName() + "/" + R.raw.splash_bg);
+        profileVideo.setVideoURI(videoUri);
+        profileVideo.setOnPreparedListener(mp -> {
+            mp.setLooping(true);
+            mp.setVolume(0f, 0f);
+        });
+        profileVideo.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (profileVideo != null && profileVideo.isPlaying()) {
+            profileVideo.pause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (profileVideo != null && !profileVideo.isPlaying()) {
+            profileVideo.start();
+        }
     }
 
     // ---- Avatar ----

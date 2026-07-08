@@ -60,5 +60,11 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    // Glide (GIF 加载)
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
+
     // Java-only project — no Kotlin force-resolve needed
 }
+
+

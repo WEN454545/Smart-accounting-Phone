@@ -1,9 +1,9 @@
 package com.example.myapplication.ui.auth;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,24 +13,39 @@ import com.example.myapplication.data.SessionManager;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final long SPLASH_DURATION_MS = 700;
+    private ScalableVideoView splashVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            SessionManager sessionManager = new SessionManager(this);
-            Intent intent;
-            if (sessionManager.isLoggedIn()) {
-                intent = new Intent(SplashActivity.this, MainActivity.class);
-            } else {
-                intent = new Intent(SplashActivity.this, LoginActivity.class);
-            }
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            finish();
-        }, SPLASH_DURATION_MS);
+        splashVideo = findViewById(R.id.splash_video);
+        setupVideo();
+
+        // Navigate to next screen on click
+        findViewById(R.id.splash_root).setOnClickListener(v -> navigateNext());
+    }
+
+    private void setupVideo() {
+        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.preview);
+        splashVideo.setVideoURI(videoUri);
+        splashVideo.setOnPreparedListener(mp -> {
+            mp.setLooping(true);
+            splashVideo.start();
+        });
+    }
+
+    private void navigateNext() {
+        SessionManager sessionManager = new SessionManager(this);
+        Intent intent;
+        if (sessionManager.isLoggedIn()) {
+            intent = new Intent(SplashActivity.this, MainActivity.class);
+        } else {
+            intent = new Intent(SplashActivity.this, LoginActivity.class);
+        }
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        finish();
     }
 }
