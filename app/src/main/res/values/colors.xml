@@ -37,6 +37,8 @@
     <color name="income_bg">#f0fdf4</color>
     <color name="expense_bg">#fef2f2</color>
     <color name="bg">#f0f4f8</color>
+    <color name="surface_semi">#DDFFFFFF</color>
+    <color name="surface_light">#B3FFFFFF</color>
     <color name="surface">#ffffff</color>
     <color name="ink">#1e293b</color>
     <color name="muted">#64748b</color>

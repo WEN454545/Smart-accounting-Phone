@@ -25,6 +25,13 @@
                 android:layout_height="200dp"
                 android:clipChildren="true">
 
+                <ImageView
+                    android:id="@+id/iv_profile_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
                 <com.example.myapplication.ui.auth.ScalableVideoView
                     android:id="@+id/profile_video"
                     android:layout_width="match_parent"
@@ -235,6 +242,39 @@
                     android:id="@+id/switch_notify"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="12dp"
+                android:background="@color/rule" />
+
+            <LinearLayout
+                android:id="@+id/row_personalize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="4dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/profile_personalize"
+                    android:textColor="@color/ink"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_bg_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_bg_customize"
+                    android:textColor="@color/muted"
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <View

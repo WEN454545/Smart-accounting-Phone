@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/bg"
+    android:orientation="vertical"
     android:animateLayoutChanges="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface"
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingTop="12dp"
@@ -99,17 +99,37 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_card"
+        android:background="#F0FFFFFF"
         android:elevation="1dp"
         android:orientation="vertical"
         android:padding="8dp"
         android:animateLayoutChanges="true">
 
-        <LinearLayout
-            android:id="@+id/calendar_grid"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="260dp"
-            android:orientation="vertical" />
+            android:layout_height="260dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageView
+                    android:id="@+id/iv_calendar_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/calendar_grid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout

@@ -1,10 +1,14 @@
 package com.example.myapplication.ui.auth;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private BillRepository repository;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ImageView ivLoginBg;
+    private SharedPreferences profilePrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +52,29 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
         btnRegister = findViewById(R.id.btn_register);
+        ivLoginBg = findViewById(R.id.iv_login_bg);
+        profilePrefs = getSharedPreferences("profile_settings", Context.MODE_PRIVATE);
+
+        // Load login background
+        loadLoginBackground();
 
         btnLogin.setOnClickListener(v -> attemptLogin());
         btnRegister.setOnClickListener(v -> attemptRegister());
+    }
+
+    private void loadLoginBackground() {
+        String savedUri = profilePrefs.getString("login_bg_uri", null);
+        if (savedUri != null) {
+            try {
+                Uri uri = Uri.parse(savedUri);
+                ivLoginBg.setImageURI(uri);
+                ivLoginBg.setVisibility(android.view.View.VISIBLE);
+            } catch (Exception e) {
+                ivLoginBg.setVisibility(android.view.View.GONE);
+            }
+        } else {
+            ivLoginBg.setVisibility(android.view.View.GONE);
+        }
     }
 
     private void attemptLogin() {

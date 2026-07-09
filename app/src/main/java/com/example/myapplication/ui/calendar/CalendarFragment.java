@@ -1,13 +1,17 @@
 package com.example.myapplication.ui.calendar;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,10 +36,14 @@ import java.util.Map;
 
 public class CalendarFragment extends Fragment implements BillAdapter.OnBillLongClickListener {
 
+    private static final String PREF_NAME = "profile_settings";
+    private static final String KEY_CAL_BG_URI = "cal_bg_uri";
+
     private TextView monthText, incomeText, expenseText;
     private TextView selectedDateText, selectedIncomeText, selectedExpenseText;
     private ImageButton btnPrev, btnNext;
     private LinearLayout calendarGrid;
+    private ImageView ivCalendarBg;
     private LinearLayout selectedDayBar;
     private LinearLayout emptyHint;
     private RecyclerView rvDayBills;
@@ -54,6 +62,7 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         incomeText = view.findViewById(R.id.tv_cal_income);
         expenseText = view.findViewById(R.id.tv_cal_expense);
         calendarGrid = view.findViewById(R.id.calendar_grid);
+        ivCalendarBg = view.findViewById(R.id.iv_calendar_bg);
         btnPrev = view.findViewById(R.id.btn_prev_month);
         btnNext = view.findViewById(R.id.btn_next_month);
         selectedDayBar = view.findViewById(R.id.selected_day_bar);
@@ -119,14 +128,28 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
             }
         });
 
+        loadCalendarBackground();
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        loadCalendarBackground();
         // Force re-query month data to pick up changes made on other tabs
         viewModel.reloadMonthData();
+    }
+
+    private void loadCalendarBackground() {
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String uriStr = prefs.getString(KEY_CAL_BG_URI, null);
+        ivCalendarBg.setVisibility(View.VISIBLE);
+        if (uriStr != null) {
+            ivCalendarBg.setImageURI(Uri.parse(uriStr));
+        } else {
+            ivCalendarBg.setImageResource(R.drawable.bg_calendar_default);
+        }
     }
 
     @Override
@@ -240,21 +263,22 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         cell.setGravity(Gravity.CENTER);
         cell.setPadding(dp4, dp4/2, dp4, dp4/2);
 
-        int bgColorRes = R.drawable.bg_cal_cell_neutral;
+        boolean hasBg = ivCalendarBg.getDrawable() != null;
+        int bgColorRes = hasBg ? R.drawable.bg_cal_cell_neutral_bg : R.drawable.bg_cal_cell_neutral;
         int textColorVal = requireContext().getColor(R.color.muted);
         double income = daySum != null ? daySum.income : 0;
         double expense = daySum != null ? daySum.expense : 0;
         double net = income - expense;
 
         if (isSelected) {
-            bgColorRes = R.drawable.bg_cal_cell_selected;
+            bgColorRes = hasBg ? R.drawable.bg_cal_cell_selected_bg : R.drawable.bg_cal_cell_selected;
             textColorVal = Color.WHITE;
         } else {
             if (net > 0) {
-                bgColorRes = R.drawable.bg_cal_cell_income;
+                bgColorRes = hasBg ? R.drawable.bg_cal_cell_income_bg : R.drawable.bg_cal_cell_income;
                 textColorVal = requireContext().getColor(R.color.income);
             } else if (net < 0) {
-                bgColorRes = R.drawable.bg_cal_cell_expense;
+                bgColorRes = hasBg ? R.drawable.bg_cal_cell_expense_bg : R.drawable.bg_cal_cell_expense;
                 textColorVal = requireContext().getColor(R.color.expense);
             }
         }

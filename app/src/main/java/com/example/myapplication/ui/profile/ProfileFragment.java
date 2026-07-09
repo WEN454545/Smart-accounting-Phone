@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -56,6 +57,11 @@ public class ProfileFragment extends Fragment {
     private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 1002;
     private static final String PREF_NAME = "profile_settings";
     private static final String KEY_AVATAR = "avatar_";
+    private static final String KEY_BG_URI = "bg_media_uri";
+    private static final String KEY_BG_TYPE = "bg_media_type";
+    private static final String KEY_CAL_BG_URI = "cal_bg_uri";
+    private static final String KEY_LOGIN_BG_URI = "login_bg_uri";
+    private static final String KEY_HOME_BG_URI = "home_bg_uri";
 
     private SessionManager sessionManager;
     private NotificationSettings notificationSettings;
@@ -64,6 +70,8 @@ public class ProfileFragment extends Fragment {
     private ImageView ivAvatar;
     private SwitchCompat switchNotify;
     private ScalableVideoView profileVideo;
+    private ImageView ivProfileBg;
+    private TextView tvBgStatus;
     private boolean isSettingSwitchProgrammatically;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
@@ -71,6 +79,42 @@ public class ProfileFragment extends Fragment {
                 if (uri != null) {
                     saveAvatar(uri);
                     Toast.makeText(requireContext(), R.string.profile_avatar_saved, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private final ActivityResultLauncher<String[]> pickMediaLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri != null) {
+                    requireContext().getContentResolver().takePersistableUriPermission(
+                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    handleMediaPicked(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<String[]> pickCalBgLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri != null) {
+                    requireContext().getContentResolver().takePersistableUriPermission(
+                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    handleCalBgPicked(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<String[]> pickLoginBgLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri != null) {
+                    requireContext().getContentResolver().takePersistableUriPermission(
+                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    handleLoginBgPicked(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<String[]> pickHomeBgLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri != null) {
+                    requireContext().getContentResolver().takePersistableUriPermission(
+                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    handleHomeBgPicked(uri);
                 }
             });
 
@@ -87,7 +131,9 @@ public class ProfileFragment extends Fragment {
         ivAvatar = view.findViewById(R.id.iv_avatar);
         switchNotify = view.findViewById(R.id.switch_notify);
         profileVideo = view.findViewById(R.id.profile_video);
-        setupVideo();
+        ivProfileBg = view.findViewById(R.id.iv_profile_bg);
+        tvBgStatus = view.findViewById(R.id.tv_bg_status);
+        setupBackground();
 
         // Load saved avatar
         loadAvatar();
@@ -126,6 +172,8 @@ public class ProfileFragment extends Fragment {
         // Row click -> open detailed settings dialog
         view.findViewById(R.id.row_notify).setOnClickListener(v -> showNotificationSettings());
 
+        view.findViewById(R.id.row_personalize).setOnClickListener(v -> showPersonalizeDialog());
+
         view.findViewById(R.id.btn_export).setOnClickListener(v -> exportCSV());
         view.findViewById(R.id.btn_import).setOnClickListener(v -> importCSV());
         view.findViewById(R.id.btn_download_template).setOnClickListener(v -> downloadCSVTemplate());
@@ -156,7 +204,19 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    private void setupVideo() {
+    private void setupBackground() {
+        String savedUri = profilePrefs.getString(KEY_BG_URI, null);
+        String savedType = profilePrefs.getString(KEY_BG_TYPE, null);
+        if (savedUri != null && savedType != null) {
+            applyBackgroundMedia(Uri.parse(savedUri), savedType);
+        } else {
+            playDefaultVideo();
+        }
+    }
+
+    private void playDefaultVideo() {
+        ivProfileBg.setVisibility(View.GONE);
+        profileVideo.setVisibility(View.VISIBLE);
         Uri videoUri = Uri.parse("android.resource://" + requireContext().getPackageName() + "/" + R.raw.splash_bg);
         profileVideo.setVideoURI(videoUri);
         profileVideo.setOnPreparedListener(mp -> {
@@ -164,6 +224,313 @@ public class ProfileFragment extends Fragment {
             mp.setVolume(0f, 0f);
         });
         profileVideo.start();
+        tvBgStatus.setText(R.string.profile_bg_default);
+    }
+
+    private void showPersonalizeDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_personalize, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        dialogView.findViewById(R.id.opt_profile_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            showBgSettingDialog();
+        });
+
+        dialogView.findViewById(R.id.opt_login_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            showLoginBgSettingDialog();
+        });
+
+        dialogView.findViewById(R.id.opt_home_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            showHomeBgSettingDialog();
+        });
+
+        dialogView.findViewById(R.id.opt_cal_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            showCalBgSettingDialog();
+        });
+
+        dialogView.findViewById(R.id.btn_personalize_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void showBgSettingDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_bg_setting, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        // --- Preview ---
+        ImageView ivPreview = dialogView.findViewById(R.id.iv_preview_bg);
+        View placeholder = dialogView.findViewById(R.id.ll_preview_placeholder);
+
+        String savedUri = profilePrefs.getString(KEY_BG_URI, null);
+        String savedType = profilePrefs.getString(KEY_BG_TYPE, null);
+        if (savedUri != null && savedType != null) {
+            placeholder.setVisibility(View.GONE);
+            ivPreview.setVisibility(View.VISIBLE);
+            if ("image".equals(savedType)) {
+                ivPreview.setImageURI(Uri.parse(savedUri));
+            } else {
+                // For video, show a static thumbnail from ContentResolver
+                ivPreview.setImageURI(Uri.parse(savedUri));
+            }
+        } else {
+            placeholder.setVisibility(View.VISIBLE);
+            ivPreview.setVisibility(View.GONE);
+        }
+
+        // --- Choose new background ---
+        dialogView.findViewById(R.id.btn_choose_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            pickMediaLauncher.launch(new String[]{"image/*", "video/*"});
+        });
+
+        // --- Reset to default ---
+        dialogView.findViewById(R.id.btn_reset_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            resetBackgroundToDefault();
+        });
+
+        // --- Cancel ---
+        dialogView.findViewById(R.id.btn_cancel_bg).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void handleMediaPicked(Uri uri) {
+        String type = requireContext().getContentResolver().getType(uri);
+        if (type == null) {
+            Toast.makeText(requireContext(), "无法识别文件类型", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String mediaType;
+        if (type.startsWith("video/")) {
+            mediaType = "video";
+        } else if (type.startsWith("image/")) {
+            mediaType = "image";
+        } else {
+            Toast.makeText(requireContext(), "请选择视频或图片文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Save preference
+        profilePrefs.edit()
+                .putString(KEY_BG_URI, uri.toString())
+                .putString(KEY_BG_TYPE, mediaType)
+                .apply();
+
+        applyBackgroundMedia(uri, mediaType);
+        Toast.makeText(requireContext(), "背景已更新", Toast.LENGTH_SHORT).show();
+    }
+
+    private void applyBackgroundMedia(Uri uri, String type) {
+        if ("video".equals(type)) {
+            ivProfileBg.setVisibility(View.GONE);
+            profileVideo.setVisibility(View.VISIBLE);
+            profileVideo.setVideoURI(uri);
+            profileVideo.setOnPreparedListener(mp -> {
+                mp.setLooping(true);
+                mp.setVolume(0f, 0f);
+            });
+            profileVideo.start();
+            tvBgStatus.setText(R.string.profile_bg_custom_video);
+        } else if ("image".equals(type)) {
+            profileVideo.setVisibility(View.GONE);
+            profileVideo.stopPlayback();
+            ivProfileBg.setVisibility(View.VISIBLE);
+            ivProfileBg.setImageURI(uri);
+            tvBgStatus.setText(R.string.profile_bg_custom_image);
+        }
+    }
+
+    private void resetBackgroundToDefault() {
+        profilePrefs.edit()
+                .remove(KEY_BG_URI)
+                .remove(KEY_BG_TYPE)
+                .apply();
+        ivProfileBg.setVisibility(View.GONE);
+        ivProfileBg.setImageURI(null);
+        playDefaultVideo();
+        Toast.makeText(requireContext(), "已恢复默认背景", Toast.LENGTH_SHORT).show();
+    }
+
+    // ---- Calendar Background ----
+
+
+    private void showCalBgSettingDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_calendar_bg, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        // Preview
+        ImageView ivPreview = dialogView.findViewById(R.id.iv_cal_bg_preview);
+        View placeholder = dialogView.findViewById(R.id.ll_cal_bg_placeholder);
+
+        String savedUri = profilePrefs.getString(KEY_CAL_BG_URI, null);
+        if (savedUri != null) {
+            placeholder.setVisibility(View.GONE);
+            ivPreview.setVisibility(View.VISIBLE);
+            ivPreview.setImageURI(Uri.parse(savedUri));
+        } else {
+            placeholder.setVisibility(View.VISIBLE);
+            ivPreview.setVisibility(View.GONE);
+        }
+
+        dialogView.findViewById(R.id.btn_cal_bg_choose).setOnClickListener(v -> {
+            dialog.dismiss();
+            pickCalBgLauncher.launch(new String[]{"image/*"});
+        });
+
+        dialogView.findViewById(R.id.btn_cal_bg_reset).setOnClickListener(v -> {
+            dialog.dismiss();
+            resetCalBgToDefault();
+        });
+
+        dialogView.findViewById(R.id.btn_cal_bg_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void handleCalBgPicked(Uri uri) {
+        String type = requireContext().getContentResolver().getType(uri);
+        if (type == null || !type.startsWith("image/")) {
+            Toast.makeText(requireContext(), "请选择图片文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        profilePrefs.edit()
+                .putString(KEY_CAL_BG_URI, uri.toString())
+                .apply();
+
+        Toast.makeText(requireContext(), "日历背景已更新", Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetCalBgToDefault() {
+        profilePrefs.edit()
+                .remove(KEY_CAL_BG_URI)
+                .apply();
+        Toast.makeText(requireContext(), "已恢复默认日历背景", Toast.LENGTH_SHORT).show();
+    }
+
+    // ---- Login Background ----
+
+    private void showLoginBgSettingDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_login_bg, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        ImageView ivPreview = dialogView.findViewById(R.id.iv_login_bg_preview);
+        View placeholder = dialogView.findViewById(R.id.ll_login_bg_placeholder);
+
+        String savedUri = profilePrefs.getString(KEY_LOGIN_BG_URI, null);
+        if (savedUri != null) {
+            placeholder.setVisibility(View.GONE);
+            ivPreview.setVisibility(View.VISIBLE);
+            ivPreview.setImageURI(Uri.parse(savedUri));
+        } else {
+            placeholder.setVisibility(View.VISIBLE);
+            ivPreview.setVisibility(View.GONE);
+        }
+
+        dialogView.findViewById(R.id.btn_login_bg_choose).setOnClickListener(v -> {
+            dialog.dismiss();
+            pickLoginBgLauncher.launch(new String[]{"image/*"});
+        });
+
+        dialogView.findViewById(R.id.btn_login_bg_reset).setOnClickListener(v -> {
+            dialog.dismiss();
+            resetLoginBgToDefault();
+        });
+
+        dialogView.findViewById(R.id.btn_login_bg_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void handleLoginBgPicked(Uri uri) {
+        String type = requireContext().getContentResolver().getType(uri);
+        if (type == null || !type.startsWith("image/")) {
+            Toast.makeText(requireContext(), "请选择图片文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        profilePrefs.edit()
+                .putString(KEY_LOGIN_BG_URI, uri.toString())
+                .apply();
+
+        Toast.makeText(requireContext(), "登录页背景已更新", Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetLoginBgToDefault() {
+        profilePrefs.edit()
+                .remove(KEY_LOGIN_BG_URI)
+                .apply();
+        Toast.makeText(requireContext(), "已恢复默认登录页背景", Toast.LENGTH_SHORT).show();
+    }
+
+    // ---- Home Background ----
+
+    private void showHomeBgSettingDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_home_bg, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        ImageView ivPreview = dialogView.findViewById(R.id.iv_home_bg_preview);
+        View placeholder = dialogView.findViewById(R.id.ll_home_bg_placeholder);
+
+        String savedUri = profilePrefs.getString(KEY_HOME_BG_URI, null);
+        if (savedUri != null) {
+            placeholder.setVisibility(View.GONE);
+            ivPreview.setVisibility(View.VISIBLE);
+            ivPreview.setImageURI(Uri.parse(savedUri));
+        } else {
+            placeholder.setVisibility(View.VISIBLE);
+            ivPreview.setVisibility(View.GONE);
+        }
+
+        dialogView.findViewById(R.id.btn_home_bg_choose).setOnClickListener(v -> {
+            dialog.dismiss();
+            pickHomeBgLauncher.launch(new String[]{"image/*"});
+        });
+
+        dialogView.findViewById(R.id.btn_home_bg_reset).setOnClickListener(v -> {
+            dialog.dismiss();
+            resetHomeBgToDefault();
+        });
+
+        dialogView.findViewById(R.id.btn_home_bg_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void handleHomeBgPicked(Uri uri) {
+        String type = requireContext().getContentResolver().getType(uri);
+        if (type == null || !type.startsWith("image/")) {
+            Toast.makeText(requireContext(), "请选择图片文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        profilePrefs.edit()
+                .putString(KEY_HOME_BG_URI, uri.toString())
+                .apply();
+
+        Toast.makeText(requireContext(), "主页背景已更新", Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetHomeBgToDefault() {
+        profilePrefs.edit()
+                .remove(KEY_HOME_BG_URI)
+                .apply();
+        Toast.makeText(requireContext(), "已恢复默认主页背景", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -177,7 +544,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (profileVideo != null && !profileVideo.isPlaying()) {
+        if (profileVideo != null && profileVideo.getVisibility() == View.VISIBLE && !profileVideo.isPlaying()) {
             profileVideo.start();
         }
     }
