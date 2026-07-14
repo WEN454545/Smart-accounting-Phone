@@ -30,6 +30,9 @@ public class TrendBarView extends View {
     private static final int LABEL_COLOR = 0xFF64748B;
     private static final int GRID_COLOR = 0xFFE5E7EB;
 
+    private static final int MIN_GROUP_WIDTH_DP = 80;
+    private int minGroupWidthPx;
+
     public TrendBarView(Context context) {
         super(context);
         init();
@@ -55,15 +58,17 @@ public class TrendBarView extends View {
         expensePaint.setAntiAlias(true);
 
         labelPaint.setColor(LABEL_COLOR);
-        labelPaint.setTextSize(28f);
+        labelPaint.setTextSize(40f);
         labelPaint.setAntiAlias(true);
 
-        amountPaint.setTextSize(24f);
+        amountPaint.setTextSize(47f);
         amountPaint.setAntiAlias(true);
 
         gridPaint.setColor(GRID_COLOR);
         gridPaint.setStrokeWidth(2f);
         gridPaint.setAntiAlias(true);
+
+        minGroupWidthPx = (int) (MIN_GROUP_WIDTH_DP * getResources().getDisplayMetrics().density);
     }
 
     public void setData(List<StatsViewModel.PeriodSum> data) {
@@ -74,7 +79,25 @@ public class TrendBarView extends View {
             if (ps.expense > max) max = ps.expense;
         }
         this.maxValue = max;
+        requestLayout();
         invalidate();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (!data.isEmpty()) {
+            int paddingLeft = 24;
+            int paddingRight = 24;
+            int desiredWidth = paddingLeft + paddingRight + data.size() * minGroupWidthPx;
+            if (desiredWidth > width) {
+                width = desiredWidth;
+            }
+        }
+
+        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -90,8 +113,8 @@ public class TrendBarView extends View {
 
         int paddingLeft = 24;
         int paddingRight = 24;
-        int paddingTop = 32;
-        int paddingBottom = 48;
+        int paddingTop = (int) (amountPaint.getTextSize() + 24);
+        int paddingBottom = (int) (labelPaint.getTextSize() + 28);
 
         int chartWidth = width - paddingLeft - paddingRight;
         int chartHeight = height - paddingTop - paddingBottom;
@@ -135,22 +158,21 @@ public class TrendBarView extends View {
             canvas.drawRect(expenseLeft, expenseTop, expenseRight, expenseBottom, expensePaint);
 
             float labelX = groupX;
-            float labelY = height - paddingBottom + 24;
+            float labelY = height - paddingBottom + labelPaint.getTextSize() + 4;
             labelPaint.setTextAlign(Paint.Align.CENTER);
             canvas.drawText(ps.label, labelX, labelY, labelPaint);
 
-            if (groupWidth > 80) {
-                String incomeText = String.format(Locale.CHINA, "%.0f", ps.income);
-                String expenseText = String.format(Locale.CHINA, "%.0f", ps.expense);
+            float textOffset = amountPaint.getTextSize() * 0.35f;
+            String incomeText = String.format(Locale.CHINA, "%.0f", ps.income);
+            String expenseText = String.format(Locale.CHINA, "%.0f", ps.expense);
 
-                amountPaint.setColor(INCOME_COLOR);
-                amountPaint.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText(incomeText, incomeLeft + barWidth / 2, incomeTop - 8, amountPaint);
+            amountPaint.setColor(INCOME_COLOR);
+            amountPaint.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText(incomeText, incomeLeft + barWidth / 2, incomeTop - textOffset, amountPaint);
 
-                amountPaint.setColor(EXPENSE_COLOR);
-                amountPaint.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText(expenseText, expenseLeft + barWidth / 2, expenseTop - 8, amountPaint);
-            }
+            amountPaint.setColor(EXPENSE_COLOR);
+            amountPaint.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText(expenseText, expenseLeft + barWidth / 2, expenseTop - textOffset, amountPaint);
         }
     }
 }

@@ -1,22 +1,22 @@
 package com.example.myapplication.ui.stats;
 
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.data.dao.TypeSum;
-import com.example.myapplication.ui.adapter.TrendAdapter;
+import com.example.myapplication.ui.view.TrendBarView;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -30,9 +30,9 @@ public class StatsFragment extends Fragment {
 
     private PieChart pieExpenseChart;
     private PieChart pieIncomeChart;
-    private RecyclerView recyclerTrend;
-    private TrendAdapter trendAdapter;
+    private TrendBarView trendView;
     private StatsViewModel viewModel;
+    private LinearLayout legendExpense, legendIncome;
 
     private TextView tvPeriodLabel, tvPeriodSubtitle, btnPeriodPrev, btnPeriodNext;
 
@@ -56,7 +56,9 @@ public class StatsFragment extends Fragment {
 
         pieExpenseChart = view.findViewById(R.id.chart_pie_expense);
         pieIncomeChart = view.findViewById(R.id.chart_pie_income);
-        recyclerTrend = view.findViewById(R.id.recycler_trend);
+        trendView = view.findViewById(R.id.trend_view);
+        legendExpense = view.findViewById(R.id.legend_expense);
+        legendIncome = view.findViewById(R.id.legend_income);
 
         tvPeriodLabel = view.findViewById(R.id.tv_period_label);
         tvPeriodSubtitle = view.findViewById(R.id.tv_period_subtitle);
@@ -66,11 +68,7 @@ public class StatsFragment extends Fragment {
         setupPieChart(pieExpenseChart);
         setupPieChart(pieIncomeChart);
 
-        trendAdapter = new TrendAdapter();
-        recyclerTrend.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerTrend.setAdapter(trendAdapter);
-
-        // Tab 切换
+        // Tab 切换鍒囨崲
         TextView tabWeek = view.findViewById(R.id.tab_week);
         TextView tabMonth = view.findViewById(R.id.tab_month);
         TextView tabYear = view.findViewById(R.id.tab_year);
@@ -79,7 +77,7 @@ public class StatsFragment extends Fragment {
         tabMonth.setOnClickListener(v -> selectTab(StatsViewModel.Period.MONTH, tabWeek, tabMonth, tabYear));
         tabYear.setOnClickListener(v -> selectTab(StatsViewModel.Period.YEAR, tabWeek, tabMonth, tabYear));
 
-        // 左右箭头切换
+        // 宸﹀彸绠ご鍒囨崲
         btnPeriodPrev.setOnClickListener(v -> {
             StatsViewModel.Period p = viewModel.getPeriod().getValue();
             if (p == null) return;
@@ -99,12 +97,12 @@ public class StatsFragment extends Fragment {
             }
         });
 
-        // 数据观察
-        viewModel.getExpenseByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieExpenseChart, typeSums));
-        viewModel.getIncomeByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieIncomeChart, typeSums));
-        viewModel.getTrendData().observe(getViewLifecycleOwner(), periodSums -> trendAdapter.setData(periodSums));
+        // 鏁版嵁瑙傚療
+        viewModel.getExpenseByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieExpenseChart, typeSums, legendExpense));
+        viewModel.getIncomeByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieIncomeChart, typeSums, legendIncome));
+        viewModel.getTrendData().observe(getViewLifecycleOwner(), periodSums -> trendView.setData(periodSums));
 
-        // 周期标签更新
+        // 鍛ㄦ湡鏍囩鏇存柊
         viewModel.getStatsYear().observe(getViewLifecycleOwner(), y -> updatePeriodLabel());
         viewModel.getStatsMonth().observe(getViewLifecycleOwner(), m -> updatePeriodLabel());
         viewModel.getStatsWeekOffset().observe(getViewLifecycleOwner(), o -> updatePeriodLabel());
@@ -151,62 +149,165 @@ public class StatsFragment extends Fragment {
     }
 
     private void setupPieChart(PieChart chart) {
-        chart.setUsePercentValues(false); // manually compute percentages
+        chart.setUsePercentValues(false);
         chart.getDescription().setEnabled(false);
         chart.setDrawHoleEnabled(true);
-        chart.setHoleRadius(40f);
-        chart.setTransparentCircleRadius(45f);
-        chart.setEntryLabelColor(Color.WHITE);
-        chart.setEntryLabelTextSize(9f);
+        chart.setHoleRadius(42f);
+        chart.setTransparentCircleRadius(48f);
+        chart.setExtraOffsets(8f, 5f, 8f, 5f);
+        chart.setEntryLabelColor(Color.parseColor("#1e293b"));
+        chart.setEntryLabelTextSize(10f);
         chart.setEntryLabelTypeface(android.graphics.Typeface.DEFAULT_BOLD);
         chart.setDrawEntryLabels(true);
         chart.getLegend().setEnabled(false);
     }
 
-    private void updatePieChart(PieChart chart, List<TypeSum> typeSums) {
+    private void updatePieChart(PieChart chart, List<TypeSum> typeSums, LinearLayout legendContainer) {
         if (typeSums == null || typeSums.isEmpty()) {
             chart.clear();
             chart.invalidate();
+            legendContainer.removeAllViews();
+            legendContainer.setVisibility(View.GONE);
             return;
         }
 
-        // Calculate total for manual percentage computation
+        // Calculate total
         double total = 0;
         for (TypeSum ts : typeSums) {
             total += Math.abs(ts.total);
         }
         final double finalTotal = total;
 
+        // Split entries: major (>=10%) get labels inside, minor (<10%) use legend
         List<PieEntry> entries = new ArrayList<>();
-        for (TypeSum ts : typeSums) {
-            entries.add(new PieEntry((float) Math.abs(ts.total), ts.type));
+        List<LegendItem> legendItems = new ArrayList<>();
+
+        for (int i = 0; i < typeSums.size(); i++) {
+            TypeSum ts = typeSums.get(i);
+            float value = (float) Math.abs(ts.total);
+            double percentage = (value / (float) finalTotal) * 100;
+            int colorIndex = entries.size();
+
+            if (percentage >= 10.0) {
+                // Major category: label inside the chart
+                entries.add(new PieEntry(value, ts.type));
+            } else {
+                // Minor category: no label on chart, use legend
+                entries.add(new PieEntry(value, ""));
+                legendItems.add(new LegendItem(ts.type, percentage, value, CAT_COLORS[colorIndex % CAT_COLORS.length]));
+            }
         }
 
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(CAT_COLORS);
-        dataSet.setValueTextSize(11f);
-        int outsideColor = (chart == pieExpenseChart) ?
+        dataSet.setValueTextSize(10f);
+        int accentColor = (chart == pieExpenseChart) ?
                 getResources().getColor(R.color.expense, requireContext().getTheme()) :
                 getResources().getColor(R.color.income, requireContext().getTheme());
-        dataSet.setValueTextColor(outsideColor);
-        // Category name inside slice, amount/percentage outside with connector lines
+        dataSet.setValueTextColor(accentColor);
+        // Labels inside the slice
         dataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
-        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
         dataSet.setSliceSpace(2f);
-        dataSet.setValueLinePart1Length(0.4f);
-        dataSet.setValueLinePart2Length(0.6f);
-        dataSet.setValueLineColor(Color.parseColor("#94a3b8"));
-        dataSet.setValueLineVariableLength(true);
 
         PieData pieData = new PieData(dataSet);
         pieData.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
                 float percentage = (value / (float) finalTotal) * 100;
-                return String.format(java.util.Locale.CHINA, "%.2f%%\n¥%.0f", percentage, value);
+                if (percentage < 10.0f) {
+                    return "";
+                }
+                return String.format(java.util.Locale.CHINA, "%.1f%%", percentage);
             }
         });
         chart.setData(pieData);
         chart.invalidate();
+
+        // Build legend for minor categories
+        buildLegend(legendContainer, legendItems);
+    }
+
+    /**
+     * Build a custom legend view for minor categories (<10%).
+     * Each item shows a colored dot, category name, and percentage.
+     */
+    private void buildLegend(LinearLayout container, List<LegendItem> items) {
+        container.removeAllViews();
+        if (items.isEmpty()) {
+            container.setVisibility(View.GONE);
+            return;
+        }
+        container.setVisibility(View.VISIBLE);
+
+        int dotSize = (int) (8 * getResources().getDisplayMetrics().density);
+        int marginBetween = (int) (6 * getResources().getDisplayMetrics().density);
+        int marginRow = (int) (4 * getResources().getDisplayMetrics().density);
+        int itemsPerRow = 3;
+
+        LinearLayout currentRow = null;
+        for (int i = 0; i < items.size(); i++) {
+            if (i % itemsPerRow == 0) {
+                currentRow = new LinearLayout(getContext());
+                currentRow.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                if (i > 0) {
+                    rowParams.topMargin = marginRow;
+                }
+                currentRow.setLayoutParams(rowParams);
+                container.addView(currentRow);
+            }
+
+            LegendItem item = items.get(i);
+            LinearLayout itemLayout = new LinearLayout(getContext());
+            itemLayout.setOrientation(LinearLayout.HORIZONTAL);
+            itemLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            if (i % itemsPerRow != 0) {
+                itemParams.leftMargin = marginBetween;
+            }
+            itemLayout.setLayoutParams(itemParams);
+
+            // Color dot
+            View dot = new View(getContext());
+            GradientDrawable dotBg = new GradientDrawable();
+            dotBg.setShape(GradientDrawable.OVAL);
+            dotBg.setColor(item.color);
+            LinearLayout.LayoutParams dotParams = new LinearLayout.LayoutParams(dotSize, dotSize);
+            dot.setLayoutParams(dotParams);
+            dot.setBackground(dotBg);
+            itemLayout.addView(dot);
+
+            // Category name + percentage
+            TextView label = new TextView(getContext());
+            label.setText(String.format(java.util.Locale.CHINA, " %s %.1f%%", item.name, item.percentage));
+            label.setTextColor(Color.parseColor("#64748b"));
+            label.setTextSize(11f);
+            label.setMaxLines(1);
+            label.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            itemLayout.addView(label);
+
+            currentRow.addView(itemLayout);
+        }
+    }
+
+    /**
+     * Data class for legend items representing minor categories.
+     */
+    private static class LegendItem {
+        final String name;
+        final double percentage;
+        final float value;
+        final int color;
+
+        LegendItem(String name, double percentage, float value, int color) {
+            this.name = name;
+            this.percentage = percentage;
+            this.value = value;
+            this.color = color;
+        }
     }
 }

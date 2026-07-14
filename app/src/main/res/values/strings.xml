@@ -174,4 +174,9 @@
     <string name="home_bg_placeholder">(未设置自定义背景)</string>
     <string name="profile_login_bg">登录页背景</string>
     <string name="profile_home_bg">主页背景</string>
+    <string name="profile_dialog_bill_bg">记账弹窗背景</string>
+    <string name="profile_dialog_bill_bg_subtitle">为记账弹窗设置背景图片</string>
+    <string name="profile_dialog_bill_bg_setting">记账弹窗背景</string>
+    <string name="dialog_bill_bg_choose">选择背景图片</string>
+    <string name="dialog_bill_bg_placeholder">(未设置自定义背景)</string>
 </resources>

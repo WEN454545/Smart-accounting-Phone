@@ -147,13 +147,17 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_trend"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="300dp"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                android:clipToPadding="false" />
+                android:scrollbars="none">
+
+                <com.example.myapplication.ui.view.TrendBarView
+                    android:id="@+id/trend_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </HorizontalScrollView>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -174,7 +178,7 @@
                     android:layout_marginEnd="16dp"
                     android:text="@string/cal_income"
                     android:textColor="@color/muted"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <View
                     android:layout_width="12dp"
@@ -187,7 +191,7 @@
                     android:layout_marginStart="4dp"
                     android:text="@string/cal_expense"
                     android:textColor="@color/muted"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -211,8 +215,16 @@
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/chart_pie_expense"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:layout_marginTop="12dp" />
+
+            <LinearLayout
+                android:id="@+id/legend_expense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
@@ -235,8 +247,16 @@
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/chart_pie_income"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 android:layout_marginTop="12dp" />
+
+            <LinearLayout
+                android:id="@+id/legend_income"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

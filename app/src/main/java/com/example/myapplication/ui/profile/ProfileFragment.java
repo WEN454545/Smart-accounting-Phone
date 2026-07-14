@@ -62,6 +62,7 @@ public class ProfileFragment extends Fragment {
     private static final String KEY_CAL_BG_URI = "cal_bg_uri";
     private static final String KEY_LOGIN_BG_URI = "login_bg_uri";
     private static final String KEY_HOME_BG_URI = "home_bg_uri";
+    private static final String KEY_DIALOG_BILL_BG_URI = "dialog_bill_bg_uri";
 
     private SessionManager sessionManager;
     private NotificationSettings notificationSettings;
@@ -115,6 +116,15 @@ public class ProfileFragment extends Fragment {
                     requireContext().getContentResolver().takePersistableUriPermission(
                             uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     handleHomeBgPicked(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<String[]> pickDialogBillBgLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri != null) {
+                    requireContext().getContentResolver().takePersistableUriPermission(
+                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    handleDialogBillBgPicked(uri);
                 }
             });
 
@@ -246,6 +256,11 @@ public class ProfileFragment extends Fragment {
         dialogView.findViewById(R.id.opt_home_bg).setOnClickListener(v -> {
             dialog.dismiss();
             showHomeBgSettingDialog();
+        });
+
+        dialogView.findViewById(R.id.opt_dialog_bill_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            showDialogBillBgSettingDialog();
         });
 
         dialogView.findViewById(R.id.opt_cal_bg).setOnClickListener(v -> {
@@ -531,6 +546,63 @@ public class ProfileFragment extends Fragment {
                 .remove(KEY_HOME_BG_URI)
                 .apply();
         Toast.makeText(requireContext(), "已恢复默认主页背景", Toast.LENGTH_SHORT).show();
+    }
+
+    // ---- Dialog Bill Background ----
+
+    private void showDialogBillBgSettingDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_dialog_bill_bg, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        ImageView ivPreview = dialogView.findViewById(R.id.iv_dialog_bill_bg_preview);
+        View placeholder = dialogView.findViewById(R.id.ll_dialog_bill_bg_placeholder);
+
+        String savedUri = profilePrefs.getString(KEY_DIALOG_BILL_BG_URI, null);
+        if (savedUri != null) {
+            placeholder.setVisibility(View.GONE);
+            ivPreview.setVisibility(View.VISIBLE);
+            ivPreview.setImageURI(Uri.parse(savedUri));
+        } else {
+            placeholder.setVisibility(View.VISIBLE);
+            ivPreview.setVisibility(View.GONE);
+        }
+
+        dialogView.findViewById(R.id.btn_dialog_bill_bg_choose).setOnClickListener(v -> {
+            dialog.dismiss();
+            pickDialogBillBgLauncher.launch(new String[]{"image/*"});
+        });
+
+        dialogView.findViewById(R.id.btn_dialog_bill_bg_reset).setOnClickListener(v -> {
+            dialog.dismiss();
+            resetDialogBillBgToDefault();
+        });
+
+        dialogView.findViewById(R.id.btn_dialog_bill_bg_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void handleDialogBillBgPicked(Uri uri) {
+        String type = requireContext().getContentResolver().getType(uri);
+        if (type == null || !type.startsWith("image/")) {
+            Toast.makeText(requireContext(), "请选择图片文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        profilePrefs.edit()
+                .putString(KEY_DIALOG_BILL_BG_URI, uri.toString())
+                .apply();
+
+        Toast.makeText(requireContext(), "记账弹窗背景已更新", Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetDialogBillBgToDefault() {
+        profilePrefs.edit()
+                .remove(KEY_DIALOG_BILL_BG_URI)
+                .apply();
+        Toast.makeText(requireContext(), "已恢复默认记账弹窗背景", Toast.LENGTH_SHORT).show();
     }
 
     @Override

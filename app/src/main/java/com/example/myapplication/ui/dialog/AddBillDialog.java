@@ -3,7 +3,12 @@ package com.example.myapplication.ui.dialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +21,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.myapplication.MyApplication;
@@ -31,6 +38,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class AddBillDialog extends DialogFragment {
+
+    private static final String PREF_NAME = "profile_settings";
+    private static final String KEY_DIALOG_BILL_BG_URI = "dialog_bill_bg_uri";
 
     public interface OnSaveListener {
         void onSave(Bill bill);
@@ -216,9 +226,26 @@ public class AddBillDialog extends DialogFragment {
         });
 
         builder.setView(view);
+
         AlertDialog d = builder.create();
         if (d.getWindow() != null) {
-            d.getWindow().setBackgroundDrawableResource(R.drawable.bg_bottom_sheet_rounded);
+            SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+            String bgUriStr = prefs.getString(KEY_DIALOG_BILL_BG_URI, null);
+            if (bgUriStr != null) {
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+                            requireContext().getContentResolver(), Uri.parse(bgUriStr));
+                    float density = getResources().getDisplayMetrics().density;
+                    RoundedBitmapDrawable roundedBg = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                    roundedBg.setCornerRadius(32 * density);
+                    roundedBg.setAntiAlias(true);
+                    d.getWindow().setBackgroundDrawable(roundedBg);
+                } catch (Exception e) {
+                    d.getWindow().setBackgroundDrawableResource(R.drawable.bg_bottom_sheet_rounded);
+                }
+            } else {
+                d.getWindow().setBackgroundDrawableResource(R.drawable.bg_bottom_sheet_rounded);
+            }
         }
         return d;
     }
