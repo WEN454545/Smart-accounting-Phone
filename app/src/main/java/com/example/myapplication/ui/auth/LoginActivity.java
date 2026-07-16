@@ -63,11 +63,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loadLoginBackground() {
-        String savedUri = profilePrefs.getString("login_bg_uri", null);
-        if (savedUri != null) {
+        String savedPath = profilePrefs.getString("login_bg_uri", null);
+        if (savedPath != null) {
             try {
-                Uri uri = Uri.parse(savedUri);
-                ivLoginBg.setImageURI(uri);
+                if (savedPath.startsWith("content://")) {
+                    Uri uri = Uri.parse(savedPath);
+                    ivLoginBg.setImageURI(uri);
+                } else {
+                    ivLoginBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
+                }
                 ivLoginBg.setVisibility(android.view.View.VISIBLE);
             } catch (Exception e) {
                 ivLoginBg.setVisibility(android.view.View.GONE);

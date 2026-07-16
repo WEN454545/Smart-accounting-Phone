@@ -143,10 +143,14 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
 
     private void loadCalendarBackground() {
         SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String uriStr = prefs.getString(KEY_CAL_BG_URI, null);
+        String savedPath = prefs.getString(KEY_CAL_BG_URI, null);
         ivCalendarBg.setVisibility(View.VISIBLE);
-        if (uriStr != null) {
-            ivCalendarBg.setImageURI(Uri.parse(uriStr));
+        if (savedPath != null) {
+            if (savedPath.startsWith("content://")) {
+                ivCalendarBg.setImageURI(Uri.parse(savedPath));
+            } else {
+                ivCalendarBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
+            }
         } else {
             ivCalendarBg.setImageResource(R.drawable.bg_calendar_default);
         }

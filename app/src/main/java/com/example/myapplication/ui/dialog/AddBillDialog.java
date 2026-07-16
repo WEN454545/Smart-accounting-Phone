@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -228,18 +229,32 @@ public class AddBillDialog extends DialogFragment {
         builder.setView(view);
 
         AlertDialog d = builder.create();
+        d.setOnShowListener(dialogInterface -> {
+            // Make internal panels transparent so the custom window background shows through
+            View parentPanel = d.findViewById(androidx.appcompat.R.id.parentPanel);
+            if (parentPanel != null) {
+                parentPanel.setBackground(null);
+            }
+            View contentPanel = d.findViewById(androidx.appcompat.R.id.contentPanel);
+            if (contentPanel != null) {
+                contentPanel.setBackground(null);
+            }
+        });
         if (d.getWindow() != null) {
             SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             String bgUriStr = prefs.getString(KEY_DIALOG_BILL_BG_URI, null);
             if (bgUriStr != null) {
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                            requireContext().getContentResolver(), Uri.parse(bgUriStr));
-                    float density = getResources().getDisplayMetrics().density;
-                    RoundedBitmapDrawable roundedBg = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-                    roundedBg.setCornerRadius(32 * density);
-                    roundedBg.setAntiAlias(true);
-                    d.getWindow().setBackgroundDrawable(roundedBg);
+                    Bitmap bitmap = decodeSampledBitmap(bgUriStr, 600);
+                    if (bitmap != null) {
+                        float density = getResources().getDisplayMetrics().density;
+                        RoundedBitmapDrawable roundedBg = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                        roundedBg.setCornerRadius(32 * density);
+                        roundedBg.setAntiAlias(true);
+                        d.getWindow().setBackgroundDrawable(roundedBg);
+                    } else {
+                        d.getWindow().setBackgroundDrawableResource(R.drawable.bg_bottom_sheet_rounded);
+                    }
                 } catch (Exception e) {
                     d.getWindow().setBackgroundDrawableResource(R.drawable.bg_bottom_sheet_rounded);
                 }
@@ -262,6 +277,69 @@ public class AddBillDialog extends DialogFragment {
         btnIncome.setTextColor(requireContext().getColor(R.color.income));
         btnExpense.setBackgroundColor(requireContext().getColor(R.color.bg));
         btnExpense.setTextColor(requireContext().getColor(R.color.muted));
+    }
+
+    /**
+     * Decode a bitmap from the given URI/file path, scaled to fit within maxWidth pixels.
+     * Uses inSampleSize for memory-efficient decoding, then scales to exact target width.
+     */
+    private Bitmap decodeSampledBitmap(String path, int maxWidth) {
+        try {
+            // First decode bounds to get original dimensions
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            if (path.startsWith("content://")) {
+                BitmapFactory.decodeStream(
+                        requireContext().getContentResolver().openInputStream(Uri.parse(path)),
+                        null, options);
+            } else {
+                BitmapFactory.decodeFile(path, options);
+            }
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options.outWidth, options.outHeight, maxWidth, maxWidth);
+            options.inJustDecodeBounds = false;
+
+            Bitmap bitmap;
+            if (path.startsWith("content://")) {
+                bitmap = BitmapFactory.decodeStream(
+                        requireContext().getContentResolver().openInputStream(Uri.parse(path)),
+                        null, options);
+            } else {
+                bitmap = BitmapFactory.decodeFile(path, options);
+            }
+
+            if (bitmap == null) return null;
+
+            // Scale to exact target width while maintaining aspect ratio
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            if (width > maxWidth) {
+                float ratio = (float) maxWidth / width;
+                int newHeight = Math.round(height * ratio);
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, maxWidth, newHeight, true);
+                if (scaled != bitmap) {
+                    bitmap.recycle();
+                }
+                return scaled;
+            }
+            return bitmap;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private int calculateInSampleSize(int rawWidth, int rawHeight, int reqWidth, int reqHeight) {
+        int inSampleSize = 1;
+        if (rawHeight > reqHeight || rawWidth > reqWidth) {
+            int halfHeight = rawHeight / 2;
+            int halfWidth = rawWidth / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
     }

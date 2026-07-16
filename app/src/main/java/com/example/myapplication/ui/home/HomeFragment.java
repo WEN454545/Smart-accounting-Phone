@@ -21,11 +21,9 @@ import android.os.Build;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
-
 import android.view.View;
-
 import android.view.ViewGroup;
-
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import android.widget.LinearLayout;
@@ -73,6 +71,7 @@ import com.example.myapplication.ui.adapter.BillAdapter;
 import com.example.myapplication.ui.adapter.DaySectionedBillAdapter;
 
 import com.example.myapplication.ui.dialog.AddBillDialog;
+import com.example.myapplication.util.ImageUtils;
 
 
 
@@ -101,6 +100,7 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     private SharedPreferences profilePrefs;
 
     private ImageView ivHomeBg, ivHomeHeaderBg;
+    private View vHeaderMask;
 
 
 
@@ -147,12 +147,34 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         ivHomeBg = view.findViewById(R.id.iv_home_bg);
 
         ivHomeHeaderBg = view.findViewById(R.id.iv_home_header_bg);
+        vHeaderMask = view.findViewById(R.id.v_header_mask);
+
+        // Constrain header background image to the header content area
+        LinearLayout headerContent = view.findViewById(R.id.ll_header_content);
+        headerContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int height = headerContent.getHeight();
+                if (height > 0) {
+                    ViewGroup.LayoutParams imgParams = ivHomeHeaderBg.getLayoutParams();
+                    imgParams.height = height;
+                    ivHomeHeaderBg.setLayoutParams(imgParams);
+                    ViewGroup.LayoutParams maskParams = vHeaderMask.getLayoutParams();
+                    maskParams.height = height;
+                    vHeaderMask.setLayoutParams(maskParams);
+                }
+                headerContent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
 
 
 
         // Load home background
 
         loadHomeBackground();
+
+        // Load home header background
+        loadHomeHeaderBackground();
 
 
 
@@ -215,11 +237,15 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     }
 
     private void loadHomeBackground() {
-        String savedUri = profilePrefs.getString("home_bg_uri", null);
-        if (savedUri != null) {
+        String savedPath = profilePrefs.getString("home_bg_uri", null);
+        if (savedPath != null) {
             try {
-                Uri uri = Uri.parse(savedUri);
-                ivHomeBg.setImageURI(uri);
+                if (savedPath.startsWith("content://")) {
+                    Uri uri = Uri.parse(savedPath);
+                    ivHomeBg.setImageURI(uri);
+                } else {
+                    ivHomeBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
+                }
                 ivHomeBg.setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 ivHomeBg.setVisibility(View.GONE);
@@ -227,6 +253,37 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         } else {
             ivHomeBg.setVisibility(View.GONE);
         }
+    }
+
+    private void loadHomeHeaderBackground() {
+        String savedPath = profilePrefs.getString("home_header_bg_uri", null);
+        if (savedPath != null) {
+            try {
+                if (savedPath.startsWith("content://")) {
+                    Uri uri = Uri.parse(savedPath);
+                    String cacheKey = ImageUtils.getCacheKey(uri);
+                    ImageUtils.loadBackgroundImage(requireContext(), ivHomeHeaderBg, uri, cacheKey, ImageView.ScaleType.CENTER_CROP);
+                } else {
+                    // File path from crop
+                    ivHomeHeaderBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
+                }
+                ivHomeHeaderBg.setVisibility(View.VISIBLE);
+                vHeaderMask.setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                ivHomeHeaderBg.setVisibility(View.GONE);
+                vHeaderMask.setVisibility(View.GONE);
+            }
+        } else {
+            ivHomeHeaderBg.setVisibility(View.GONE);
+            vHeaderMask.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadHomeBackground();
+        loadHomeHeaderBackground();
     }
 
     private static final int REQUEST_CODE_NOTIFICATION = 2001;

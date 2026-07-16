@@ -27,6 +27,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -1302,17 +1303,18 @@ public class SelectToSpeakService extends AccessibilityService {
                 String bgUriStr = profilePrefs.getString("dialog_bill_bg_uri", null);
                 if (bgUriStr != null) {
                     try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                                getContentResolver(), Uri.parse(bgUriStr));
-                        float density = getResources().getDisplayMetrics().density;
-                        RoundedBitmapDrawable roundedBg = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-                        roundedBg.setCornerRadius(32 * density);
-                        roundedBg.setAntiAlias(true);
-                        View clContent = floatView.findViewById(R.id.cl_window_content);
-                        if (clContent != null) {
-                            ((androidx.cardview.widget.CardView) cardContent).setCardBackgroundColor(
-                                    android.graphics.Color.TRANSPARENT);
-                            clContent.setBackground(roundedBg);
+                        Bitmap bitmap = decodeSampledBitmap(bgUriStr, 600);
+                        if (bitmap != null) {
+                            float density = getResources().getDisplayMetrics().density;
+                            RoundedBitmapDrawable roundedBg = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                            roundedBg.setCornerRadius(32 * density);
+                            roundedBg.setAntiAlias(true);
+                            View clContent = floatView.findViewById(R.id.cl_window_content);
+                            if (clContent != null) {
+                                ((androidx.cardview.widget.CardView) cardContent).setCardBackgroundColor(
+                                        android.graphics.Color.TRANSPARENT);
+                                clContent.setBackground(roundedBg);
+                            }
                         }
                     } catch (Exception e) {
                         // 加载失败，保持默认
@@ -7473,5 +7475,64 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
     @Override public void onInterrupt() {}
+
+    /**
+     * Decode a bitmap from the given URI/file path, scaled to fit within maxWidth pixels.
+     */
+    private Bitmap decodeSampledBitmap(String path, int maxWidth) {
+        try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            if (path.startsWith("content://")) {
+                BitmapFactory.decodeStream(
+                        getContentResolver().openInputStream(Uri.parse(path)),
+                        null, options);
+            } else {
+                BitmapFactory.decodeFile(path, options);
+            }
+
+            options.inSampleSize = calculateInSampleSize(options.outWidth, options.outHeight, maxWidth, maxWidth);
+            options.inJustDecodeBounds = false;
+
+            Bitmap bitmap;
+            if (path.startsWith("content://")) {
+                bitmap = BitmapFactory.decodeStream(
+                        getContentResolver().openInputStream(Uri.parse(path)),
+                        null, options);
+            } else {
+                bitmap = BitmapFactory.decodeFile(path, options);
+            }
+
+            if (bitmap == null) return null;
+
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            if (width > maxWidth) {
+                float ratio = (float) maxWidth / width;
+                int newHeight = Math.round(height * ratio);
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, maxWidth, newHeight, true);
+                if (scaled != bitmap) {
+                    bitmap.recycle();
+                }
+                return scaled;
+            }
+            return bitmap;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private int calculateInSampleSize(int rawWidth, int rawHeight, int reqWidth, int reqHeight) {
+        int inSampleSize = 1;
+        if (rawHeight > reqHeight || rawWidth > reqWidth) {
+            int halfHeight = rawHeight / 2;
+            int halfWidth = rawWidth / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
 
 }

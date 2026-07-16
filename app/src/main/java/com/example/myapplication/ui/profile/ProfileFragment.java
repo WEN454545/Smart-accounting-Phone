@@ -40,6 +40,8 @@ import com.example.myapplication.data.SessionManager;
 import com.example.myapplication.data.entity.Bill;
 import com.example.myapplication.data.repository.BillRepository;
 import com.example.myapplication.ui.auth.ScalableVideoView;
+import com.example.myapplication.ui.crop.CropImageActivity;
+import com.example.myapplication.util.ImageUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,6 +65,15 @@ public class ProfileFragment extends Fragment {
     private static final String KEY_LOGIN_BG_URI = "login_bg_uri";
     private static final String KEY_HOME_BG_URI = "home_bg_uri";
     private static final String KEY_DIALOG_BILL_BG_URI = "dialog_bill_bg_uri";
+    private static final String KEY_HOME_HEADER_BG_URI = "home_header_bg_uri";
+
+    // Aspect ratios for each target control (width / height)
+    private static final float ASPECT_HOME_HEADER = 2.7f;       // Wide header
+    private static final float ASPECT_HOME_FULL = 0.5625f;      // 9:16 phone screen
+    private static final float ASPECT_CALENDAR = 1.0f;          // Square-ish card
+    private static final float ASPECT_LOGIN = 0.5625f;          // 9:16 phone screen
+    private static final float ASPECT_PROFILE = 1.8f;           // Profile card (wide)
+    private static final float ASPECT_DIALOG_BILL = 0.75f;      // 3:4 dialog
 
     private SessionManager sessionManager;
     private NotificationSettings notificationSettings;
@@ -125,6 +136,23 @@ public class ProfileFragment extends Fragment {
                     requireContext().getContentResolver().takePersistableUriPermission(
                             uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     handleDialogBillBgPicked(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<String[]> pickHomeHeaderBgLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri != null) {
+                    requireContext().getContentResolver().takePersistableUriPermission(
+                            uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    handleHomeHeaderBgPicked(uri);
+                }
+            });
+
+    // Crop result launcher - handles all crop scenarios
+    private final ActivityResultLauncher<Intent> cropResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    handleCropResult(result.getData());
                 }
             });
 
@@ -218,7 +246,7 @@ public class ProfileFragment extends Fragment {
         String savedUri = profilePrefs.getString(KEY_BG_URI, null);
         String savedType = profilePrefs.getString(KEY_BG_TYPE, null);
         if (savedUri != null && savedType != null) {
-            applyBackgroundMedia(Uri.parse(savedUri), savedType);
+            applyBackgroundMedia(resolveStoredPath(savedUri), savedType);
         } else {
             playDefaultVideo();
         }
@@ -268,6 +296,11 @@ public class ProfileFragment extends Fragment {
             showCalBgSettingDialog();
         });
 
+        dialogView.findViewById(R.id.opt_home_header_bg).setOnClickListener(v -> {
+            dialog.dismiss();
+            showHomeHeaderBgSettingDialog();
+        });
+
         dialogView.findViewById(R.id.btn_personalize_cancel).setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
@@ -289,10 +322,10 @@ public class ProfileFragment extends Fragment {
             placeholder.setVisibility(View.GONE);
             ivPreview.setVisibility(View.VISIBLE);
             if ("image".equals(savedType)) {
-                ivPreview.setImageURI(Uri.parse(savedUri));
+                ivPreview.setImageURI(resolveStoredPath(savedUri));
             } else {
                 // For video, show a static thumbnail from ContentResolver
-                ivPreview.setImageURI(Uri.parse(savedUri));
+                ivPreview.setImageURI(resolveStoredPath(savedUri));
             }
         } else {
             placeholder.setVisibility(View.VISIBLE);
@@ -317,6 +350,65 @@ public class ProfileFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Launch the crop activity with the given image URI and target aspect ratio.
+     */
+    private void launchCropActivity(Uri uri, float aspectRatio, String prefKey) {
+        Intent intent = new Intent(requireContext(), CropImageActivity.class);
+        intent.putExtra(CropImageActivity.EXTRA_IMAGE_URI, uri);
+        intent.putExtra(CropImageActivity.EXTRA_ASPECT_RATIO, aspectRatio);
+        intent.putExtra(CropImageActivity.EXTRA_PREF_KEY, prefKey);
+        cropResultLauncher.launch(intent);
+    }
+
+    /**
+     * Handle the crop result: save the cropped image path to SharedPreferences.
+     */
+    private void handleCropResult(Intent data) {
+        String savedPath = data.getStringExtra(CropImageActivity.EXTRA_RESULT_PATH);
+        String prefKey = data.getStringExtra(CropImageActivity.EXTRA_PREF_KEY);
+
+        if (savedPath == null || prefKey == null) {
+            Toast.makeText(requireContext(), "裁剪失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Save the cropped image file path to SharedPreferences
+        profilePrefs.edit().putString(prefKey, savedPath).apply();
+
+        // For profile background, also save the media type
+        if (KEY_BG_URI.equals(prefKey)) {
+            profilePrefs.edit().putString(KEY_BG_TYPE, "image").apply();
+        }
+
+        // Show success message based on the scenario
+        String message;
+        switch (prefKey) {
+            case KEY_BG_URI:
+                message = "个人主页背景已更新";
+                break;
+            case KEY_CAL_BG_URI:
+                message = "日历背景已更新";
+                break;
+            case KEY_LOGIN_BG_URI:
+                message = "登录页背景已更新";
+                break;
+            case KEY_HOME_BG_URI:
+                message = "主页背景已更新";
+                break;
+            case KEY_DIALOG_BILL_BG_URI:
+                message = "记账弹窗背景已更新";
+                break;
+            case KEY_HOME_HEADER_BG_URI:
+                message = "主页顶部背景已更新";
+                break;
+            default:
+                message = "背景已更新";
+                break;
+        }
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
     private void handleMediaPicked(Uri uri) {
         String type = requireContext().getContentResolver().getType(uri);
         if (type == null) {
@@ -329,6 +421,9 @@ public class ProfileFragment extends Fragment {
             mediaType = "video";
         } else if (type.startsWith("image/")) {
             mediaType = "image";
+            // Launch crop activity instead of directly saving
+            launchCropActivity(uri, ASPECT_PROFILE, KEY_BG_URI);
+            return;
         } else {
             Toast.makeText(requireContext(), "请选择视频或图片文件", Toast.LENGTH_SHORT).show();
             return;
@@ -364,6 +459,17 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Resolve a stored path (URI string or file path) to a Uri.
+     */
+    private Uri resolveStoredPath(String storedPath) {
+        if (storedPath == null) return null;
+        if (storedPath.startsWith("content://")) {
+            return Uri.parse(storedPath);
+        }
+        return Uri.fromFile(new java.io.File(storedPath));
+    }
+
     private void resetBackgroundToDefault() {
         profilePrefs.edit()
                 .remove(KEY_BG_URI)
@@ -392,7 +498,7 @@ public class ProfileFragment extends Fragment {
         if (savedUri != null) {
             placeholder.setVisibility(View.GONE);
             ivPreview.setVisibility(View.VISIBLE);
-            ivPreview.setImageURI(Uri.parse(savedUri));
+            ivPreview.setImageURI(resolveStoredPath(savedUri));
         } else {
             placeholder.setVisibility(View.VISIBLE);
             ivPreview.setVisibility(View.GONE);
@@ -420,11 +526,7 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        profilePrefs.edit()
-                .putString(KEY_CAL_BG_URI, uri.toString())
-                .apply();
-
-        Toast.makeText(requireContext(), "日历背景已更新", Toast.LENGTH_SHORT).show();
+        launchCropActivity(uri, ASPECT_CALENDAR, KEY_CAL_BG_URI);
     }
 
     private void resetCalBgToDefault() {
@@ -449,7 +551,7 @@ public class ProfileFragment extends Fragment {
         if (savedUri != null) {
             placeholder.setVisibility(View.GONE);
             ivPreview.setVisibility(View.VISIBLE);
-            ivPreview.setImageURI(Uri.parse(savedUri));
+            ivPreview.setImageURI(resolveStoredPath(savedUri));
         } else {
             placeholder.setVisibility(View.VISIBLE);
             ivPreview.setVisibility(View.GONE);
@@ -477,11 +579,7 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        profilePrefs.edit()
-                .putString(KEY_LOGIN_BG_URI, uri.toString())
-                .apply();
-
-        Toast.makeText(requireContext(), "登录页背景已更新", Toast.LENGTH_SHORT).show();
+        launchCropActivity(uri, ASPECT_LOGIN, KEY_LOGIN_BG_URI);
     }
 
     private void resetLoginBgToDefault() {
@@ -506,7 +604,7 @@ public class ProfileFragment extends Fragment {
         if (savedUri != null) {
             placeholder.setVisibility(View.GONE);
             ivPreview.setVisibility(View.VISIBLE);
-            ivPreview.setImageURI(Uri.parse(savedUri));
+            ivPreview.setImageURI(resolveStoredPath(savedUri));
         } else {
             placeholder.setVisibility(View.VISIBLE);
             ivPreview.setVisibility(View.GONE);
@@ -534,11 +632,7 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        profilePrefs.edit()
-                .putString(KEY_HOME_BG_URI, uri.toString())
-                .apply();
-
-        Toast.makeText(requireContext(), "主页背景已更新", Toast.LENGTH_SHORT).show();
+        launchCropActivity(uri, ASPECT_HOME_FULL, KEY_HOME_BG_URI);
     }
 
     private void resetHomeBgToDefault() {
@@ -563,7 +657,7 @@ public class ProfileFragment extends Fragment {
         if (savedUri != null) {
             placeholder.setVisibility(View.GONE);
             ivPreview.setVisibility(View.VISIBLE);
-            ivPreview.setImageURI(Uri.parse(savedUri));
+            ivPreview.setImageURI(resolveStoredPath(savedUri));
         } else {
             placeholder.setVisibility(View.VISIBLE);
             ivPreview.setVisibility(View.GONE);
@@ -591,11 +685,7 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        profilePrefs.edit()
-                .putString(KEY_DIALOG_BILL_BG_URI, uri.toString())
-                .apply();
-
-        Toast.makeText(requireContext(), "记账弹窗背景已更新", Toast.LENGTH_SHORT).show();
+        launchCropActivity(uri, ASPECT_DIALOG_BILL, KEY_DIALOG_BILL_BG_URI);
     }
 
     private void resetDialogBillBgToDefault() {
@@ -603,6 +693,90 @@ public class ProfileFragment extends Fragment {
                 .remove(KEY_DIALOG_BILL_BG_URI)
                 .apply();
         Toast.makeText(requireContext(), "已恢复默认记账弹窗背景", Toast.LENGTH_SHORT).show();
+    }
+
+    // ---- Home Header Background (主页顶部背景) ----
+
+    private void showHomeHeaderBgSettingDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_home_header_bg, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        ImageView ivPreview = dialogView.findViewById(R.id.iv_home_header_bg_preview);
+        View placeholder = dialogView.findViewById(R.id.ll_home_header_bg_placeholder);
+        TextView tvCrop = dialogView.findViewById(R.id.tv_scale_crop);
+        TextView tvFit = dialogView.findViewById(R.id.tv_scale_fit);
+
+        // 当前选中的缩放模式（默认 centerCrop）
+        final ImageView.ScaleType[] currentScaleType = {ImageView.ScaleType.CENTER_CROP};
+        // 当前选中的图片 URI
+        final Uri[] currentUri = {null};
+
+        String savedUri = profilePrefs.getString(KEY_HOME_HEADER_BG_URI, null);
+        if (savedUri != null) {
+            placeholder.setVisibility(View.GONE);
+            ivPreview.setVisibility(View.VISIBLE);
+            Uri uri = resolveStoredPath(savedUri);
+            currentUri[0] = uri;
+            ImageUtils.loadPreviewImage(requireContext(), ivPreview, uri, ImageView.ScaleType.CENTER_CROP);
+        } else {
+            placeholder.setVisibility(View.VISIBLE);
+            ivPreview.setVisibility(View.GONE);
+        }
+
+        // 缩放模式切换：裁剪填充
+        tvCrop.setOnClickListener(v -> {
+            currentScaleType[0] = ImageView.ScaleType.CENTER_CROP;
+            tvCrop.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(requireContext(), R.color.primary)));
+            tvCrop.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), android.R.color.white));
+            tvFit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE8ECF0));
+            tvFit.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.ink));
+            ivPreview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        });
+
+        // 缩放模式切换：等比缩放
+        tvFit.setOnClickListener(v -> {
+            currentScaleType[0] = ImageView.ScaleType.FIT_CENTER;
+            tvFit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    androidx.core.content.ContextCompat.getColor(requireContext(), R.color.primary)));
+            tvFit.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), android.R.color.white));
+            tvCrop.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE8ECF0));
+            tvCrop.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.ink));
+            ivPreview.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        });
+
+        dialogView.findViewById(R.id.btn_home_header_bg_choose).setOnClickListener(v -> {
+            dialog.dismiss();
+            pickHomeHeaderBgLauncher.launch(new String[]{"image/*"});
+        });
+
+        dialogView.findViewById(R.id.btn_home_header_bg_reset).setOnClickListener(v -> {
+            dialog.dismiss();
+            resetHomeHeaderBgToDefault();
+        });
+
+        dialogView.findViewById(R.id.btn_home_header_bg_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void handleHomeHeaderBgPicked(Uri uri) {
+        String type = requireContext().getContentResolver().getType(uri);
+        if (type == null || !type.startsWith("image/")) {
+            Toast.makeText(requireContext(), "请选择图片文件", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        launchCropActivity(uri, ASPECT_HOME_HEADER, KEY_HOME_HEADER_BG_URI);
+    }
+
+    private void resetHomeHeaderBgToDefault() {
+        profilePrefs.edit()
+                .remove(KEY_HOME_HEADER_BG_URI)
+                .apply();
+        Toast.makeText(requireContext(), "已恢复默认主页顶部背景", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -856,6 +1030,8 @@ public class ProfileFragment extends Fragment {
             try {
                 int deletedCount = repository.deleteBillsBefore(userId, startTimeOfYear);
                 notificationSettings.resetLastNotified();
+                // 同时清除图片缓存
+                ImageUtils.clearDiskCache(requireContext());
                 requireActivity().runOnUiThread(() ->
                         Toast.makeText(requireContext(), "已清除 " + deletedCount + " 条旧记录", Toast.LENGTH_SHORT).show());
             } catch (Exception e) {

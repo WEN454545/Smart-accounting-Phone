@@ -28,9 +28,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
+                android:alpha="0.55"
+                android:visibility="gone" />
+
+            <!-- Gray mask overlay to improve text readability -->
+            <View
+                android:id="@+id/v_header_mask"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#88666666"
                 android:visibility="gone" />
 
             <LinearLayout
+                android:id="@+id/ll_header_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -67,12 +77,12 @@
                             android:alpha="0.9" />
 
                         <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
+                            android:layout_width="13dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
+                            android:alpha="0.6"
                             android:src="@drawable/ic_dropdown_arrow"
-                            android:tint="@android:color/white"
-                            android:alpha="0.6" />
+                            android:tint="@android:color/white" />
                     </LinearLayout>
 
                     <ImageView
