@@ -4,12 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**æ™ºèƒ½è®°è´¦ (Smart Bookkeeping)** â€” an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, and statistical charts.
+**ÖÇÄÜ¼ÇÕË (Smart Bookkeeping)** ¡ª an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, and statistical charts.
 
 ## Hard Constraints
 
 - **ALL source files MUST use UTF-8 encoding.** Never use any other encoding (GBK, GB2312, ISO-8859-1, etc.) when creating or editing files. If a file contains Chinese characters, ensure it is saved as UTF-8. When in doubt, use the Write tool to rewrite the file with explicit UTF-8 content.
 - **Before committing, run** `python check_all_encoding.py` to verify no file has encoding issues.
+- **Read [ENCODING.md](ENCODING.md) before every task** ¡ª contains the full encoding policy, common garbled text causes, and fix procedures.
+- **Before every task**: If you suspect encoding issues, run `python fix_encoding.py` to auto-detect and fix all non-UTF-8 files.
 - All XML declaration headers must specify `encoding="utf-8"` AND the file must actually be saved as UTF-8 (not just declared).
 - All Gradle files must specify `-Dfile.encoding=UTF-8` if JVM args are configured.
 - **.gitattributes** enforces UTF-8 for all text files via `* text=auto working-tree-encoding=UTF-8`.
@@ -30,54 +32,54 @@ Min SDK: 24 | Target/Compile SDK: 34 | Java 17 | ViewBinding enabled
 
 ```
 app/src/main/java/com/example/myapplication/
-â”œâ”€â”€ MyApplication.java              â€” Application class, holds singleton BillRepository
-â”œâ”€â”€ MainActivity.java               â€” Single Activity, hosts 4 fragments via BottomNavigation
-â”œâ”€â”€ data/
-â”‚   â”œâ”€â”€ entity/
-â”‚   â”‚   â”œâ”€â”€ Bill.java               â€” Room @Entity: id, type, amount, timestamp, location, note, source, category
-â”‚   â”‚   â””â”€â”€ Budget.java             â€” Room @Entity: yearMonth (PK), totalBudget, createdAt
-â”‚   â”œâ”€â”€ dao/
-â”‚   â”‚   â”œâ”€â”€ BillDao.java            â€” CRUD + LiveData queries (getBillsBetween, getIncomeBetween, getExpenseBetween, getExpenseByType, getDailySum)
-â”‚   â”‚   â”œâ”€â”€ BudgetDao.java          â€” insert (REPLACE), update, getBudget by yearMonth
-â”‚   â”‚   â”œâ”€â”€ TypeSum.java            â€” Result POJO: type, total (for pie chart)
-â”‚   â”‚   â””â”€â”€ DaySum.java             â€” Result POJO: day, income, expense (for calendar + bar chart)
-â”‚   â”œâ”€â”€ database/
-â”‚   â”‚   â””â”€â”€ AppDatabase.java        â€” Room DB singleton, version 1
-â”‚   â””â”€â”€ repository/
-â”‚       â””â”€â”€ BillRepository.java     â€” Data access layer wrapping DAOs with ExecutorService
-â””â”€â”€ ui/
-    â”œâ”€â”€ home/
-    â”‚   â”œâ”€â”€ HomeFragment.java       â€” Income/expense header (date shown as "yyyyå¹´Mæœˆdæ—¥"), budget card, recent bill list with swipe-delete + click-edit
-    â”‚   â”œâ”€â”€ HomeViewModel.java      â€” Exposes LiveData for current month's bills, income, expense, budget
-    â”‚   â”œâ”€â”€ AllBillsFragment.java   â€” All bills view grouped by year-month, with back navigation
-    â”‚   â””â”€â”€ AllBillsViewModel.java  â€” ViewModel for all bills
-    â”œâ”€â”€ calendar/
-    â”‚   â”œâ”€â”€ CalendarFragment.java   â€” LinearLayout-based calendar grid with prev/next month nav, income/expense per day, color-coded cells
-    â”‚   â””â”€â”€ CalendarViewModel.java  â€” Manages month state, uses MediatorLiveData for income/expense/dailySums
-    â”œâ”€â”€ stats/
-    â”‚   â”œâ”€â”€ StatsFragment.java      â€” PieChart + BarChart with week/month/year period tabs; data from Room
-    â”‚   â””â”€â”€ StatsViewModel.java     â€” Period enum (WEEK/MONTH/YEAR), uses MediatorLiveData for expenseByType + dailySums
-    â”œâ”€â”€ profile/
-    â”‚   â””â”€â”€ ProfileFragment.java    â€” Avatar, budget summary, CSV export, dark mode toggle, cache clear
-    â”œâ”€â”€ adapter/
-    â”‚   â”œâ”€â”€ BillAdapter.java        â€” RecyclerView.Adapter with OnBillClickListener, emoji icons, color-coded amounts
-    â”‚   â””â”€â”€ SectionedBillAdapter.java â€” Grouped bill list adapter with section headers by year-month
-    â””â”€â”€ dialog/
-        â””â”€â”€ AddBillDialog.java      â€” DialogFragment for add/edit, includes date picker, supports prefill for editing
+©À©¤©¤ MyApplication.java              ¡ª Application class, holds singleton BillRepository
+©À©¤©¤ MainActivity.java               ¡ª Single Activity, hosts 4 fragments via BottomNavigation
+©À©¤©¤ data/
+©¦   ©À©¤©¤ entity/
+©¦   ©¦   ©À©¤©¤ Bill.java               ¡ª Room @Entity: id, type, amount, timestamp, location, note, source, category
+©¦   ©¦   ©¸©¤©¤ Budget.java             ¡ª Room @Entity: yearMonth (PK), totalBudget, createdAt
+©¦   ©À©¤©¤ dao/
+©¦   ©¦   ©À©¤©¤ BillDao.java            ¡ª CRUD + LiveData queries (getBillsBetween, getIncomeBetween, getExpenseBetween, getExpenseByType, getDailySum)
+©¦   ©¦   ©À©¤©¤ BudgetDao.java          ¡ª insert (REPLACE), update, getBudget by yearMonth
+©¦   ©¦   ©À©¤©¤ TypeSum.java            ¡ª Result POJO: type, total (for pie chart)
+©¦   ©¦   ©¸©¤©¤ DaySum.java             ¡ª Result POJO: day, income, expense (for calendar + bar chart)
+©¦   ©À©¤©¤ database/
+©¦   ©¦   ©¸©¤©¤ AppDatabase.java        ¡ª Room DB singleton, version 1
+©¦   ©¸©¤©¤ repository/
+©¦       ©¸©¤©¤ BillRepository.java     ¡ª Data access layer wrapping DAOs with ExecutorService
+©¸©¤©¤ ui/
+    ©À©¤©¤ home/
+    ©¦   ©À©¤©¤ HomeFragment.java       ¡ª Income/expense header (date shown as "yyyyÄêMÔÂdÈÕ"), budget card, recent bill list with swipe-delete + click-edit
+    ©¦   ©À©¤©¤ HomeViewModel.java      ¡ª Exposes LiveData for current month's bills, income, expense, budget
+    ©¦   ©À©¤©¤ AllBillsFragment.java   ¡ª All bills view grouped by year-month, with back navigation
+    ©¦   ©¸©¤©¤ AllBillsViewModel.java  ¡ª ViewModel for all bills
+    ©À©¤©¤ calendar/
+    ©¦   ©À©¤©¤ CalendarFragment.java   ¡ª LinearLayout-based calendar grid with prev/next month nav, income/expense per day, color-coded cells
+    ©¦   ©¸©¤©¤ CalendarViewModel.java  ¡ª Manages month state, uses MediatorLiveData for income/expense/dailySums
+    ©À©¤©¤ stats/
+    ©¦   ©À©¤©¤ StatsFragment.java      ¡ª PieChart + BarChart with week/month/year period tabs; data from Room
+    ©¦   ©¸©¤©¤ StatsViewModel.java     ¡ª Period enum (WEEK/MONTH/YEAR), uses MediatorLiveData for expenseByType + dailySums
+    ©À©¤©¤ profile/
+    ©¦   ©¸©¤©¤ ProfileFragment.java    ¡ª Avatar, budget summary, CSV export, dark mode toggle, cache clear
+    ©À©¤©¤ adapter/
+    ©¦   ©À©¤©¤ BillAdapter.java        ¡ª RecyclerView.Adapter with OnBillClickListener, emoji icons, color-coded amounts
+    ©¦   ©¸©¤©¤ SectionedBillAdapter.java ¡ª Grouped bill list adapter with section headers by year-month
+    ©¸©¤©¤ dialog/
+        ©¸©¤©¤ AddBillDialog.java      ¡ª DialogFragment for add/edit, includes date picker, supports prefill for editing
 ```
 
 ## Key Dependencies
 
-- **Room** â€” local SQLite ORM (bills + budgets tables)
-- **MPAndroidChart** (v3.1.0 via JitPack) â€” pie and bar charts in stats
-- **Material Components** â€” BottomNavigationView, FAB, themes
-- **Lifecycle (ViewModel + LiveData)** â€” MVVM architecture; all data flows through ViewModel â†’ Fragment
+- **Room** ¡ª local SQLite ORM (bills + budgets tables)
+- **MPAndroidChart** (v3.1.0 via JitPack) ¡ª pie and bar charts in stats
+- **Material Components** ¡ª BottomNavigationView, FAB, themes
+- **Lifecycle (ViewModel + LiveData)** ¡ª MVVM architecture; all data flows through ViewModel ¡ú Fragment
 
 ## Color System (colors.xml)
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| primary | #0d9488 | Teal â€” buttons, active states |
+| primary | #0d9488 | Teal ¡ª buttons, active states |
 | primary_dark | #0f766e | Status bar, gradient end |
 | income | #22c55e | Income amounts |
 | expense | #ef4444 | Expense amounts |
@@ -91,11 +93,11 @@ Category colors (cat_food, cat_transport, etc.) are pastel backgrounds for emoji
 
 ## Important Patterns
 
-- **Fragments never access DAOs directly** â€” go through `MyApplication.getRepository()`
+- **Fragments never access DAOs directly** ¡ª go through `MyApplication.getRepository()`
 - **Fragments create ViewModels** via `new ViewModelProvider(this).get(XxxViewModel.class)`
-- **Room queries return LiveData** â€” Fragments observe, never poll
+- **Room queries return LiveData** ¡ª Fragments observe, never poll
 - **Write operations** (insert/update/delete) go through Repository's ExecutorService, off the main thread
-- **Bill editing** â€” click a bill item in the list to open the dialog pre-filled; swipe left/right to delete
-- **Budget** â€” click the budget card on Home to open a set-budget dialog; stored per yearMonth
-- **MediatorLiveData for dynamic queries** â€” CalendarViewModel and StatsViewModel use MediatorLiveData to wrap data sources that change when month/period changes; old source is removed before adding new one to avoid stale observers
-- **Calendar uses nested LinearLayout** â€” CalendarFragment builds the calendar grid using nested LinearLayouts (vertical rows + horizontal columns) with layout_weight for equal distribution; more reliable than GridLayout for dynamic content
+- **Bill editing** ¡ª click a bill item in the list to open the dialog pre-filled; swipe left/right to delete
+- **Budget** ¡ª click the budget card on Home to open a set-budget dialog; stored per yearMonth
+- **MediatorLiveData for dynamic queries** ¡ª CalendarViewModel and StatsViewModel use MediatorLiveData to wrap data sources that change when month/period changes; old source is removed before adding new one to avoid stale observers
+- **Calendar uses nested LinearLayout** ¡ª CalendarFragment builds the calendar grid using nested LinearLayouts (vertical rows + horizontal columns) with layout_weight for equal distribution; more reliable than GridLayout for dynamic content

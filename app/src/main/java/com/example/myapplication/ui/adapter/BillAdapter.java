@@ -28,7 +28,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
     }
 
     private List<Bill> bills = new ArrayList<>();
-    private final SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日 HH:mm", Locale.CHINA);
+    private final SimpleDateFormat sdf = new SimpleDateFormat("MM\u6708dd\u65E5 HH:mm", Locale.CHINA);
     private final OnBillClickListener listener;
     private OnBillLongClickListener longClickListener;
 
@@ -60,17 +60,17 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bill bill = bills.get(position);
-        // 标题显示分类名
+        // title = category name
         holder.title.setText(bill.getType());
-        // 副标题显示日期，如有备注则附加
+        // subtitle: date, append note if exists
         String metaText = sdf.format(new Date(bill.getTimestamp()));
         if (bill.getNote() != null && !bill.getNote().isEmpty()) {
-            metaText += " · " + bill.getNote();
+            metaText += " \u00B7 " + bill.getNote();
         }
         holder.meta.setText(metaText);
 
         boolean isIncome = "income".equals(bill.getCategory());
-        holder.amount.setText((isIncome ? "+" : "-") + "¥" + String.format(Locale.CHINA, "%.2f", Math.abs(bill.getAmount())));
+        holder.amount.setText((isIncome ? "+" : "-") + "\u00A5" + String.format(Locale.CHINA, "%.2f", Math.abs(bill.getAmount())));
         holder.amount.setTextColor(holder.itemView.getContext().getColor(isIncome ? R.color.income : R.color.expense));
 
         holder.icon.setText(getIconForType(bill.getType()));
@@ -92,49 +92,49 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
     }
 
     private String getIconForType(String type) {
-        if (type == null) return "💳";
+        if (type == null) return "\uD83D\uDCB3";
         switch (type) {
-            // 支出
-            case "餐饮": return "🍔";
-            case "购物": return "🛒";
-            case "住房": return "🏠";
-            case "交通": return "🚕";
-            case "旅行": return "✈️";
-            case "通讯": return "📱";
-            case "娱乐": return "🎬";
-            case "人情": return "🎁";
-            case "医疗": return "💊";
-            case "教育": return "📚";
-            case "美容": return "💄";
-            case "其他": return "📦";
-            // 收入
-            case "转账": return "💸";
-            case "红包": return "🧧";
-            case "退款": return "↩️";
-            default: return "💳";
+            // expense
+            case "\u9910\u996E": return "\uD83C\uDF54";
+            case "\u8D2D\u7269": return "\uD83D\uDED2";
+            case "\u4F4F\u623F": return "\uD83C\uDFE0";
+            case "\u4EA4\u901A": return "\uD83D\uDE95";
+            case "\u65C5\u884C": return "\u2708\uFE0F";
+            case "\u901A\u8BAF": return "\uD83D\uDCF1";
+            case "\u5A31\u4E50": return "\uD83C\uDFAC";
+            case "\u4EBA\u60C5": return "\uD83C\uDF81";
+            case "\u533B\u7597": return "\uD83D\uDC8A";
+            case "\u6559\u80B2": return "\uD83D\uDCDA";
+            case "\u7F8E\u5BB9": return "\uD83D\uDC84";
+            case "\u5176\u4ED6": return "\uD83D\uDCE6";
+            // income
+            case "\u8F6C\u8D26": return "\uD83D\uDCB8";
+            case "\u7EA2\u5305": return "\uD83E\uDDE7";
+            case "\u9000\u6B3E": return "\u21A9\uFE0F";
+            default: return "\uD83D\uDCB3";
         }
     }
 
     private int getBgColorForType(String type) {
         if (type == null) return R.color.cat_other;
         switch (type) {
-            // 支出
-            case "餐饮": return R.color.cat_food;
-            case "购物": return R.color.cat_shopping;
-            case "住房": return R.color.cat_housing;
-            case "交通": return R.color.cat_transport;
-            case "旅行": return R.color.cat_travel;
-            case "通讯": return R.color.cat_communication;
-            case "娱乐": return R.color.cat_entertainment;
-            case "人情": return R.color.cat_social;
-            case "医疗": return R.color.cat_medical;
-            case "教育": return R.color.cat_education;
-            case "美容": return R.color.cat_beauty;
-            case "其他": return R.color.cat_other;
-            // 收入
-            case "转账": return R.color.cat_transfer;
-            case "红包": return R.color.cat_redpacket;
-            case "退款": return R.color.cat_refund;
+            // expense
+            case "\u9910\u996E": return R.color.cat_food;
+            case "\u8D2D\u7269": return R.color.cat_shopping;
+            case "\u4F4F\u623F": return R.color.cat_housing;
+            case "\u4EA4\u901A": return R.color.cat_transport;
+            case "\u65C5\u884C": return R.color.cat_travel;
+            case "\u901A\u8BAF": return R.color.cat_communication;
+            case "\u5A31\u4E50": return R.color.cat_entertainment;
+            case "\u4EBA\u60C5": return R.color.cat_social;
+            case "\u533B\u7597": return R.color.cat_medical;
+            case "\u6559\u80B2": return R.color.cat_education;
+            case "\u7F8E\u5BB9": return R.color.cat_beauty;
+            case "\u5176\u4ED6": return R.color.cat_other;
+            // income
+            case "\u8F6C\u8D26": return R.color.cat_transfer;
+            case "\u7EA2\u5305": return R.color.cat_redpacket;
+            case "\u9000\u6B3E": return R.color.cat_refund;
             default: return R.color.cat_other;
         }
     }

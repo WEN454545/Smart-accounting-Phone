@@ -17,8 +17,12 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +70,9 @@ public class ProfileFragment extends Fragment {
     private static final String KEY_HOME_BG_URI = "home_bg_uri";
     private static final String KEY_DIALOG_BILL_BG_URI = "dialog_bill_bg_uri";
     private static final String KEY_HOME_HEADER_BG_URI = "home_header_bg_uri";
+    public static final String KEY_TRANSACTION_STYLE = "transaction_style";
+    public static final String STYLE_STANDARD = "standard";
+    public static final String STYLE_ISLAND = "island";
 
     // Aspect ratios for each target control (width / height)
     private static final float ASPECT_HOME_HEADER = 2.7f;       // Wide header
@@ -84,6 +91,7 @@ public class ProfileFragment extends Fragment {
     private ScalableVideoView profileVideo;
     private ImageView ivProfileBg;
     private TextView tvBgStatus;
+    private TextView tvTransactionStyleValue;
     private boolean isSettingSwitchProgrammatically;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
@@ -171,10 +179,14 @@ public class ProfileFragment extends Fragment {
         profileVideo = view.findViewById(R.id.profile_video);
         ivProfileBg = view.findViewById(R.id.iv_profile_bg);
         tvBgStatus = view.findViewById(R.id.tv_bg_status);
+        tvTransactionStyleValue = view.findViewById(R.id.tv_transaction_style_value);
         setupBackground();
 
         // Load saved avatar
         loadAvatar();
+
+        // Update transaction style display
+        updateTransactionStyleDisplay();
 
         // Avatar click -> pick from gallery
         view.findViewById(R.id.layout_avatar).setOnClickListener(v -> {
@@ -211,6 +223,12 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.row_notify).setOnClickListener(v -> showNotificationSettings());
 
         view.findViewById(R.id.row_personalize).setOnClickListener(v -> showPersonalizeDialog());
+
+        // Transaction style row click
+        View rowTransactionStyle = view.findViewById(R.id.row_transaction_style);
+        if (rowTransactionStyle != null) {
+            rowTransactionStyle.setOnClickListener(v -> showTransactionStyleDialog());
+        }
 
         view.findViewById(R.id.btn_export).setOnClickListener(v -> exportCSV());
         view.findViewById(R.id.btn_import).setOnClickListener(v -> importCSV());
@@ -1039,6 +1057,119 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(requireContext(), "清除失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }).start();
+    }
+
+    private void updateTransactionStyleDisplay() {
+        String style = profilePrefs.getString(KEY_TRANSACTION_STYLE, STYLE_STANDARD);
+        int resId;
+        switch (style) {
+            case STYLE_ISLAND:
+                resId = R.string.style_island;
+                break;
+            default:
+                resId = R.string.style_standard;
+                break;
+        }
+        if (tvTransactionStyleValue != null) {
+            tvTransactionStyleValue.setText(resId);
+        }
+    }
+
+    private void showTransactionStyleDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_transaction_style, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        RadioButton rbStandard = dialogView.findViewById(R.id.rb_style_standard);
+        RadioButton rbIsland = dialogView.findViewById(R.id.rb_style_island);
+        View cardStandard = dialogView.findViewById(R.id.opt_style_standard);
+        View cardIsland = dialogView.findViewById(R.id.opt_style_island);
+
+        RadioButton[] radioButtons = {rbStandard, rbIsland};
+        View[] cards = {cardStandard, cardIsland};
+
+        // Helper to clear all radio buttons and reset card borders
+        Runnable clearSelection = () -> {
+            for (RadioButton rb : radioButtons) rb.setChecked(false);
+            for (View card : cards) {
+                card.setBackgroundResource(R.drawable.bg_style_card);
+            }
+        };
+
+        // Helper to select a specific option with visual feedback
+        class StyleSelector {
+            void select(RadioButton rb, View card) {
+                clearSelection.run();
+                rb.setChecked(true);
+                card.setBackgroundResource(R.drawable.bg_style_card_selected);
+            }
+        }
+        StyleSelector selector = new StyleSelector();
+
+        // Set current selection
+        String currentStyle = profilePrefs.getString(KEY_TRANSACTION_STYLE, STYLE_STANDARD);
+        switch (currentStyle) {
+            case STYLE_ISLAND:
+                selector.select(rbIsland, cardIsland);
+                break;
+            default:
+                selector.select(rbStandard, cardStandard);
+                break;
+        }
+
+        // Clicking anywhere on the card row selects that option
+        cardStandard.setOnClickListener(v -> {
+            selector.select(rbStandard, cardStandard);
+            animateCardPress(cardStandard);
+        });
+        cardIsland.setOnClickListener(v -> {
+            selector.select(rbIsland, cardIsland);
+            animateCardPress(cardIsland);
+        });
+
+        // Save button
+        dialogView.findViewById(R.id.btn_style_save).setOnClickListener(v -> {
+            String selectedStyle;
+            if (rbIsland.isChecked()) {
+                selectedStyle = STYLE_ISLAND;
+            } else {
+                selectedStyle = STYLE_STANDARD;
+            }
+            profilePrefs.edit().putString(KEY_TRANSACTION_STYLE, selectedStyle).apply();
+            updateTransactionStyleDisplay();
+            dialog.dismiss();
+            Toast.makeText(requireContext(), R.string.style_saved, Toast.LENGTH_SHORT).show();
+        });
+
+        // Cancel button
+        dialogView.findViewById(R.id.btn_style_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+
+        // Set dialog width to 85% of screen width to avoid content squeezing
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(window.getAttributes());
+            lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.85);
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(lp);
+        }
+    }
+
+    /** Applies a subtle press animation to the card when clicked */
+    private void animateCardPress(View card) {
+        card.animate()
+                .scaleX(0.97f)
+                .scaleY(0.97f)
+                .setDuration(80)
+                .withEndAction(() -> card.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(120)
+                        .start())
+                .start();
     }
 
     private void logout() {

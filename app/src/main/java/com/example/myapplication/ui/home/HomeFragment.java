@@ -1,7 +1,5 @@
 package com.example.myapplication.ui.home;
 
-
-
 import android.app.AlertDialog;
 
 import android.content.Context;
@@ -37,7 +35,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
 import androidx.annotation.NonNull;
 
 import androidx.annotation.Nullable;
@@ -55,7 +52,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-
 import com.example.myapplication.R;
 
 import com.example.myapplication.data.SessionManager;
@@ -71,16 +67,14 @@ import com.example.myapplication.ui.adapter.BillAdapter;
 import com.example.myapplication.ui.adapter.DaySectionedBillAdapter;
 
 import com.example.myapplication.ui.dialog.AddBillDialog;
-import com.example.myapplication.util.ImageUtils;
 
+import com.example.myapplication.util.ImageUtils;
 
 
 import java.util.Calendar;
 
 
-
 public class HomeFragment extends Fragment implements BillAdapter.OnBillClickListener, BillAdapter.OnBillLongClickListener {
-
 
 
     private TextView incomeText, expenseText, budgetText, budgetUsedText, budgetPercentText, dateText;
@@ -103,7 +97,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     private View vHeaderMask;
 
 
-
     @Nullable
 
     @Override
@@ -113,9 +106,7 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
-
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
 
 
         SessionManager sessionManager = new SessionManager(requireContext());
@@ -125,7 +116,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         notificationHelper = new BudgetNotificationHelper(requireContext(), userId);
 
         profilePrefs = requireContext().getSharedPreferences("profile_settings", Context.MODE_PRIVATE);
-
 
 
         incomeText = view.findViewById(R.id.tv_income);
@@ -168,7 +158,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         });
 
 
-
         // Load home background
 
         loadHomeBackground();
@@ -177,17 +166,14 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         loadHomeHeaderBackground();
 
 
-
-        // 主动请求通知权限（Android 13+）
+        // \u4E3B\u52A8\u8BF7\u6C42\u901A\u77E5\u6743\u9650\uFF08Android 13+\uFF09
 
         requestNotificationPermission();
 
 
-
-        // 点击日期弹出年月选择器
+        // \u70B9\u51FB\u65E5\u671F\u5F39\u51FA\u5E74\u6708\u9009\u62E9\u5668
 
         dateText.setOnClickListener(v -> showYearMonthPicker());
-
 
 
         adapter = new DaySectionedBillAdapter(this);
@@ -199,9 +185,7 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         recyclerView.setAdapter(adapter);
 
 
-
         view.findViewById(R.id.fab_add).setOnClickListener(v -> showAddDialog(null));
-
 
 
         view.findViewById(R.id.tv_view_all).setOnClickListener(v -> {
@@ -219,7 +203,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         });
 
 
-
         view.findViewById(R.id.iv_settings).setOnClickListener(v -> {
 
             Intent intent = new Intent(requireActivity(), com.example.autobookkeep.ui.AutoSettingsActivity.class);
@@ -229,9 +212,7 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         });
 
 
-
         observeData();
-
         return view;
 
     }
@@ -289,7 +270,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     private static final int REQUEST_CODE_NOTIFICATION = 2001;
 
 
-
     private void requestNotificationPermission() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -311,7 +291,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     }
 
 
-
     private void showYearMonthPicker() {
 
         Integer curYear = viewModel.getYear().getValue();
@@ -329,14 +308,12 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         }
 
 
-
         int yearVal = curYear;
 
         int monthVal = curMonth;
 
 
-
-        // 双 NumberPicker 年月选择器
+        // \u53CC NumberPicker \u5E74\u6708\u9009\u62E9\u5668
 
         NumberPicker yearPicker = new NumberPicker(requireContext());
 
@@ -347,7 +324,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         yearPicker.setValue(yearVal);
 
         yearPicker.setWrapSelectorWheel(false);
-
 
 
         NumberPicker monthPicker = new NumberPicker(requireContext());
@@ -362,12 +338,11 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
         monthPicker.setDisplayedValues(new String[]{
 
-                "1月", "2月", "3月", "4月", "5月", "6月",
+                "1\u6708", "2\u6708", "3\u6708", "4\u6708", "5\u6708", "6\u6708",
 
-                "7月", "8月", "9月", "10月", "11月", "12月"
+                "7\u6708", "8\u6708", "9\u6708", "10\u6708", "11\u6708", "12\u6708"
 
         });
-
 
 
         LinearLayout layout = new LinearLayout(requireContext());
@@ -383,24 +358,23 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         layout.addView(monthPicker, lp);
 
 
-
         AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
 
-                .setTitle("选择年月")
+                .setTitle("\u9009\u62E9\u5E74\u6708")
 
                 .setView(layout)
 
-                .setPositiveButton("确定", (d, w) -> {
+                .setPositiveButton("\u786E\u5B9A", (d, w) -> {
 
                     int selectedYear = yearPicker.getValue();
 
-                    int selectedMonth = monthPicker.getValue() - 1; // 转为 Calendar.MONTH (0-11)
+                    int selectedMonth = monthPicker.getValue() - 1; // \u8F6C\u4E3A Calendar.MONTH (0-11)
 
                     viewModel.goToYearMonth(selectedYear, selectedMonth);
 
                 })
 
-                .setNegativeButton("取消", null)
+                .setNegativeButton("\u53D6\u6D88", null)
 
                 .create();
 
@@ -409,14 +383,13 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     }
 
 
-
     private void observeData() {
 
         viewModel.getYear().observe(getViewLifecycleOwner(), y -> {
 
             Integer m = viewModel.getMonth().getValue();
 
-            if (m != null) dateText.setText(y + "年" + (m + 1) + "月");
+            if (m != null) dateText.setText(y + "\u5E74" + (m + 1) + "\u6708");
 
         });
 
@@ -424,10 +397,9 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
             Integer y = viewModel.getYear().getValue();
 
-            if (y != null) dateText.setText(y + "年" + (m + 1) + "月");
+            if (y != null) dateText.setText(y + "\u5E74" + (m + 1) + "\u6708");
 
         });
-
 
 
         viewModel.getIncome().observe(getViewLifecycleOwner(), income -> {
@@ -437,7 +409,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
             incomeText.setText("\u00A5" + String.format(java.util.Locale.CHINA, "%,.2f", val));
 
         });
-
 
 
         viewModel.getExpense().observe(getViewLifecycleOwner(), expense -> {
@@ -453,11 +424,9 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         });
 
 
-
         viewModel.getBills().observe(getViewLifecycleOwner(), bills ->
 
                 adapter.setBills(bills != null ? bills : java.util.Collections.emptyList()));
-
 
 
         viewModel.getBudget().observe(getViewLifecycleOwner(), budget ->
@@ -465,7 +434,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
                 updateBudgetDisplay(currentUsedExpense));
 
     }
-
 
 
     private void updateBudgetDisplay(double used) {
@@ -479,21 +447,18 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         int percent = (int) Math.min(100, Math.max(0, (used / total) * 100));
 
 
+        budgetText.setText("\u5269\u4F59 \u00A5" + String.format(java.util.Locale.CHINA, "%,.2f", remaining));
 
-        budgetText.setText("剩余 \u00A5" + String.format(java.util.Locale.CHINA, "%,.2f", remaining));
-
-        budgetUsedText.setText("已用 \u00A5" + String.format(java.util.Locale.CHINA, "%,.2f", used) + " / \u00A5" + String.format(java.util.Locale.CHINA, "%,.2f", total));
+        budgetUsedText.setText("\u5DF2\u7528 \u00A5" + String.format(java.util.Locale.CHINA, "%,.2f", used) + " / \u00A5" + String.format(java.util.Locale.CHINA, "%,.2f", total));
 
         budgetPercentText.setText(percent + "%");
 
         budgetProgress.setProgress(percent);
 
 
-
         notificationHelper.checkAndNotify(used, total);
 
     }
-
 
 
     private void showAddDialog(@Nullable Bill editBill) {
@@ -521,7 +486,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     }
 
 
-
     @Override
 
     public void onBillClick(Bill bill) {
@@ -531,26 +495,25 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     }
 
 
-
     @Override
 
     public void onBillLongClick(Bill bill) {
 
         new AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
 
-                .setTitle("删除账单")
+                .setTitle("\u5220\u9664\u8D26\u5355")
 
-                .setMessage("确定要删除 " + bill.getType() + " \u00A5" + String.format(java.util.Locale.CHINA, "%.2f", Math.abs(bill.getAmount())) + " 吗？")
+                .setMessage("\u786E\u5B9A\u8981\u5220\u9664 " + bill.getType() + " \u00A5" + String.format(java.util.Locale.CHINA, "%.2f", Math.abs(bill.getAmount())) + " \u5417\uFF1F")
 
-                .setPositiveButton("删除", (d, w) -> {
+                .setPositiveButton("\u5220\u9664", (d, w) -> {
 
                     viewModel.deleteBill(bill);
 
-                    Toast.makeText(requireContext(), "已删除", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "\u5DF2\u5220\u9664", Toast.LENGTH_SHORT).show();
 
                 })
 
-                .setNegativeButton("取消", null)
+                .setNegativeButton("\u53D6\u6D88", null)
 
                 .show();
 

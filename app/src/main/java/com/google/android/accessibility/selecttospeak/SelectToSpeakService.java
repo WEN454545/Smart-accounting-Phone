@@ -176,7 +176,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-    // 🌟 防抖增强：旧手机上微信页面加载慢，期间连续 CONTENT_CHANGED 会无限重置 300ms 定时器
+    // \u9632\u6296\u589E\u5F3A：旧手机上微信页面加载慢，期间连续 CONTENT_CHANGED 会无限重置 300ms 定时器
 
     // forceScanRunnable 支持重试，最多 5 次（共 ~7.5s），确保慢加载页面也能被扫到
 
@@ -250,7 +250,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-    // 🌟 新增：定义允许无障碍服务运行的目标应用包名白名单
+    // \u65B0\u589E：定义允许无障碍服务运行的目标应用包名白名单
 
     private static final Set<String> TARGET_PACKAGES = new HashSet<>(Arrays.asList(
 
@@ -284,7 +284,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             try {
 
-                // 🌟 扫描已执行，取消兜底定时器
+                // \u626B\u63CF\u5DF2\u6267\u884C，取消兜底定时器
 
                 handler.removeCallbacks(forceScanRunnable);
 
@@ -564,7 +564,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-                // 🌟 关键词回退：仅对无专属页面适配器的App生效
+                // \u5173\u952E\u8BCD\u56DE\u9000：仅对无专属页面适配器的App生效
 
                 // 已有专属handler的App（微信/支付宝/拼多多/抖音/美团/京东/通义千问/云闪付/抖省省）
 
@@ -630,7 +630,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 非根节点加一个小巧的折线箭头，视觉更清晰
 
-            String prefix = depth == 0 ? "" : "↳ ";
+            String prefix = depth == 0 ? "" : "\u2514 ";
 
 
 
@@ -728,7 +728,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-        // 🌟 2. 动态拦截核心逻辑：先读取日志开关状态
+        // 2. \u52A8\u6001\u62E6\u622A核心逻辑：先读取日志开关状态
 
         boolean isLogEnabled = false;
 
@@ -746,7 +746,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-        // 🌟 3. 如果【没有开启】日志功能，则执行严格的包名白名单拦截（省电、防误杀）
+        // 3. \u5982\u679C【没有开启】日志功能，则执行严格的包名白名单拦截（省电、防误杀）
 
         if (!isLogEnabled) {
 
@@ -780,7 +780,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-        // 🌟 兜底扫描：只发布一次，支持重试，不被后续事件重置
+        // \u515C\u5E95\u626B\u63CF：只发布一次，支持重试，不被后续事件重置
 
         // 解决旧手机微信页面加载慢导致 300ms 定时器被无限重置的问题
 
@@ -1002,7 +1002,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                 SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
 
-                detectedSymbol = prefs.getString("default_currency_symbol", "¥");
+                detectedSymbol = prefs.getString("default_currency_symbol", "\u00A5");
 
             }
 
@@ -1186,7 +1186,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
         SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
 
-        final String defaultSymbol = prefs.getString("default_currency_symbol", "¥");
+        final String defaultSymbol = prefs.getString("default_currency_symbol", "\u00A5");
 
 
 
@@ -1216,9 +1216,27 @@ public class SelectToSpeakService extends AccessibilityService {
 
         selectedSubCategory = null;
 
+        SharedPreferences profilePrefs = getSharedPreferences("profile_settings", MODE_PRIVATE);
+        String transactionStyle = profilePrefs.getString("transaction_style", "standard");
 
+        // 根据交易提醒样式选择不同的弹窗
+        if ("island".equals(transactionStyle)) {
+            showConfirmWindowIsland(amount, type, category, note, matchedAssetId, initialSymbol, transactionTime);
+            return;
+        }
+
+        // 标准样式
+        showStandardConfirmWindow(amount, type, category, note, matchedAssetId, initialSymbol, transactionTime);
+    }
+
+    private void showStandardConfirmWindow(double amount, int type, String category, String note, int matchedAssetId, String initialSymbol, long transactionTime) {
+
+        if (isWindowShowing) return;
+
+        selectedSubCategory = null;
 
         SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        SharedPreferences profilePrefs = getSharedPreferences("profile_settings", MODE_PRIVATE);
 
         boolean isCurrencyEnabled = prefs.getBoolean("enable_currency", false);
 
@@ -1299,7 +1317,6 @@ public class SelectToSpeakService extends AccessibilityService {
                 cardContent.setOnClickListener(v -> {});
 
                 // 加载自定义背景
-                SharedPreferences profilePrefs = getSharedPreferences("profile_settings", MODE_PRIVATE);
                 String bgUriStr = profilePrefs.getString("dialog_bill_bg_uri", null);
                 if (bgUriStr != null) {
                     try {
@@ -1810,7 +1827,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-                    String finalSymbol = isCurrencyEnabled ? btnCurrency.getText().toString() : "¥";
+                    String finalSymbol = isCurrencyEnabled ? btnCurrency.getText().toString() : "\u00A5";
 
 
 
@@ -1851,19 +1868,108 @@ public class SelectToSpeakService extends AccessibilityService {
     }
 
     private void closeWindow(WindowManager wm, View view) {
-
         try { wm.removeView(view); } catch (Exception e) {}
-
         finally {
-
             isWindowShowing = false;
-
             lastWindowDismissTime = System.currentTimeMillis();
-
             windowRootView = null;
-
         }
+    }
 
+    // ================= \u7075\u52A8\u5C9B\u5F39\u7A97 =================
+    private void showConfirmWindowIsland(double amount, int type, String category, String note,
+                                         int matchedAssetId, String initialSymbol, long transactionTime) {
+        try {
+            WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+            params.type = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) ?
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_PHONE;
+            params.format = PixelFormat.TRANSLUCENT;
+
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            params.width = screenWidth;
+            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            params.y = 0;
+
+            ContextThemeWrapper themeContext = new ContextThemeWrapper(this, R.style.Theme_AutoBookkeep);
+            LayoutInflater inflater = LayoutInflater.from(themeContext);
+            View floatView = inflater.inflate(R.layout.window_confirm_transaction_island, null);
+
+            this.windowRootView = floatView;
+            isWindowShowing = true;
+
+            // 金额
+            TextView tvAmount = floatView.findViewById(R.id.tv_island_amount);
+            final String symbol = (initialSymbol != null && !initialSymbol.isEmpty()) ? initialSymbol : "\u00A5";
+            String amountStr = String.format(java.util.Locale.CHINA, "%s%.2f %s",
+                    symbol, amount, type == 1 ? "\u6536\u5165" : "\u652F\u51FA");
+            tvAmount.setText(amountStr);
+            tvAmount.setTextColor(type == 1 ?
+                    ContextCompat.getColor(this, R.color.income) :
+                    ContextCompat.getColor(this, R.color.expense));
+
+            // 图标
+            TextView tvIcon = floatView.findViewById(R.id.tv_island_icon);
+            tvIcon.setText(type == 1 ? "\uD83D\uDCB0" : "\uD83D\uDCB3");
+
+            // 分类
+            TextView tvCategory = floatView.findViewById(R.id.tv_island_category);
+            String displayCategory = category;
+            if (displayCategory == null || displayCategory.isEmpty()) {
+                displayCategory = type == 1 ? "\u6536\u5165" : "\u652F\u51FA";
+            }
+            tvCategory.setText(displayCategory);
+
+            // 确认按钮
+            floatView.findViewById(R.id.btn_island_save).setOnClickListener(v -> {
+                saveToDatabase(amount, type, category, null, note, "", matchedAssetId > 0 ? matchedAssetId : 0,
+                        symbol, null, transactionTime);
+                closeWindow(windowManager, floatView);
+                Toast.makeText(this, "\u5DF2\u8BB0\u8D26", Toast.LENGTH_SHORT).show();
+            });
+
+            // 取消按钮
+            floatView.findViewById(R.id.btn_island_cancel).setOnClickListener(v ->
+                    closeWindow(windowManager, floatView));
+
+            // 根视图点击（含卡片非按钮区域 + 卡片外空白）→ 打开标准类型选择窗口
+            View.OnClickListener openStandardWindow = v -> {
+                closeWindow(windowManager, floatView);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    showStandardConfirmWindow(amount, type, category, note, matchedAssetId, initialSymbol, transactionTime);
+                }, 100);
+            };
+
+            View rootView = floatView.findViewById(R.id.window_root);
+            if (rootView != null) {
+                rootView.setOnClickListener(openStandardWindow);
+            }
+
+            // 入场动画 - 顶部滑入
+            View card = floatView.findViewById(R.id.island_card);
+            if (card != null) {
+                card.startAnimation(android.view.animation.AnimationUtils.loadAnimation(this, R.anim.anim_slide_in_top));
+            }
+
+            windowManager.addView(floatView, params);
+
+            // 5秒无操作自动记入账单
+            final int finalAssetId = (matchedAssetId > 0) ? matchedAssetId : 0;
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (isWindowShowing && windowRootView == floatView) {
+                    saveToDatabase(amount, type, category, null, note, "", finalAssetId,
+                            symbol, null, transactionTime);
+                    closeWindow(windowManager, floatView);
+                    Toast.makeText(this, "\u5DF2\u8BB0\u8D26", Toast.LENGTH_SHORT).show();
+                }
+            }, 5000);
+        } catch (Exception e) {
+            Log.e("AutoTrackService", "Island window show failed", e);
+            isWindowShowing = false;
+        }
     }
 
 
@@ -2272,7 +2378,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 👇👇👇 一键刷新所有桌面小组件 👇👇👇
+            // \uD83D\uDD04 一键刷新所有桌面小组件 \uD83D\uDD04
 
             com.example.autobookkeep.widget.WidgetUtils.updateAllWidgets(getApplicationContext());
 
@@ -2744,7 +2850,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             String finalDefaultCategory = defaultCategory;
 
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalDefaultCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalDefaultCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -3002,7 +3108,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // type=1 代表收入
 
-            handler.post(() -> showConfirmWindow(finalAmount, 1, "红包", timeNote, autoAssetId, "¥"));
+            handler.post(() -> showConfirmWindow(finalAmount, 1, "红包", timeNote, autoAssetId, "\u00A5"));
 
 
 
@@ -3082,7 +3188,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                         if (!nextText.isEmpty() && !"支付成功".equals(nextText)
 
-                                && !nextText.contains("¥") && !nextText.contains("￥")) {
+                                && !nextText.contains("\u00A5") && !nextText.contains("￥")) {
 
                             merchantInfo = nextText; // 这里将完美抓取到“广东轻工职业技术大学”
 
@@ -3098,13 +3204,13 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 3. 提取金额（兼容日志中的全角 ￥ 和半角 ¥）
+            // 3. 提取金额（兼容日志中的全角 ￥ 和半角 \u00A5）
 
-            if (text.contains("¥") || text.contains("￥")) {
+            if (text.contains("\u00A5") || text.contains("￥")) {
 
                 try {
 
-                    String cleanAmount = text.replace("¥", "").replace("￥", "").replace(",", "").trim();
+                    String cleanAmount = text.replace("\u00A5", "").replace("￥", "").replace(",", "").trim();
 
                     double parsedAmount = Double.parseDouble(cleanAmount);
 
@@ -3180,7 +3286,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账弹窗（type=0 为支出，默认分类这里设为“购物”或“餐饮”）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "¥"));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "\u00A5"));
 
 
 
@@ -3248,11 +3354,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 2. 提取金额（格式通常为 ￥0.01）
 
-            if ((content.contains("￥") || content.contains("¥")) && amount == -1) {
+            if ((content.contains("￥") || content.contains("\u00A5")) && amount == -1) {
 
                 try {
 
-                    String cleanAmount = content.replace("￥", "").replace("¥", "").replace(",", "").trim();
+                    String cleanAmount = content.replace("￥", "").replace("\u00A5", "").replace(",", "").trim();
 
                     double parsed = Double.parseDouble(cleanAmount);
 
@@ -3320,7 +3426,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账（支出类型 0）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥"));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5"));
 
 
 
@@ -3468,7 +3574,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                         if (!nextContent.isEmpty()) {
 
-                            if (!nextContent.contains("原价") && !nextContent.contains("优惠") && !nextContent.contains("￥") && !nextContent.contains("¥")) {
+                            if (!nextContent.contains("原价") && !nextContent.contains("优惠") && !nextContent.contains("￥") && !nextContent.contains("\u00A5")) {
 
                                 directBelowNote = nextContent;
 
@@ -3736,7 +3842,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             final String finalCategory = defaultCategory;
 
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -3822,11 +3928,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 3. 提取金额和商户名
 
-            if (text.contains("￥") || text.contains("¥")) {
+            if (text.contains("￥") || text.contains("\u00A5")) {
 
                 try {
 
-                    String cleanAmount = text.replace("￥", "").replace("¥", "").replace(",", "").trim();
+                    String cleanAmount = text.replace("￥", "").replace("\u00A5", "").replace(",", "").trim();
 
                     double parsedAmount = Double.parseDouble(cleanAmount);
 
@@ -3922,7 +4028,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 弹出记账确认窗口（type=0 为支出，默认分类这里设为“购物”）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "¥"));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "\u00A5"));
 
 
 
@@ -3998,15 +4104,15 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 3. 独立提取金额：支持从 Text 和 Desc 中抓取 ￥ 或 ¥
+            // 3. 独立提取金额：支持从 Text 和 Desc 中抓取 ￥ 或 \u00A5
 
-            if (text.startsWith("￥") || text.startsWith("¥") || desc.startsWith("￥") || desc.startsWith("¥")) {
+            if (text.startsWith("￥") || text.startsWith("\u00A5") || desc.startsWith("￥") || desc.startsWith("\u00A5")) {
 
                 try {
 
                     String cleanAmount = !text.isEmpty() ? text : desc;
 
-                    cleanAmount = cleanAmount.replace("￥", "").replace("¥", "").trim();
+                    cleanAmount = cleanAmount.replace("￥", "").replace("\u00A5", "").trim();
 
                     double parsed = Double.parseDouble(cleanAmount);
 
@@ -4124,7 +4230,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账弹窗（type: 0 代表支出，分类默认给 "红包"）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, "红包", timeNote, autoAssetId, "¥"));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, "红包", timeNote, autoAssetId, "\u00A5"));
 
 
 
@@ -4498,7 +4604,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账窗口
 
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, defaultCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, finalType, defaultCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -4598,9 +4704,9 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-                            // 排除空节点、以及带有 ￥、¥ 或 - 符号的优惠券金额干扰项
+                            // 排除空节点、以及带有 ￥、\u00A5 或 - 符号的优惠券金额干扰项
 
-                            if (!nextContent.isEmpty() && !nextContent.contains("￥") && !nextContent.contains("¥") && !nextContent.startsWith("-")) {
+                            if (!nextContent.isEmpty() && !nextContent.contains("￥") && !nextContent.contains("\u00A5") && !nextContent.startsWith("-")) {
 
                                 payeeName = nextContent;
 
@@ -4748,7 +4854,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             long finalTimestamp = now;
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -4858,7 +4964,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     if (!nextContent.isEmpty()) {
 
-                        // 遇到单字符的字体图标（如 ）或者无关文字则停止拼接
+                        // 遇到单字符的字体图标或者无关文字则停止拼接
 
                         if (nextContent.length() == 1 || nextContent.equals("找回密码") || nextContent.contains("密码")) {
 
@@ -4938,7 +5044,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账确认窗口（type: 0 为支出，分类默认给“购物”）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -5220,7 +5326,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发弹窗
 
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, defaultCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, finalType, defaultCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -5538,7 +5644,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             final String finalCategory = defaultCategory;
 
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
             return true;
 
@@ -5556,7 +5662,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
      * 【专版专杀】专门适配云闪付的“交易详情”页面
 
-     * 提取金额(如 -¥10.02)、商户名、付款方式以及准确的交易时间
+     * 提取金额(如 -\u00A510.02)、商户名、付款方式以及准确的交易时间
 
      */
 
@@ -5608,15 +5714,13 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 2. 提取金额和收支类型 (精准锁定格式，如 "-¥10.02" 或 "+¥10.02")
+            // 2. 提取金额和收支类型 (精准锁定格式，如 "-\u00A510.02" 或 "+\u00A510.02")
 
-            if (content.matches("^[-+]?¥?\\d+\\.\\d{2}$") && amount == -1) {
-
+            if (content.matches("^[-+]?\u00A5?\\d+\\.\\d{2}$") && amount == -1) {
                 try {
+                    // 去除可能的 \u00A5 符号
 
-                    // 去除可能的 ¥ 符号
-
-                    String cleanAmount = content.replace("¥", "").trim();
+                    String cleanAmount = content.replace("\u00A5", "").trim();
 
                     double parsedAmount = Double.parseDouble(cleanAmount);
 
@@ -5650,7 +5754,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-                        if (!prevContent.isEmpty() && !prevContent.matches("^[-+]?¥?\\d+\\.\\d{2}$")) {
+                        if (!prevContent.isEmpty() && !prevContent.matches("^[-+]?\u00A5?\\d+\\.\\d{2}$")) {
 
                             note = prevContent;
 
@@ -5818,7 +5922,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发弹窗
 
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, defaultCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, finalType, defaultCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -5886,15 +5990,15 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 2. 提取金额（寻找带有 ￥ 或 ¥ 的节点）
+            // 2. 提取金额（寻找带有 ￥ 或 \u00A5 的节点）
 
             // 【过滤干扰】：排除掉包含"原价"、"优惠"的节点，只抓取真正的实付金额
 
-            if ((content.contains("￥") || content.contains("¥")) && !content.contains("原价") && !content.contains("优惠")) {
+            if ((content.contains("￥") || content.contains("\u00A5")) && !content.contains("原价") && !content.contains("优惠")) {
 
                 try {
 
-                    String cleanAmount = content.replace("￥", "").replace("¥", "").replace(",", "").trim();
+                    String cleanAmount = content.replace("￥", "").replace("\u00A5", "").replace(",", "").trim();
 
                     double parsedAmount = Double.parseDouble(cleanAmount);
 
@@ -6014,7 +6118,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             final String finalCategory = defaultCategory;
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -6034,7 +6138,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
      * 【专版专杀】专门适配京东“支付成功”页面
 
-     * 从合并节点 (如 "京东白条付款¥7.7") 中同时剥离出付款方式和金额
+     * 从合并节点 (如 "京东白条付款\u00A57.7") 中同时剥离出付款方式和金额
 
      */
 
@@ -6080,15 +6184,15 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 2. 核心拆解：提取“京东白条付款¥7.7”或“微信支付￥12.00”这类组合结构
+            // 2. 核心拆解：提取“京东白条付款\u00A57.7”或“微信支付￥12.00”这类组合结构
 
-            if ((content.contains("付款¥") || content.contains("付款￥") || content.contains("支付¥") || content.contains("支付￥")) && amount == -1) {
+            if ((content.contains("付款\u00A5") || content.contains("付款￥") || content.contains("支付\u00A5") || content.contains("支付￥")) && amount == -1) {
 
                 try {
 
-                    // 正则手术刀：匹配前面任意字符(组1) + 付款/支付 + ¥/￥ + 数字或小数(组2)
+                    // 正则手术刀：匹配前面任意字符(组1) + 付款/支付 + \u00A5/￥ + 数字或小数(组2)
 
-                    java.util.regex.Matcher m = java.util.regex.Pattern.compile("(.*?)(?:付款|支付)[¥￥](\\d+(?:\\.\\d{1,2})?)").matcher(content);
+                    java.util.regex.Matcher m = java.util.regex.Pattern.compile("(.*?)(?:付款|支付)[\u00A5￥](\\d+(?:\\.\\d{1,2})?)").matcher(content);
 
                     if (m.find()) {
 
@@ -6160,7 +6264,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账弹窗（type: 0 为支出）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -6320,7 +6424,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账确认窗口（type: 0 为支出）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -6340,7 +6444,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
      * 【专版专杀】专门适配美团“支付成功”页面
 
-     * 解决金额与标题合并 (如 "支付成功 ¥25.38") 的问题，并精准提取支付方式
+     * 解决金额与标题合并 (如 "支付成功 \u00A525.38") 的问题，并精准提取支付方式
 
      */
 
@@ -6378,7 +6482,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 1. 识别页面特征并提取合并的金额
 
-            // 美团节点特征: [支付成功 ¥25.38]
+            // 美团节点特征: [支付成功 \u00A525.38]
 
             if (content.contains("支付成功")) {
 
@@ -6388,11 +6492,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
                 // 尝试从该节点直接剥离金额
 
-                if (content.contains("¥") || content.contains("￥")) {
+                if (content.contains("\u00A5") || content.contains("￥")) {
 
                     try {
 
-                        java.util.regex.Matcher m = java.util.regex.Pattern.compile("[¥￥](\\d+(?:\\.\\d{1,2})?)").matcher(content);
+                        java.util.regex.Matcher m = java.util.regex.Pattern.compile("[\u00A5￥](\\d+(?:\\.\\d{1,2})?)").matcher(content);
 
                         if (m.find()) {
 
@@ -6492,7 +6596,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账确认窗口（type: 0 为支出）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -6670,7 +6774,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发弹窗
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -6738,13 +6842,13 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 2. 提取金额 (如：¥12.00)
+            // 2. 提取金额 (如：\u00A512.00)
 
-            if ((content.startsWith("¥") || content.startsWith("￥")) && amount == -1) {
+            if ((content.startsWith("\u00A5") || content.startsWith("￥")) && amount == -1) {
 
                 try {
 
-                    String cleanAmount = content.replace("¥", "").replace("￥", "").replace(",", "").trim();
+                    String cleanAmount = content.replace("\u00A5", "").replace("￥", "").replace(",", "").trim();
 
                     amount = Double.parseDouble(cleanAmount);
 
@@ -6904,7 +7008,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 注意：type = 1 代表这是“收入”
 
-            handler.post(() -> showConfirmWindow(finalAmount, 1, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 1, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -6924,7 +7028,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
      * 【专版专杀】专门适配云闪付“支付成功”页面
 
-     * 锁定首个带 ¥ 的有效金额，向上抓取商户名，向下跳过原价/优惠等干扰项
+     * 锁定首个带 \u00A5 的有效金额，向上抓取商户名，向下跳过原价/优惠等干扰项
 
      */
 
@@ -6972,13 +7076,13 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 2. 提取实付金额（锁定第一个带有 ¥ 或 ￥ 的节点，避开负数）
+            // 2. 提取实付金额（锁定第一个带有 \u00A5 或 ￥ 的节点，避开负数）
 
-            if ((content.contains("¥") || content.contains("￥")) && !content.contains("-") && !content.contains("优惠") && amount == -1) {
+            if ((content.contains("\u00A5") || content.contains("￥")) && !content.contains("-") && !content.contains("优惠") && amount == -1) {
 
                 try {
 
-                    String cleanAmount = content.replace("¥", "").replace("￥", "").replace(",", "").trim();
+                    String cleanAmount = content.replace("\u00A5", "").replace("￥", "").replace(",", "").trim();
 
                     amount = Double.parseDouble(cleanAmount);
 
@@ -7124,7 +7228,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账弹窗（type = 0 为支出）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -7284,7 +7388,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 弹出确认窗口
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -7458,7 +7562,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账确认窗口
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "¥", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 

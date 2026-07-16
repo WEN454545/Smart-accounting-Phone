@@ -86,7 +86,6 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         viewModel.getMonth().observe(getViewLifecycleOwner(), m -> {
             viewModel.clearSelection();
             selectedDayNum = null;
-            // 切换月份后，默认选中当天（如果切换到当前月份）
             Calendar now = Calendar.getInstance();
             Integer curY = viewModel.getYear().getValue();
             if (curY != null && curY.intValue() == now.get(Calendar.YEAR)
@@ -101,11 +100,11 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
 
         viewModel.getIncome().observe(getViewLifecycleOwner(), income -> {
             double val = income != null ? income : 0;
-            incomeText.setText("¥" + String.format(Locale.CHINA, "%,.2f", val));
+            incomeText.setText("\u00a5" + String.format(Locale.CHINA, "%,.2f", val));
         });
         viewModel.getExpense().observe(getViewLifecycleOwner(), expense -> {
             double val = expense != null ? expense : 0;
-            expenseText.setText("¥" + String.format(Locale.CHINA, "%,.2f", val));
+            expenseText.setText("\u00a5" + String.format(Locale.CHINA, "%,.2f", val));
         });
 
         viewModel.getDailySums().observe(getViewLifecycleOwner(), sums -> renderCalendar());
@@ -137,7 +136,6 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
     public void onResume() {
         super.onResume();
         loadCalendarBackground();
-        // Force re-query month data to pick up changes made on other tabs
         viewModel.reloadMonthData();
     }
 
@@ -159,12 +157,12 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
     @Override
     public void onBillLongClick(Bill bill) {
         new AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
-                .setTitle("删除账单")
-                .setMessage("确定要删除 " + bill.getType() + " ¥" + String.format(java.util.Locale.CHINA, "%.2f", Math.abs(bill.getAmount())) + " 吗？")
-                .setPositiveButton("删除", (d, w) -> {
+                .setTitle("\u5220\u9664\u8d26\u5355")
+                .setMessage("\u786e\u5b9a\u8981\u5220\u9664 " + bill.getType() + " \u00a5" + String.format(java.util.Locale.CHINA, "%.2f", Math.abs(bill.getAmount())) + " \u5417\uff1f")
+                .setPositiveButton("\u5220\u9664", (d, w) -> {
                     viewModel.deleteBill(bill);
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton("\u53d6\u6d88", null)
                 .show();
     }
 
@@ -175,7 +173,7 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         Integer month = viewModel.getMonth().getValue();
         if (year == null || month == null) return;
 
-        monthText.setText(year + "年" + (month + 1) + "月");
+        monthText.setText(year + "\u5e74" + (month + 1) + "\u6708");
 
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, 1);
@@ -202,7 +200,7 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         calendarGrid.setWeightSum(totalRows);
 
         LinearLayout headerRow = createRow(1f);
-        String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
+        String[] weekDays = {"\u65e5", "\u4e00", "\u4e8c", "\u4e09", "\u56db", "\u4e94", "\u516d"};
         for (String day : weekDays) {
             TextView tv = createDayLabel(day);
             tv.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
@@ -268,25 +266,12 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         cell.setPadding(dp4, dp4/2, dp4, dp4/2);
 
         boolean hasBg = ivCalendarBg.getDrawable() != null;
-        int bgColorRes = hasBg ? R.drawable.bg_cal_cell_neutral_bg : R.drawable.bg_cal_cell_neutral;
-        int textColorVal = requireContext().getColor(R.color.muted);
-        double income = daySum != null ? daySum.income : 0;
-        double expense = daySum != null ? daySum.expense : 0;
-        double net = income - expense;
-
+        int bgColorRes;
         if (isSelected) {
             bgColorRes = hasBg ? R.drawable.bg_cal_cell_selected_bg : R.drawable.bg_cal_cell_selected;
-            textColorVal = Color.WHITE;
         } else {
-            if (net > 0) {
-                bgColorRes = hasBg ? R.drawable.bg_cal_cell_income_bg : R.drawable.bg_cal_cell_income;
-                textColorVal = requireContext().getColor(R.color.income);
-            } else if (net < 0) {
-                bgColorRes = hasBg ? R.drawable.bg_cal_cell_expense_bg : R.drawable.bg_cal_cell_expense;
-                textColorVal = requireContext().getColor(R.color.expense);
-            }
+            bgColorRes = hasBg ? R.drawable.bg_cal_cell_neutral_bg : R.drawable.bg_cal_cell_neutral;
         }
-
         cell.setBackgroundResource(bgColorRes);
 
         TextView dayNumTv = new TextView(requireContext());
@@ -294,11 +279,14 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         dayNumTv.setGravity(Gravity.CENTER);
         dayNumTv.setTextSize(16);
         dayNumTv.setTypeface(null, android.graphics.Typeface.BOLD);
-        dayNumTv.setTextColor(textColorVal);
+        dayNumTv.setTextColor(isSelected ? Color.WHITE : requireContext().getColor(R.color.ink));
 
         if (isToday) {
             dayNumTv.setBackgroundResource(R.drawable.bg_today);
             dayNumTv.setPadding(dp4, dp4/2, dp4, dp4/2);
+            if (!isSelected) {
+                dayNumTv.setTextColor(requireContext().getColor(R.color.primary));
+            }
         }
 
         if (isSelected && isToday) {
@@ -307,19 +295,30 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
 
         cell.addView(dayNumTv);
 
-        if (net != 0) {
-            TextView netText = new TextView(requireContext());
-            netText.setGravity(Gravity.CENTER);
-            int netColor = isSelected
-                    ? (net > 0 ? requireContext().getColor(R.color.income) : requireContext().getColor(R.color.expense))
-                    : textColorVal;
-            netText.setTextColor(netColor);
-            netText.setTextSize(9);
-            netText.setSingleLine(true);
-            netText.setEllipsize(android.text.TextUtils.TruncateAt.END);
-            netText.setPadding(0, 0, 0, 0);
-            netText.setText(formatNet(net));
-            cell.addView(netText);
+        // income amount
+        double income = daySum != null ? daySum.income : 0;
+        if (income > 0) {
+            TextView incomeTv = new TextView(requireContext());
+            incomeTv.setGravity(Gravity.CENTER);
+            incomeTv.setTextColor(isSelected ? Color.WHITE : requireContext().getColor(R.color.income));
+            incomeTv.setTextSize(8.5f);
+            incomeTv.setSingleLine(true);
+            incomeTv.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            incomeTv.setText("+" + String.format(Locale.CHINA, "%,.0f", income));
+            cell.addView(incomeTv);
+        }
+
+        // expense amount
+        double expense = daySum != null ? daySum.expense : 0;
+        if (expense > 0) {
+            TextView expenseTv = new TextView(requireContext());
+            expenseTv.setGravity(Gravity.CENTER);
+            expenseTv.setTextColor(isSelected ? Color.WHITE : requireContext().getColor(R.color.expense));
+            expenseTv.setTextSize(8.5f);
+            expenseTv.setSingleLine(true);
+            expenseTv.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            expenseTv.setText("-" + String.format(Locale.CHINA, "%,.0f", expense));
+            cell.addView(expenseTv);
         }
 
         cell.setOnClickListener(v -> {
@@ -341,7 +340,7 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
     }
 
     private void updateSelectedDayLabel(int year, int month, int day) {
-        selectedDateText.setText((month + 1) + "月" + day + "日账单");
+        selectedDateText.setText((month + 1) + "\u6708" + day + "\u65e5\u8d26\u5355");
     }
 
     private void updateSelectedDaySummary(List<Bill> bills) {
@@ -359,12 +358,6 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         selectedExpenseText.setText(formatAmount(expense, false));
         selectedIncomeText.setVisibility(income > 0 ? View.VISIBLE : View.GONE);
         selectedExpenseText.setVisibility(expense > 0 ? View.VISIBLE : View.GONE);
-    }
-
-    private String formatNet(double net) {
-        String sign = net > 0 ? "+" : "-";
-        double abs = Math.abs(net);
-        return sign + String.format(Locale.CHINA, "%,.2f", abs);
     }
 
     private String formatAmount(double amount, boolean isIncome) {

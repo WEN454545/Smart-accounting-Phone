@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="适配日志"
+            android:text="&#x9002;&#x914D;&#x65E5;&#x5FD7;"
             android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"/>
@@ -30,7 +30,7 @@
             android:id="@+id/btn_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="复制"
+            android:text="&#x590D;&#x5236;"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="?android:attr/colorPrimary"
@@ -71,7 +71,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="筛选应用："
+                    android:text="&#x7B5B;&#x9009;&#x5E94;&#x7528;&#xFF1A;"
                     android:textSize="16sp"
                     android:textColor="?android:attr/textColorSecondary"/>
 
@@ -95,7 +95,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="开启底层节点抓取"
+                    android:text="&#x5F00;&#x542F;&#x5E95;&#x5C42;&#x8282;&#x70B9;&#x6293;&#x53D6;"
                     android:textSize="16sp"
                     android:textColor="?android:attr/textColorPrimary"/>
 

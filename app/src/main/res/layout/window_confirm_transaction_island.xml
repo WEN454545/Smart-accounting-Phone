@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dynamic Island style transaction reminder -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/window_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000">
+
+    <!-- Island pill container - top center -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/island_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="48dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="12dp"
+        app:cardBackgroundColor="@color/surface">
+
+        <LinearLayout
+            android:id="@+id/island_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="4dp"
+            android:paddingVertical="6dp"
+            android:minHeight="48dp">
+
+            <!-- Left icon -->
+            <TextView
+                android:id="@+id/tv_island_icon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="&#x1F4B3;"
+                android:textSize="20sp"
+                android:background="@drawable/bg_icon_circle_small"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <!-- Middle info area -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="12dp"
+                android:minWidth="120dp"
+                android:clickable="false"
+                android:focusable="false">
+
+                <TextView
+                    android:id="@+id/tv_island_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#xA5;0.00"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/ink"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tv_island_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x8D2D;&#x7269;"
+                    android:textSize="11sp"
+                    android:textColor="@color/muted"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+
+            <!-- Cancel button -->
+            <FrameLayout
+                android:id="@+id/btn_island_cancel"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_close"
+                    android:contentDescription="&#x53D6;&#x6D88;"
+                    app:tint="@color/muted" />
+            </FrameLayout>
+
+            <!-- Confirm button -->
+            <FrameLayout
+                android:id="@+id/btn_island_save"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_island_save_btn"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_check"
+                    android:contentDescription="&#x786E;&#x8BA4;"
+                    app:tint="@android:color/white" />
+            </FrameLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

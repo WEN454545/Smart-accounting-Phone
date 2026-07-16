@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- æš—è‰²æ¨¡å¼åŸºç¡€é¢œè‰² -->
+    <!-- °µÉ«Ä£Ê½»ù´¡ÑÕÉ« -->
     <color name="bar_background">#121212</color>
     <color name="white">#1e1e1e</color>
     <color name="text_white">#ffffff</color>
@@ -17,7 +17,7 @@
     <color name="icon_secondary">#94a3b8</color>
     <color name="switch_track_off">#555555</color>
 
-    <!-- ä¸»é¢˜è‰²ï¼ˆä¿æŒä¸Žæµ…è‰²æ¨¡å¼ä¸€è‡´ï¼‰ -->
+    <!-- Ö÷ÌâÉ«£¨±£³ÖÓëÇ³É«Ä£Ê½Ò»ÖÂ£© -->
     <color name="primary">#0d9488</color>
     <color name="primary_dark">#0f766e</color>
     <color name="primary_light">#134e4a</color>
@@ -31,7 +31,7 @@
     <color name="muted">#94a3b8</color>
     <color name="rule">#333333</color>
 
-    <!-- åˆ†ç±»é¢œè‰²ï¼ˆæš—è‰²é€‚é…ï¼‰ -->
+    <!-- ·ÖÀàÑÕÉ«£¨°µÉ«ÊÊÅä£© -->
     <color name="cat_food">#422006</color>
     <color name="cat_transport">#1e3a5f</color>
     <color name="cat_shopping">#471a33</color>

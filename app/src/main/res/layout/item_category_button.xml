@@ -6,7 +6,7 @@
     android:layout_gravity="center"
     android:layout_margin="6dp"
     android:gravity="center"
-    android:text="餐"
+    android:text="&#x9910;"
     android:textColor="@color/text_primary"
     android:textSize="18sp"
     android:textStyle="bold"

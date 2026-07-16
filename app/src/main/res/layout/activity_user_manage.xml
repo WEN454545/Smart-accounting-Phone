@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
             android:minWidth="48dp"
-            android:text="←"
+            android:text="&#x2190;"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="用户管理"
+            android:text="&#x7528;&#x6237;&#x7BA1;&#x7406;"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="长按用户可删除（管理员不可删除）"
+        android:text="&#x957F;&#x6309;&#x7528;&#x6237;&#x53EF;&#x5220;&#x9664;&#xFF08;&#x7BA1;&#x7406;&#x5458;&#x4E0D;&#x53EF;&#x5220;&#x9664;&#xFF09;"
         android:textColor="@color/muted"
         android:textSize="13sp" />
 

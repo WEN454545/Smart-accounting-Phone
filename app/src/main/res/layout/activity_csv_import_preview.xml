@@ -19,7 +19,7 @@
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="取消"
+            android:text="&#x53D6;&#x6D88;"
             android:textColor="@color/primary"
             android:textSize="15sp" />
 
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="导入预览"
+            android:text="&#x5BFC;&#x5165;&#x9884;&#x89C8;"
             android:textColor="@color/ink"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -37,7 +37,7 @@
             android:id="@+id/btn_import"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="导入"
+            android:text="&#x5BFC;&#x5165;"
             android:textColor="@color/primary"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -56,7 +56,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="共 0 条"
+            android:text="&#x5171; 0 &#x6761;"
             android:textColor="@color/ink"
             android:textSize="14sp" />
 
@@ -64,7 +64,7 @@
             android:id="@+id/tv_selected_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="已选 0 条"
+            android:text="&#x5DF2;&#x9009; 0 &#x6761;"
             android:textColor="@color/primary"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -87,7 +87,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:gravity="center"
-            android:text="全选"
+            android:text="&#x5168;&#x9009;"
             android:textColor="@color/primary"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -100,7 +100,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_card"
             android:gravity="center"
-            android:text="取消全选"
+            android:text="&#x53D6;&#x6D88;&#x5168;&#x9009;"
             android:textColor="@color/muted"
             android:textSize="14sp" />
     </LinearLayout>

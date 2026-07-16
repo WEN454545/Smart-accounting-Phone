@@ -26,14 +26,14 @@
                 android:layout_height="48dp"
                 android:gravity="center"
                 android:background="@drawable/bg_dialog_rounded"
-                android:text="\u2699"
+                android:text="&#x1F3A8;"
                 android:textSize="24sp"
                 android:layout_marginBottom="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="个性化设置"
+                android:text="&#x4E2A;&#x6027;&#x5316;&#x8BBE;&#x7F6E;"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="?android:attr/textColorPrimary" />
@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="设置主页和日历的背景"
+                android:text="&#x81EA;&#x5B9A;&#x4E49;&#x4E3B;&#x9875;&#x80CC;&#x666F;&#x548C;&#x4E3B;&#x9898;"
                 android:textSize="12sp"
                 android:textColor="@color/muted"
                 android:layout_marginTop="4dp" />
@@ -65,7 +65,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="\ud83d\uddbc" />
+                android:text="&#x1F3A8;" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -77,7 +77,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="个人主页背景"
+                    android:text="&#x81EA;&#x5B9A;&#x4E49;&#x4E3B;&#x9875;&#x80CC;&#x666F;"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:textColor="@color/ink" />
@@ -85,7 +85,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="设置头像区域的背景视频或图片"
+                    android:text="&#x9009;&#x62E9;&#x4F60;&#x559C;&#x6B22;&#x7684;&#x80CC;&#x666F;&#x56FE;&#x7247;&#x6216;&#x89C6;&#x9891;"
                     android:textSize="11sp"
                     android:textColor="@color/muted"
                     android:layout_marginTop="2dp" />
@@ -117,7 +117,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="\ud83d\udd12" />
+                android:text="&#x1F510;" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -169,7 +169,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="\ud83c\udfe0" />
+                android:text="&#x1F3E0;" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -221,7 +221,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="\ud83d\udcb0" />
+                android:text="&#x1F4DD;" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -273,7 +273,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="\ud83d\udcc5" />
+                android:text="&#x1F4C5;" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -285,7 +285,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="日历网格背景"
+                    android:text="&#x81EA;&#x5B9A;&#x4E49;&#x65E5;&#x5386;&#x80CC;&#x666F;"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:textColor="@color/ink" />
@@ -293,7 +293,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="设置日历网格区域的背景图片"
+                    android:text="&#x4E3A;&#x65E5;&#x5386;&#x7F51;&#x683C;&#x533A;&#x57DF;&#x8BBE;&#x7F6E;&#x80CC;&#x666F;&#x56FE;&#x7247;"
                     android:textSize="11sp"
                     android:textColor="@color/muted"
                     android:layout_marginTop="2dp" />
@@ -325,7 +325,7 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textSize="20sp"
-                android:text="\ud83c\udfe0" />
+                android:text="&#x1F3A8;" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -365,7 +365,7 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:gravity="center"
-            android:text="取消"
+            android:text="&#x53D6;&#x6D88;"
             android:textSize="14sp"
             android:textColor="@color/muted"
             android:background="?android:attr/selectableItemBackground"

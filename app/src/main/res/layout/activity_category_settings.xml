@@ -24,13 +24,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="记账分类预设"
+            android:text="&#x8BB0;&#x8D26;&#x5206;&#x7C7B;&#x9884;&#x8BBE;"
             android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>
 
-    <!-- 支出分类 -->
+    <!-- &#x652F;&#x51FA;&#x5206;&#x7C7B; -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -62,7 +62,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="支出分类"
+                    android:text="&#x652F;&#x51FA;&#x5206;&#x7C7B;"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="?android:attr/textColorPrimary"/>
@@ -71,7 +71,7 @@
                     android:id="@+id/btn_add_expense"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+ 添加"
+                    android:text="+ &#x6DFB;&#x52A0;"
                     android:textSize="14sp"
                     android:textColor="@color/app_blue"
                     android:clickable="true"
@@ -94,7 +94,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- 收入分类 -->
+    <!-- &#x6536;&#x5165;&#x5206;&#x7C7B; -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -125,7 +125,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="收入分类"
+                    android:text="&#x6536;&#x5165;&#x5206;&#x7C7B;"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="?android:attr/textColorPrimary"/>
@@ -134,7 +134,7 @@
                     android:id="@+id/btn_add_income"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+ 添加"
+                    android:text="+ &#x6DFB;&#x52A0;"
                     android:textSize="14sp"
                     android:textColor="@color/app_blue"
                     android:clickable="true"

@@ -55,7 +55,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:text="记一笔"
+                            android:text="&#x8BB0;&#x4E00;&#x7B14;"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="?android:attr/textColorPrimary"/>
@@ -81,7 +81,7 @@
                             android:layout_width="0dp"
                             android:layout_height="48dp"
                             android:layout_weight="1"
-                            android:text="支出"
+                            android:text="&#x652F;&#x51FA;"
                             android:gravity="center"
                             android:button="@null"
                             android:background="@drawable/bg_type_selector"
@@ -95,7 +95,7 @@
                             android:layout_width="0dp"
                             android:layout_height="48dp"
                             android:layout_weight="1"
-                            android:text="收入"
+                            android:text="&#x6536;&#x5165;"
                             android:gravity="center"
                             android:button="@null"
                             android:background="@drawable/bg_type_selector"
@@ -121,9 +121,9 @@
                         android:id="@+id/et_window_target"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:hint="输入负债/借出对象"
+                        android:hint="&#x8F93;&#x5165;&#x8D1F;&#x503A;/&#x501F;&#x51FA;&#x5BF9;&#x8C61;"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textColorHint="?android:attr/textColorHint"
+                        android:textColorHint="@color/text_hint"
                         android:textSize="16sp"
                         android:background="@drawable/bg_input_field"
                         android:paddingHorizontal="18dp"
@@ -142,11 +142,11 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="56dp"
-                            android:hint="金额"
+                            android:hint="&#x91D1;&#x989D;"
                             android:inputType="numberDecimal"
                             android:textSize="16sp"
                             android:textColor="?android:attr/textColorPrimary"
-                            android:textColorHint="?android:attr/textColorHint"
+                            android:textColorHint="@color/text_hint"
                             android:background="@drawable/bg_input_field"
                             android:paddingHorizontal="20dp"
                             android:paddingVertical="10dp"/>
@@ -156,7 +156,7 @@
                             android:layout_width="56dp"
                             android:layout_height="56dp"
                             android:layout_marginStart="8dp"
-                            android:text="¥"
+                            android:text="&#xA5;"
                             android:textSize="18sp"
                             android:textColor="@color/text_primary"
                             android:backgroundTint="@color/input_bg"
@@ -173,9 +173,9 @@
                         android:id="@+id/et_window_category"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:hint="自定义分类"
+                        android:hint="&#x81EA;&#x5B9A;&#x4E49;&#x5206;&#x7C7B;"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textColorHint="?android:attr/textColorHint"
+                        android:textColorHint="@color/text_hint"
                         android:textSize="16sp"
                         android:background="@drawable/bg_input_field"
                         android:paddingHorizontal="18dp"
@@ -183,7 +183,7 @@
                         android:layout_marginBottom="16dp"
                         android:visibility="gone"/>
 
-                    <!-- 时间选择器 -->
+                    <!-- &#x65F6;&#x95F4;&#x9009;&#x62E9;&#x5668; -->
                     <TextView
                         android:id="@+id/tv_window_date"
                         android:layout_width="match_parent"
@@ -198,14 +198,14 @@
                         android:textSize="16sp"
                         android:textColor="?android:attr/textColorPrimary" />
 
-                    <!-- 备注 -->
+                    <!-- &#x5907;&#x6CE8; -->
                     <com.example.autobookkeep.ui.CustomHighlightEditText
                         android:id="@+id/et_window_note"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textColorHint="?android:attr/textColorHint"
-                        android:hint="备注"
+                        android:textColorHint="@color/text_hint"
+                        android:hint="&#x5907;&#x6CE8;"
                         android:textSize="16sp"
                         android:background="@drawable/bg_input_field"
                         android:paddingHorizontal="18dp"
@@ -222,7 +222,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="56dp"
-                            android:text="取 消"
+                            android:text="&#x53D6; &#x6D88;"
                             android:textColor="@color/text_primary"
                             android:backgroundTint="@color/input_bg"
                             android:layout_marginEnd="8dp"
@@ -236,7 +236,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="56dp"
-                            android:text="确认保存"
+                            android:text="&#x786E;&#x8BA4;&#x4FDD;&#x5B58;"
                             android:textColor="@color/text_white"
                             android:textStyle="bold"
                             android:backgroundTint="@color/app_blue"

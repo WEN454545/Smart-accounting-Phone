@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="月度预算设置"
+            android:text="&#x6708;&#x5EA6;&#x9884;&#x7B97;&#x8BBE;&#x7F6E;"
             android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"/>
@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="设置当月月度预算总额"
+                android:text="&#x8BBE;&#x7F6E;&#x5F53;&#x6708;&#x6708;&#x5EA6;&#x9884;&#x7B97;&#x603B;&#x989D;"
                 android:textSize="14sp"
                 android:textColor="@color/text_hint"
                 android:layout_marginBottom="16dp"/>
@@ -49,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:inputType="numberDecimal"
-                android:hint="请输入预算金额"
+                android:hint="&#x8BF7;&#x8F93;&#x5165;&#x9884;&#x7B97;&#x91D1;&#x989D;"
                 android:textSize="20sp"
                 android:textColor="?android:attr/textColorPrimary"
                 android:background="@drawable/bg_input_field"
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="20dp"
-                android:text="保存预算"
+                android:text="&#x4FDD;&#x5B58;&#x9884;&#x7B97;"
                 android:textColor="@color/text_white"
                 android:textSize="16sp"
                 android:textStyle="bold"

@@ -28,8 +28,8 @@ public class BudgetNotificationHelper {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "预算提醒";
-            String description = "当支出超过预算时发送提醒";
+            CharSequence name = "\u9884\u7B97\u63D0\u9192";
+            String description = "\u5F53\u652F\u51FA\u8D85\u8FC7\u9884\u7B97\u65F6\u53D1\u9001\u63D0\u9192";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
@@ -60,9 +60,9 @@ public class BudgetNotificationHelper {
     }
 
     public void showBudgetWarning(double expense, double budget, int percent) {
-        String title = "预算提醒";
-        String message = "本月支出已达预算的 " + percent + "%（¥" + String.format("%.2f", expense) +
-                " / ¥" + String.format("%.2f", budget) + "），请注意控制支出。";
+        String title = "\u9884\u7B97\u63D0\u9192";
+        String message = "\u672C\u6708\u652F\u51FA\u5DF2\u8FBE\u9884\u7B97\u7684 " + percent + "%\uFF08\u00A5" + String.format("%.2f", expense) +
+                " / \u00A5" + String.format("%.2f", budget) + "\uFF09\uFF0C\u8BF7\u6CE8\u610F\u63A7\u5236\u652F\u51FA\u3002";
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -82,10 +82,10 @@ public class BudgetNotificationHelper {
 
     public void showBudgetOverWarning(double expense, double budget) {
         double overAmount = expense - budget;
-        String title = "预算超支警告";
-        String message = "本月支出已超出预算 ¥" + String.format("%.2f", overAmount) +
-                "！当前支出：¥" + String.format("%.2f", expense) +
-                "，预算：¥" + String.format("%.2f", budget);
+        String title = "\u9884\u7B97\u8D85\u652F\u8B66\u544A";
+        String message = "\u672C\u6708\u652F\u51FA\u5DF2\u8D85\u51FA\u9884\u7B97 \u00A5" + String.format("%.2f", overAmount) +
+                "\uFF01\u5F53\u524D\u652F\u51FA\uFF1A\u00A5" + String.format("%.2f", expense) +
+                "\uFF0C\u9884\u7B97\uFF1A\u00A5" + String.format("%.2f", budget);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)

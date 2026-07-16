@@ -36,7 +36,7 @@ public class BillRepository {
         userDao = db.userDao();
     }
 
-    // ── Bill CRUD ──────────────────────────────────────────────
+    // ---- Bill CRUD ----
 
     public void insert(Bill bill) {
         executor.execute(() -> billDao.insert(bill));
@@ -96,7 +96,7 @@ public class BillRepository {
         return result[0];
     }
 
-    // ── Budget ──────────────────────────────────────────────────
+    // ---- Budget ----
 
     public void saveBudget(Budget budget) {
         executor.execute(() -> budgetDao.insert(budget));
@@ -106,7 +106,7 @@ public class BillRepository {
         return budgetDao.getBudget(yearMonth, userId);
     }
 
-    // ── User ──────────────────────────────────────────────────────
+    // ---- User ----
 
     public void insertUser(User user, final OnUserInsertedListener listener) {
         executor.execute(() -> {

@@ -68,7 +68,7 @@ public class StatsFragment extends Fragment {
         setupPieChart(pieExpenseChart);
         setupPieChart(pieIncomeChart);
 
-        // Tab 切换鍒囨崲
+        // Tab 切换
         TextView tabWeek = view.findViewById(R.id.tab_week);
         TextView tabMonth = view.findViewById(R.id.tab_month);
         TextView tabYear = view.findViewById(R.id.tab_year);
@@ -77,7 +77,7 @@ public class StatsFragment extends Fragment {
         tabMonth.setOnClickListener(v -> selectTab(StatsViewModel.Period.MONTH, tabWeek, tabMonth, tabYear));
         tabYear.setOnClickListener(v -> selectTab(StatsViewModel.Period.YEAR, tabWeek, tabMonth, tabYear));
 
-        // 宸﹀彸绠ご鍒囨崲
+        // 左右箭头切换
         btnPeriodPrev.setOnClickListener(v -> {
             StatsViewModel.Period p = viewModel.getPeriod().getValue();
             if (p == null) return;
@@ -97,12 +97,12 @@ public class StatsFragment extends Fragment {
             }
         });
 
-        // 鏁版嵁瑙傚療
+        // 数据观察
         viewModel.getExpenseByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieExpenseChart, typeSums, legendExpense));
         viewModel.getIncomeByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieIncomeChart, typeSums, legendIncome));
         viewModel.getTrendData().observe(getViewLifecycleOwner(), periodSums -> trendView.setData(periodSums));
 
-        // 鍛ㄦ湡鏍囩鏇存柊
+        // 周期标签更新
         viewModel.getStatsYear().observe(getViewLifecycleOwner(), y -> updatePeriodLabel());
         viewModel.getStatsMonth().observe(getViewLifecycleOwner(), m -> updatePeriodLabel());
         viewModel.getStatsWeekOffset().observe(getViewLifecycleOwner(), o -> updatePeriodLabel());

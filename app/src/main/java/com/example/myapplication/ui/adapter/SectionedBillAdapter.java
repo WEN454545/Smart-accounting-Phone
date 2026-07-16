@@ -59,7 +59,7 @@ public class SectionedBillAdapter extends RecyclerView.Adapter<SectionedBillAdap
         cal.setTimeInMillis(timestamp);
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH) + 1;
-        return year + "年" + month + "月";
+        return year + "\u5E74" + month + "\u6708";
     }
 
     @NonNull
@@ -131,7 +131,7 @@ public class SectionedBillAdapter extends RecyclerView.Adapter<SectionedBillAdap
 
         static class ViewHolder extends RecyclerView.ViewHolder {
             private final TextView iconText, titleText, amountText, metaText;
-            private final SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日 HH:mm", Locale.CHINA);
+            private final SimpleDateFormat sdf = new SimpleDateFormat("MM\u6708dd\u65E5 HH:mm", Locale.CHINA);
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -148,20 +148,20 @@ public class SectionedBillAdapter extends RecyclerView.Adapter<SectionedBillAdap
                 int bgColor = getBgColorForType(bill.getType());
                 iconText.setBackgroundColor(itemView.getContext().getColor(bgColor));
 
-                // 标题显示分类名
+                // title = category name
                 titleText.setText(bill.getType());
 
                 boolean isIncome = "income".equals(bill.getCategory());
                 double amount = Math.abs(bill.getAmount());
-                String amountStr = String.format(Locale.CHINA, "¥%,.2f", amount);
+                String amountStr = String.format(Locale.CHINA, "\u00A5%,.2f", amount);
                 amountText.setText((isIncome ? "+" : "-") + amountStr);
                 amountText.setTextColor(itemView.getContext().getColor(
                         isIncome ? R.color.income : R.color.expense));
 
-                // 副标题显示日期，如有备注则附加
+                // subtitle: date, append note if exists
                 String metaStr = sdf.format(new Date(bill.getTimestamp()));
                 if (bill.getNote() != null && !bill.getNote().isEmpty()) {
-                    metaStr += " · " + bill.getNote();
+                    metaStr += " \u00B7 " + bill.getNote();
                 }
                 metaText.setText(metaStr);
 
@@ -177,21 +177,21 @@ public class SectionedBillAdapter extends RecyclerView.Adapter<SectionedBillAdap
             private String getIconForType(String type) {
                 if (type == null) return "\uD83D\uDCB3";
                 switch (type) {
-                    case "餐饮": return "\uD83C\uDF54";
-                    case "购物": return "\uD83D\uDED2";
-                    case "住房": return "\uD83C\uDFE0";
-                    case "交通": return "\uD83D\uDE95";
-                    case "旅行": return "\u2708\uFE0F";
-                    case "通讯": return "\uD83D\uDCF1";
-                    case "娱乐": return "\uD83C\uDFAC";
-                    case "人情": return "\uD83C\uDF81";
-                    case "医疗": return "\uD83D\uDC8A";
-                    case "教育": return "\uD83D\uDCDA";
-                    case "美容": return "\uD83D\uDC84";
-                    case "其他": return "\uD83D\uDCE6";
-                    case "转账": return "\uD83D\uDCB8";
-                    case "红包": return "\uD83E\uDDE7";
-                    case "退款": return "\u21A9\uFE0F";
+                    case "\u9910\u996E": return "\uD83C\uDF54";
+                    case "\u8D2D\u7269": return "\uD83D\uDED2";
+                    case "\u4F4F\u623F": return "\uD83C\uDFE0";
+                    case "\u4EA4\u901A": return "\uD83D\uDE95";
+                    case "\u65C5\u884C": return "\u2708\uFE0F";
+                    case "\u901A\u8BAF": return "\uD83D\uDCF1";
+                    case "\u5A31\u4E50": return "\uD83C\uDFAC";
+                    case "\u4EBA\u60C5": return "\uD83C\uDF81";
+                    case "\u533B\u7597": return "\uD83D\uDC8A";
+                    case "\u6559\u80B2": return "\uD83D\uDCDA";
+                    case "\u7F8E\u5BB9": return "\uD83D\uDC84";
+                    case "\u5176\u4ED6": return "\uD83D\uDCE6";
+                    case "\u8F6C\u8D26": return "\uD83D\uDCB8";
+                    case "\u7EA2\u5305": return "\uD83E\uDDE7";
+                    case "\u9000\u6B3E": return "\u21A9\uFE0F";
                     default: return "\uD83D\uDCB3";
                 }
             }
@@ -199,21 +199,21 @@ public class SectionedBillAdapter extends RecyclerView.Adapter<SectionedBillAdap
             private int getBgColorForType(String type) {
                 if (type == null) return R.color.cat_other;
                 switch (type) {
-                    case "餐饮": return R.color.cat_food;
-                    case "购物": return R.color.cat_shopping;
-                    case "住房": return R.color.cat_housing;
-                    case "交通": return R.color.cat_transport;
-                    case "旅行": return R.color.cat_travel;
-                    case "通讯": return R.color.cat_communication;
-                    case "娱乐": return R.color.cat_entertainment;
-                    case "人情": return R.color.cat_social;
-                    case "医疗": return R.color.cat_medical;
-                    case "教育": return R.color.cat_education;
-                    case "美容": return R.color.cat_beauty;
-                    case "其他": return R.color.cat_other;
-                    case "转账": return R.color.cat_transfer;
-                    case "红包": return R.color.cat_redpacket;
-                    case "退款": return R.color.cat_refund;
+                    case "\u9910\u996E": return R.color.cat_food;
+                    case "\u8D2D\u7269": return R.color.cat_shopping;
+                    case "\u4F4F\u623F": return R.color.cat_housing;
+                    case "\u4EA4\u901A": return R.color.cat_transport;
+                    case "\u65C5\u884C": return R.color.cat_travel;
+                    case "\u901A\u8BAF": return R.color.cat_communication;
+                    case "\u5A31\u4E50": return R.color.cat_entertainment;
+                    case "\u4EBA\u60C5": return R.color.cat_social;
+                    case "\u533B\u7597": return R.color.cat_medical;
+                    case "\u6559\u80B2": return R.color.cat_education;
+                    case "\u7F8E\u5BB9": return R.color.cat_beauty;
+                    case "\u5176\u4ED6": return R.color.cat_other;
+                    case "\u8F6C\u8D26": return R.color.cat_transfer;
+                    case "\u7EA2\u5305": return R.color.cat_redpacket;
+                    case "\u9000\u6B3E": return R.color.cat_refund;
                     default: return R.color.cat_other;
                 }
             }

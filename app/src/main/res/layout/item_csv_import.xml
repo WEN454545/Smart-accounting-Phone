@@ -26,7 +26,7 @@
             android:id="@+id/tv_type_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="支出 ¥50.00"
+            android:text="&#x652F;&#x51FA; &#xA5;50.00"
             android:textColor="@color/ink"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="餐饮 · 午餐"
+            android:text="&#x9910;&#x996E; &#xB7; &#x5348;&#x9910;"
             android:textColor="@color/muted"
             android:textSize="12sp" />
 

@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="添加照片备注"
+            android:text="&#x6DFB;&#x52A0;&#x7167;&#x7247;&#x5907;&#x6CE8;"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"
@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="拍照"
+                android:text="&#x62CD;&#x7167;"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="?android:attr/textColorPrimary"/>
@@ -74,7 +74,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="从相册选择"
+                android:text="&#x4ECE;&#x76F8;&#x518C;&#x9009;&#x62E9;"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="?android:attr/textColorPrimary"/>
@@ -84,7 +84,7 @@
             android:id="@+id/btn_action_cancel"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:text="取 消"
+            android:text="&#x53D6; &#x6D88;"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="?android:attr/textColorPrimary"

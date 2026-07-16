@@ -40,7 +40,7 @@ public interface BillDao {
     @Query("SELECT type, SUM(amount) as total FROM bills WHERE userId = :userId AND category = 'income' AND timestamp >= :start AND timestamp < :end GROUP BY type")
     LiveData<List<TypeSum>> getIncomeByType(long userId, long start, long end);
 
-    @Query("SELECT strftime('%d', datetime(timestamp/1000, 'unixepoch')) as day, " +
+    @Query("SELECT strftime('%d', datetime(timestamp/1000, 'unixepoch', '+8 hours')) as day, " +
            "SUM(CASE WHEN category = 'income' THEN amount ELSE 0 END) as income, " +
            "SUM(CASE WHEN category = 'expense' THEN ABS(amount) ELSE 0 END) as expense " +
            "FROM bills WHERE userId = :userId AND timestamp >= :start AND timestamp < :end GROUP BY day")

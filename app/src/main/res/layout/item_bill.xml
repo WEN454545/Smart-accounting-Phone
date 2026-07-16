@@ -15,7 +15,7 @@
         android:layout_height="44dp"
         android:background="@drawable/bg_icon"
         android:gravity="center"
-        android:text="🍔"
+        android:text="&#x1F372;"
         android:textSize="18sp" />
 
     <LinearLayout
@@ -29,7 +29,7 @@
             android:id="@+id/bill_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="午餐 - 麦当劳"
+            android:text="&#x9910;&#x996E; - &#x5348;&#x9910;"
             android:textColor="@color/ink"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:text="今天 12:30 · 餐饮"
+            android:text="&#x4ECA;&#x5929; 12:30 &#xB7; &#x665A;&#x9910;"
             android:textColor="@color/muted"
             android:textSize="11sp" />
     </LinearLayout>
@@ -48,7 +48,7 @@
         android:id="@+id/bill_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-¥42.00"
+        android:text="-&#xA5;42.00"
         android:textColor="@color/expense"
         android:textSize="15sp"
         android:textStyle="bold" />

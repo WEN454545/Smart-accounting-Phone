@@ -43,13 +43,13 @@ public class AllBillsFragment extends Fragment implements BillAdapter.OnBillClic
 
         view.findViewById(R.id.btn_delete_all).setOnClickListener(v -> {
             new AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
-                    .setTitle("删除全部账单")
-                    .setMessage("确定要删除全部账单吗？此操作不可撤销。")
-                    .setPositiveButton("删除全部", (d, w) -> {
+                    .setTitle("\u5220\u9664\u5168\u90E8\u8D26\u5355")
+                    .setMessage("\u786E\u5B9A\u8981\u5220\u9664\u5168\u90E8\u8D26\u5355\u5417\uFF1F\u6B64\u64CD\u4F5C\u4E0D\u53EF\u64A4\u9500\u3002")
+                    .setPositiveButton("\u5220\u9664\u5168\u90E8", (d, w) -> {
                         viewModel.deleteAllBills();
-                        Toast.makeText(requireContext(), "已删除全部账单", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "\u5DF2\u5220\u9664\u5168\u90E8\u8D26\u5355", Toast.LENGTH_SHORT).show();
                     })
-                    .setNegativeButton("取消", null)
+                    .setNegativeButton("\u53D6\u6D88", null)
                     .show();
         });
 
@@ -68,7 +68,7 @@ public class AllBillsFragment extends Fragment implements BillAdapter.OnBillClic
         dialog.setOnSaveListener(updatedBill -> {
             updatedBill.setId(bill.getId());
             viewModel.updateBill(updatedBill);
-            Toast.makeText(requireContext(), "账单已更新", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "\u8D26\u5355\u5DF2\u66F4\u65B0", Toast.LENGTH_SHORT).show();
         });
         dialog.show(getParentFragmentManager(), "edit");
     }
@@ -76,13 +76,13 @@ public class AllBillsFragment extends Fragment implements BillAdapter.OnBillClic
     @Override
     public void onBillLongClick(Bill bill) {
         new AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
-                .setTitle("删除账单")
-                .setMessage("确定要删除 " + bill.getType() + " ¥" + String.format(java.util.Locale.CHINA, "%.2f", Math.abs(bill.getAmount())) + " 吗？")
-                .setPositiveButton("删除", (d, w) -> {
+                .setTitle("\u5220\u9664\u8D26\u5355")
+                .setMessage("\u786E\u5B9A\u8981\u5220\u9664 " + bill.getType() + " \u00A5" + String.format(java.util.Locale.CHINA, "%.2f", Math.abs(bill.getAmount())) + " \u5417\uFF1F")
+                .setPositiveButton("\u5220\u9664", (d, w) -> {
                     viewModel.deleteBill(bill);
-                    Toast.makeText(requireContext(), "已删除", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "\u5DF2\u5220\u9664", Toast.LENGTH_SHORT).show();
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton("\u53D6\u6D88", null)
                 .show();
     }
 }
