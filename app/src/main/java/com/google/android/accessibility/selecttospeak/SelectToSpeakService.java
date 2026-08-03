@@ -122,11 +122,15 @@ import java.util.Arrays;
 
 import java.util.Date;
 
+import java.util.HashMap;
+
 import java.util.HashSet;
 
 import java.util.List;
 
 import java.util.Locale;
+
+import java.util.Map;
 
 import java.util.Set;
 
@@ -1167,6 +1171,113 @@ public class SelectToSpeakService extends AccessibilityService {
     }
 
 
+
+    /**
+     * Infer category for a newly recognized bill from historical records.
+     * Matches past bills by merchant/product name (fuzzy LIKE on note/remark),
+     * and returns the most frequently used category. Falls back to the provided
+     * hardcoded category when no match is found or input is too generic.
+     *
+     * MUST be called off the main thread (Room disallows main-thread queries).
+     *
+     * @param merchantOrProduct merchant name or product description extracted from the bill page
+     * @param type              0 = expense, 1 = income
+     * @param fallback          hardcoded category to use when no historical match exists
+     */
+    private String inferCategoryFromHistory(String merchantOrProduct, int type, String fallback) {
+        if (dao == null) {
+            Log.w(TAG, "inferCategory: dao is null, fallback=" + fallback);
+            return fallback;
+        }
+        String keyword = sanitizeHistoryKeyword(merchantOrProduct);
+        if (keyword == null) {
+            Log.i(TAG, "inferCategory: keyword filtered (too short/generic), input="
+                    + merchantOrProduct + ", fallback=" + fallback);
+            return fallback;
+        }
+        try {
+            List<String> cats = dao.getCategoriesByKeywordSync(type, keyword, 20);
+            Log.i(TAG, "inferCategory: type=" + type + " keyword=\"" + keyword
+                    + "\" matched=" + (cats == null ? 0 : cats.size()) + " records");
+            if (cats == null || cats.isEmpty()) return fallback;
+            // Vote: pick the most frequent category; ties broken by most recent (List is date DESC)
+            Map<String, Integer> count = new HashMap<>();
+            String firstSeen = null;
+            for (String c : cats) {
+                if (c == null || c.isEmpty()) continue;
+                if (firstSeen == null) firstSeen = c;
+                count.put(c, count.getOrDefault(c, 0) + 1);
+            }
+            String best = null;
+            int max = 0;
+            for (Map.Entry<String, Integer> e : count.entrySet()) {
+                if (e.getValue() > max) {
+                    max = e.getValue();
+                    best = e.getKey();
+                }
+            }
+            String result = best != null ? best : fallback;
+            Log.i(TAG, "inferCategory: vote result=\"" + result + "\" (best=\"" + best
+                    + "\" count=" + max + ", fallback=\"" + fallback + "\")");
+            return result;
+        } catch (Exception e) {
+            Log.e(TAG, "inferCategoryFromHistory failed", e);
+            return fallback;
+        }
+    }
+
+    /**
+     * Sanitize the merchant/product keyword before history lookup.
+     * Returns null when the keyword is too short or too generic to be meaningful,
+     * so the caller falls back to the hardcoded category instead of polluting
+     * results with unrelated matches.
+     */
+    private String sanitizeHistoryKeyword(String keyword) {
+        if (keyword == null) return null;
+        String trimmed = keyword.trim();
+        if (trimmed.length() < 2) return null;
+        // Escape LIKE wildcards to avoid unintended pattern matching
+        trimmed = trimmed.replace("%", " ").replace("_", " ").trim();
+        if (trimmed.length() < 2) return null;
+        // Filter generic UI text and placeholders that match too many unrelated records
+        if (isGenericUiText(trimmed)) return null;
+        return trimmed;
+    }
+
+    /**
+     * Detect generic UI text from WeChat/Alipay bill detail pages that is NOT a merchant name.
+     * These strings appear near the amount or status areas and would pollute history lookups.
+     */
+    private boolean isGenericUiText(String text) {
+        if (text == null || text.isEmpty()) return true;
+        String t = text.trim();
+        if (t.length() < 2) return true;
+        // Status labels
+        if (t.contains("\u5F53\u524D\u72B6\u6001")      // 当前状态 (current status)
+                || t.contains("\u4EA4\u6613\u72B6\u6001")    // 交易状态
+                || t.contains("\u652F\u4ED8\u72B6\u6001")    // 支付状态
+                || t.contains("\u4EA4\u6613\u8BE6\u60C5")    // 交易详情
+                || t.contains("\u8D26\u5355\u8BE6\u60C5")    // 账单详情
+                || t.contains("\u5DF2\u652F\u4ED8")          // 已支付
+                || t.contains("\u5DF2\u5B8C\u6210")          // 已完成
+                || t.contains("\u5F85\u652F\u4ED8")          // 待支付
+                || t.contains("\u5DF2\u9000\u6B3E")          // 已退款
+                || t.contains("\u5DF2\u5173\u95ED")) {       // 已关闭
+            return true;
+        }
+        // Generic placeholders
+        if (t.equals("\u5FAE\u4FE1\u652F\u4ED8")           // WeChat Pay
+                || t.equals("\u652F\u4ED8\u5B9D\u8D26\u5355")    // Alipay Bill
+                || t.equals("\u652F\u4ED8\u5B9D")                // Alipay
+                || t.equals("\u5FAE\u4FE1")                       // WeChat
+                || t.equals("\u5546\u6237")                       // Merchant
+                || t.equals("\u5546\u54C1")                       // Product
+                || t.equals("\u4EA4\u6613")                       // Transaction
+                || t.equals("\u5FAE\u4FE1\u8D26\u5355")) {        // WeChat Bill
+            return true;
+        }
+        return false;
+    }
 
     private void triggerConfirmWindow(double amount, int type, String category, int assetId) {
 
@@ -2260,6 +2371,9 @@ public class SelectToSpeakService extends AccessibilityService {
 
             dao.insert(t);
 
+            Log.i(TAG, "saveToDatabase: inserted bill type=" + type
+                    + " category=\"" + category + "\" note=\"" + note + "\"");
+
 
 
             // 1. 同步目标资产(如存在)
@@ -2850,7 +2964,12 @@ public class SelectToSpeakService extends AccessibilityService {
 
             String finalDefaultCategory = defaultCategory;
 
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalDefaultCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
+            // 先查历史账单分类，查不到再用硬编码默认；查询在子线程执行避免阻塞主线程
+            final String finalMerchantInfo = merchantInfo;
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                String inferred = inferCategoryFromHistory(finalMerchantInfo, finalType, finalDefaultCategory);
+                handler.post(() -> showConfirmWindow(finalAmount, finalType, inferred, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
+            });
 
 
 
@@ -3285,8 +3404,12 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
             // 触发记账弹窗（type=0 为支出，默认分类这里设为“购物”或“餐饮”）
-
-            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "\u00A5"));
+            // 先查历史账单分类，查不到再用“购物”作为默认
+            final String finalMerchantInfo = merchantInfo;
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                String inferred = inferCategoryFromHistory(finalMerchantInfo, 0, "购物");
+                handler.post(() -> showConfirmWindow(finalAmount, 0, inferred, recordIdentifier, autoAssetId, "\u00A5"));
+            });
 
 
 
@@ -3750,6 +3873,19 @@ public class SelectToSpeakService extends AccessibilityService {
 
             if (note.isEmpty()) note = "微信账单";
 
+            // 提取商户全称，用于历史分类查询
+            // 优先用"商户全称/收款方"标签后的文本（最可靠），其次 directBelowNote（金额正下方）
+            String merchantName = "";
+            if (!merchantNote.isEmpty() && !isGenericUiText(merchantNote)) {
+                merchantName = merchantNote;
+            } else if (!directBelowNote.isEmpty() && !isGenericUiText(directBelowNote)) {
+                merchantName = directBelowNote;
+            }
+            // 将商户全称追加到 note，确保保存后能按商户名匹配到历史记录
+            if (!merchantName.isEmpty() && !note.equals(merchantName) && !note.contains(merchantName)) {
+                note = note + " - " + merchantName;
+            }
+
             if (note.length() > 50) note = note.substring(0, 48) + "...";
 
 
@@ -3841,8 +3977,13 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
             final String finalCategory = defaultCategory;
-
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
+            final String finalNote = note;
+            // 按商户全称查询历史分类（无商户名时回退到 note）
+            final String finalMerchantName = !merchantName.isEmpty() ? merchantName : note;
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                String inferred = inferCategoryFromHistory(finalMerchantName, finalType, finalCategory);
+                handler.post(() -> showConfirmWindow(finalAmount, finalType, inferred, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
+            });
 
 
 
@@ -4027,8 +4168,12 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
             // 弹出记账确认窗口（type=0 为支出，默认分类这里设为“购物”）
-
-            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "\u00A5"));
+            // 先查历史账单分类，查不到再用“购物”作为默认
+            final String finalMerchantInfo = merchantInfo;
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                String inferred = inferCategoryFromHistory(finalMerchantInfo, 0, "购物");
+                handler.post(() -> showConfirmWindow(finalAmount, 0, inferred, recordIdentifier, autoAssetId, "\u00A5"));
+            });
 
 
 
@@ -5643,8 +5788,12 @@ public class SelectToSpeakService extends AccessibilityService {
             // 【核心修复】：增加 final 关键字进行定格，满足 Lambda 表达式的语法要求
 
             final String finalCategory = defaultCategory;
-
-            handler.post(() -> showConfirmWindow(finalAmount, finalType, finalCategory, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
+            final String noteForLambda = finalNote;
+            // 先查历史账单分类，查不到再用硬编码默认；查询在子线程执行避免阻塞主线程
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                String inferred = inferCategoryFromHistory(noteForLambda, finalType, finalCategory);
+                handler.post(() -> showConfirmWindow(finalAmount, finalType, inferred, recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
+            });
 
             return true;
 

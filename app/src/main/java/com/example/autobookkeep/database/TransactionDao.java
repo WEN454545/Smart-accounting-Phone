@@ -31,4 +31,14 @@ public interface TransactionDao {
 
     @Query("SELECT SUM(amount) FROM transactions WHERE date >= :start AND date <= :end AND type = :type")
     Double getTotalAmountByType(long start, long end, int type);
+
+    /**
+     * Query historical categories by merchant or product keyword (fuzzy match on note/remark).
+     * Used to infer category for newly recognized bills based on past records.
+     * Ordered by date DESC so the most recent records take priority in voting.
+     */
+    @Query("SELECT category FROM transactions WHERE type = :type AND category IS NOT NULL AND category != '' " +
+            "AND (note LIKE '%' || :keyword || '%' OR remark LIKE '%' || :keyword || '%') " +
+            "ORDER BY date DESC LIMIT :limit")
+    List<String> getCategoriesByKeywordSync(int type, String keyword, int limit);
 }
