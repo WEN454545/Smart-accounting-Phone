@@ -1,11 +1,15 @@
 package com.example.myapplication.ui.stats;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +37,7 @@ public class StatsFragment extends Fragment {
     private TrendBarView trendView;
     private StatsViewModel viewModel;
     private LinearLayout legendExpense, legendIncome;
+    private ImageView ivPageBg;
 
     private TextView tvPeriodLabel, tvPeriodSubtitle, btnPeriodPrev, btnPeriodNext;
 
@@ -53,6 +58,9 @@ public class StatsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_stats, container, false);
 
         viewModel = new ViewModelProvider(this).get(StatsViewModel.class);
+
+        ivPageBg = view.findViewById(R.id.iv_page_bg);
+        loadPageBackground();
 
         pieExpenseChart = view.findViewById(R.id.chart_pie_expense);
         pieIncomeChart = view.findViewById(R.id.chart_pie_income);
@@ -116,6 +124,31 @@ public class StatsFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadPageBackground();
+    }
+
+    private void loadPageBackground() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("profile_settings", Context.MODE_PRIVATE);
+        String savedPath = prefs.getString("home_bg_uri", null);
+        if (savedPath != null) {
+            try {
+                if (savedPath.startsWith("content://")) {
+                    ivPageBg.setImageURI(Uri.parse(savedPath));
+                } else {
+                    ivPageBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
+                }
+                ivPageBg.setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                ivPageBg.setVisibility(View.GONE);
+            }
+        } else {
+            ivPageBg.setVisibility(View.GONE);
+        }
+    }
+
     private void updatePeriodLabel() {
         tvPeriodLabel.setText(viewModel.getPeriodLabel());
         String subtitle = viewModel.getPeriodSubtitle();
@@ -133,17 +166,17 @@ public class StatsFragment extends Fragment {
 
     private void updateTabStyle(StatsViewModel.Period p, TextView week, TextView month, TextView year) {
         int white = requireContext().getColor(android.R.color.white);
-        int muted = requireContext().getColor(R.color.muted);
+        int ink = requireContext().getColor(R.color.ink);
 
-        week.setTextColor(p == StatsViewModel.Period.WEEK ? white : muted);
+        week.setTextColor(p == StatsViewModel.Period.WEEK ? white : ink);
         week.setBackgroundResource(p == StatsViewModel.Period.WEEK ? R.drawable.bg_tab_selected : R.drawable.bg_tab_unselected);
         week.setTypeface(null, p == StatsViewModel.Period.WEEK ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
 
-        month.setTextColor(p == StatsViewModel.Period.MONTH ? white : muted);
+        month.setTextColor(p == StatsViewModel.Period.MONTH ? white : ink);
         month.setBackgroundResource(p == StatsViewModel.Period.MONTH ? R.drawable.bg_tab_selected : R.drawable.bg_tab_unselected);
         month.setTypeface(null, p == StatsViewModel.Period.MONTH ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
 
-        year.setTextColor(p == StatsViewModel.Period.YEAR ? white : muted);
+        year.setTextColor(p == StatsViewModel.Period.YEAR ? white : ink);
         year.setBackgroundResource(p == StatsViewModel.Period.YEAR ? R.drawable.bg_tab_selected : R.drawable.bg_tab_unselected);
         year.setTypeface(null, p == StatsViewModel.Period.YEAR ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
     }
@@ -284,7 +317,7 @@ public class StatsFragment extends Fragment {
             // Category name + percentage
             TextView label = new TextView(getContext());
             label.setText(String.format(java.util.Locale.CHINA, " %s %.1f%%", item.name, item.percentage));
-            label.setTextColor(Color.parseColor("#64748b"));
+            label.setTextColor(requireContext().getColor(R.color.ink));
             label.setTextSize(11f);
             label.setMaxLines(1);
             label.setEllipsize(android.text.TextUtils.TruncateAt.END);

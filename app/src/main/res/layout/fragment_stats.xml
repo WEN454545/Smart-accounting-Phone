@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bg"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_page_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +24,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_card"
+            android:background="@drawable/bg_card_semi"
             android:elevation="2dp"
             android:orientation="horizontal"
             android:padding="4dp">
@@ -27,7 +37,7 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="@string/stats_week"
-                android:textColor="@color/muted"
+                android:textColor="@color/ink"
                 android:textSize="13sp"
                 android:clickable="true"
                 android:focusable="true"
@@ -56,7 +66,7 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="@string/stats_year"
-                android:textColor="@color/muted"
+                android:textColor="@color/ink"
                 android:textSize="13sp"
                 android:clickable="true"
                 android:focusable="true"
@@ -70,7 +80,7 @@
             android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:background="@drawable/bg_card"
+            android:background="@drawable/bg_card_semi"
             android:elevation="2dp"
             android:padding="12dp">
 
@@ -86,7 +96,7 @@
                     android:layout_height="36dp"
                     android:gravity="center"
                     android:text="&lt;"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/ink"
                     android:textSize="20sp"
                     android:clickable="true"
                     android:focusable="true"
@@ -109,7 +119,7 @@
                     android:layout_height="36dp"
                     android:gravity="center"
                     android:text=">"
-                    android:textColor="@color/primary"
+                    android:textColor="@color/ink"
                     android:textSize="20sp"
                     android:clickable="true"
                     android:focusable="true"
@@ -123,7 +133,7 @@
                 android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:text="@string/stats_week_label"
-                android:textColor="@color/muted"
+                android:textColor="@color/ink"
                 android:textSize="12sp"
                 android:visibility="gone" />
         </LinearLayout>
@@ -132,7 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card"
+            android:background="@drawable/bg_card_semi"
             android:elevation="2dp"
             android:orientation="vertical"
             android:padding="16dp">
@@ -177,7 +187,7 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="16dp"
                     android:text="@string/cal_income"
-                    android:textColor="@color/muted"
+                    android:textColor="@color/ink"
                     android:textSize="14sp" />
 
                 <View
@@ -190,7 +200,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:text="@string/cal_expense"
-                    android:textColor="@color/muted"
+                    android:textColor="@color/ink"
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
@@ -199,7 +209,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card"
+            android:background="@drawable/bg_card_semi"
             android:elevation="2dp"
             android:orientation="vertical"
             android:padding="16dp">
@@ -231,7 +241,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card"
+            android:background="@drawable/bg_card_semi"
             android:elevation="2dp"
             android:orientation="vertical"
             android:padding="16dp">
@@ -260,3 +270,4 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+</FrameLayout>

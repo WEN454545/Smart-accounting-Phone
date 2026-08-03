@@ -31,6 +31,12 @@
     <color name="muted">#94a3b8</color>
     <color name="rule">#333333</color>
 
+    <!-- °ëÍ¸Ã÷¿¨Æ¬±³¾°£¨ËæÖ÷ÌâÇÐ»»£© -->
+    <color name="card_bg_semi">#B31a1a2e</color>
+    <color name="card_border_semi">#18FFFFFF</color>
+    <color name="cal_bar_bg_semi">#991a1a2e</color>
+    <color name="cal_grid_bg_semi">#CC1a1a2e</color>
+
     <!-- ·ÖÀàÑÕÉ«£¨°µÉ«ÊÊÅä£© -->
     <color name="cat_food">#422006</color>
     <color name="cat_transport">#1e3a5f</color>
