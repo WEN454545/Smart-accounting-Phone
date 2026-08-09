@@ -1,9 +1,13 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.widget.ImageView;
+import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +27,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private SessionManager sessionManager;
+    private ImageView ivGlobalBg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+
+        ivGlobalBg = findViewById(R.id.iv_global_bg);
+        loadGlobalBackground();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
@@ -66,6 +74,32 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadGlobalBackground();
+    }
+
+    private void loadGlobalBackground() {
+        SharedPreferences prefs = getSharedPreferences("profile_settings", Context.MODE_PRIVATE);
+        String savedPath = prefs.getString("home_bg_uri", null);
+        if (savedPath != null) {
+            try {
+                if (savedPath.startsWith("content://")) {
+                    Uri uri = Uri.parse(savedPath);
+                    ivGlobalBg.setImageURI(uri);
+                } else {
+                    ivGlobalBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
+                }
+                ivGlobalBg.setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                ivGlobalBg.setVisibility(View.GONE);
+            }
+        } else {
+            ivGlobalBg.setVisibility(View.GONE);
+        }
     }
 
     private boolean isAccessibilityServiceEnabled() {

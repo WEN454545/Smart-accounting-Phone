@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
     private SharedPreferences profilePrefs;
 
-    private ImageView ivHomeBg, ivHomeHeaderBg;
+    private ImageView ivHomeHeaderBg;
     private View vHeaderMask;
 
 
@@ -134,8 +134,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
         dateText = view.findViewById(R.id.tv_date);
 
-        ivHomeBg = view.findViewById(R.id.iv_home_bg);
-
         ivHomeHeaderBg = view.findViewById(R.id.iv_home_header_bg);
         vHeaderMask = view.findViewById(R.id.v_header_mask);
 
@@ -157,10 +155,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
             }
         });
 
-
-        // Load home background
-
-        loadHomeBackground();
 
         // Load home header background
         loadHomeHeaderBackground();
@@ -217,25 +211,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
     }
 
-    private void loadHomeBackground() {
-        String savedPath = profilePrefs.getString("home_bg_uri", null);
-        if (savedPath != null) {
-            try {
-                if (savedPath.startsWith("content://")) {
-                    Uri uri = Uri.parse(savedPath);
-                    ivHomeBg.setImageURI(uri);
-                } else {
-                    ivHomeBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
-                }
-                ivHomeBg.setVisibility(View.VISIBLE);
-            } catch (Exception e) {
-                ivHomeBg.setVisibility(View.GONE);
-            }
-        } else {
-            ivHomeBg.setVisibility(View.GONE);
-        }
-    }
-
     private void loadHomeHeaderBackground() {
         String savedPath = profilePrefs.getString("home_header_bg_uri", null);
         if (savedPath != null) {
@@ -263,7 +238,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     @Override
     public void onResume() {
         super.onResume();
-        loadHomeBackground();
         loadHomeHeaderBackground();
     }
 

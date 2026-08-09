@@ -1,158 +1,157 @@
 # Encoding Rules
 
-## 硬性规定
+## Ӳ�Թ涨
 
-- **所有项目源码文件必须使用 UTF-8 编码**，不得使用 GBK、GB2312、ISO-8859-1 等其他编码格式。
-- 所有 XML 声明头必须指定 `encoding="utf-8"`，且文件实际编码必须为 UTF-8。
-- 所有新的 `.java`、`.xml`、`.gradle`、`.properties`、`.py` 文件创建时必须保存为 UTF-8。
-- `.gitattributes` 已配置 `* text=auto working-tree-encoding=UTF-8`，确保 Git 正确处理编码。
+- **������ĿԴ���ļ�����ʹ�� UTF-8 ����**������ʹ�� GBK��GB2312��ISO-8859-1 �����������ʽ��
+- ���� XML ����ͷ����ָ�� `encoding="utf-8"`�����ļ�ʵ�ʱ������Ϊ UTF-8��
+- �����µ� `.java`��`.xml`��`.gradle`��`.properties`��`.py` �ļ�����ʱ���뱣��Ϊ UTF-8��
+- `.gitattributes` ������ `* text=auto working-tree-encoding=UTF-8`��ȷ�� Git ��ȷ�������롣
 
-## 编码检查
+## ������
 
-### 提交前检查
+### �ύǰ���
 
-每次提交前运行：
+ÿ���ύǰ���У�
 ```bash
 python check_all_encoding.py
 ```
 
-该脚本会扫描所有源码文件，报告编码异常（GBK 编码、乱码字符等）。
+�ýű���ɨ������Դ���ļ�����������쳣��GBK ���롢�����ַ��ȣ���
 
-### 修复编码问题
+### �޸���������
 
-如果发现编码问题，运行修复脚本：
+������ֱ������⣬�����޸��ű���
 ```bash
-# 修复整个项目
+# �޸�������Ŀ
 python fix_encoding.py
 
-# 修复单个文件
+# �޸������ļ�
 python fix_encoding.py "app\src\main\java\com\google\android\accessibility\selecttospeak\SelectToSpeakService.java"
 ```
 
-`fix_encoding.py` 会自动检测并转换以下情况：
-1. 直接 GBK 编码的文件 → 转为 UTF-8
-2. 双重编码损坏的文件（GBK → Latin-1 → UTF-8 误存）→ 还原为正确 UTF-8
-3. 已经是正确 UTF-8 的文件 → 跳过
+`fix_encoding.py` ���Զ���Ⲣת�����������
+1. ֱ�� GBK ������ļ� �� תΪ UTF-8
+2. ˫�ر����𻵵��ļ���GBK �� Latin-1 �� UTF-8 ��棩�� ��ԭΪ��ȷ UTF-8
+3. �Ѿ�����ȷ UTF-8 ���ļ� �� ����
 
-## 常见编码乱码原因
+## ������������ԭ��
 
-| 现象 | 原因 | 修复方式 |
+| ���� | ԭ�� | �޸���ʽ |
 |------|------|----------|
-| 中文显示为乱码（如 `鏅鸿兘璁拌处`） | 文件以 GBK 保存，IDE 以 UTF-8 打开 | `fix_encoding.py` |
-| 中文显示为问号 `?` | 文件损坏或双重编码错误 | `fix_encoding.py` |
-| XML 报 encoding 错误 | XML 声明与文件实际编码不一致 | 确保 XML 声明为 `utf-8`，文件也存为 UTF-8 |
+| ������ʾΪ���루�� `智能记账`�� | �ļ��� GBK ���棬IDE �� UTF-8 �� | `fix_encoding.py` |
+| ������ʾΪ�ʺ� `?` | �ļ��𻵻�˫�ر������ | `fix_encoding.py` |
+| XML �� encoding ���� | XML �������ļ�ʵ�ʱ��벻һ�� | ȷ�� XML ����Ϊ `utf-8`���ļ�Ҳ��Ϊ UTF-8 |
 
-## 注意事项
+## ע������
 
-- 每次创建或修改包含中文的文件后，务必确认文件保存为 UTF-8 编码。
-- 不要使用记事本默认保存（记事本默认使用 ANSI/GBK），推荐使用 VS Code 或 Android Studio 等 IDE。
-- Java 源文件中的中文注释和字符串常量同样受此规则约束。
-- AGENTS.md 和 CLAUDE.md 中关于编码的硬性约束具有最高优先级。
+- ÿ�δ������޸İ������ĵ��ļ������ȷ���ļ�����Ϊ UTF-8 ���롣
+- ��Ҫʹ�ü��±�Ĭ�ϱ��棨���±�Ĭ��ʹ�� ANSI/GBK�����Ƽ�ʹ�� VS Code �� Android Studio �� IDE��
+- Java Դ�ļ��е�����ע�ͺ��ַ�������ͬ���ܴ˹���Լ����
+- AGENTS.md �� CLAUDE.md �й��ڱ����Ӳ��Լ������������ȼ���
 
-## AI 工具环境编码陷阱（2026-08-02 实战经验）
+## AI ���߻����������壨2026-08-02 ʵս���飩
 
-### 根本原因
+### ����ԭ��
 
-在 Windows 中文系统上，AI 编码助手（Codex/Claude）的 Write / Edit 工具执行文件写入时，**系统默认编码为 GBK**。当中文或 emoji 字符通过工具写入文件时，会被自动转换为 GBK 字节存储，但文件声明的是 `encoding="utf-8"`，导致：
+�� Windows ����ϵͳ�ϣ�AI �������֣�Codex/Claude���� Write / Edit ����ִ���ļ�д��ʱ��**ϵͳĬ�ϱ���Ϊ GBK**�������Ļ� emoji �ַ�ͨ������д���ļ�ʱ���ᱻ�Զ�ת��Ϊ GBK �ֽڴ洢�����ļ��������� `encoding="utf-8"`�����£�
 
-- **XML 文件**：AAPT2 解析时报 encoding 错误，Mac 构建失败
-- **Java 文件**：javac 编译中文字符串时报 "unmappable character" 错误
-- **显示层面**：IDE 打开时中文和 emoji 显示为乱码（mojibake）、问号 `?` 或替换字符 `�`
+- **XML �ļ�**��AAPT2 ����ʱ�� encoding ����Mac ����ʧ��
+- **Java �ļ�**��javac ���������ַ���ʱ�� "unmappable character" ����
+- **��ʾ����**��IDE ��ʱ���ĺ� emoji ��ʾΪ���루mojibake�����ʺ� `?` ���滻�ַ� `�1�7`
 
-### 受影响字符类型
+### ��Ӱ���ַ�����
 
-| 字符类型 | 示例 | 损坏表现 | GBK 存储特点 |
+| �ַ����� | ʾ�� | �𻵱��� | GBK �洢�ص� |
 |----------|------|----------|--------------|
-| 中文字符 | 智能记账 | `鏅鸿兘璁拌处`（mojibake） | GBK 双字节被当作 Latin-1 解释为 UTF-8 |
-| 人民币符号 ¥ | ¥0.00 | `?0.00`（问号） | U+00A5 在 GBK→UTF-8 转换中丢失 |
-| Emoji 表情 | 🎨 💳 📝 | `�9�6` `�9�8`（替换字符） | Emoji（4 字节 UTF-8）在 GBK 中无对应，被破坏 |
-| 特殊符号 | └ ← → | `�6�9` `��`（替换字符） | 制表符/箭头在 GBK 中不完整 |
+| �����ַ� | ���ܼ��� | `智能记账`��mojibake�� | GBK ˫�ֽڱ����� Latin-1 ����Ϊ UTF-8 |
+| ����ҷ��� �0�6 | �0�60.00 | `?0.00`���ʺţ� | U+00A5 �� GBK��UTF-8 ת���ж�ʧ |
+| Emoji ���� | �9�6 �9�3 �9�5 | `�1�79�1�76` `�1�79�1�78`���滻�ַ��� | Emoji��4 �ֽ� UTF-8���� GBK ���޶�Ӧ�����ƻ� |
+| ������� | �� �� �� | `�1�76�1�79` `�1�7�1�7`���滻�ַ��� | �Ʊ���/��ͷ�� GBK �в����� |
 
-### 解决方法优先级
+### ����������ȼ�
 
-#### 方法一：运行 fix_encoding.py（最彻底）
+#### ����һ������ fix_encoding.py����ף�
 
 ```bash
 python fix_encoding.py
 ```
 
-脚本直接读取文件原始字节，检测 GBK→UTF-8，做真正的字节级编码转换。
+�ű�ֱ�Ӷ�ȡ�ļ�ԭʼ�ֽڣ���� GBK��UTF-8�����������ֽڼ�����ת����
 
-**注意**：在 PowerShell 执行策略受限的环境中，可能需要管理员权限：
+**ע��**���� PowerShell ִ�в������޵Ļ����У�������Ҫ����ԱȨ�ޣ�
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 python fix_encoding.py
 ```
 
-#### 方法二：XML NCR 格式（ASCII 安全，适合 XML 文件）
+#### ��������XML NCR ��ʽ��ASCII ��ȫ���ʺ� XML �ļ���
 
-将中文字符转为 XML 数字字符引用（NCR），纯 ASCII 无编码风险：
+�������ַ�תΪ XML �����ַ����ã�NCR������ ASCII �ޱ�����գ�
 
 ```xml
-<!-- 原始（会被破坏） -->
-<TextView android:text="智能记账" />
+<!-- ԭʼ���ᱻ�ƻ��� -->
+<TextView android:text="���ܼ���" />
 
-<!-- NCR 格式（ASCII 安全） -->
+<!-- NCR ��ʽ��ASCII ��ȫ�� -->
 <TextView android:text="&#x667A;&#x80FD;&#x8BB0;&#x8D26;" />
 ```
 
-常用转换：
-- `取消` → `&#x53D6;&#x6D88;`
-- `确定` → `&#x786E;&#x5B9A;`
-- `¥` → `&#xA5;`
-- `🎨` → `&#x1F3A8;`
+����ת����
+- `ȡ��` �� `&#x53D6;&#x6D88;`
+- `ȷ��` �� `&#x786E;&#x5B9A;`
+- `�0�6` �� `&#xA5;`
+- `�9�6` �� `&#x1F3A8;`
 
-Android 的 XML 解析器自动将 NCR 还原为 Unicode 字符，运行时无差异。
+Android �� XML �������Զ��� NCR ��ԭΪ Unicode �ַ�������ʱ�޲��졣
 
-#### 方法三：Java Unicode 转义（ASCII 安全，适合 Java 文件）
+#### ��������Java Unicode ת�壨ASCII ��ȫ���ʺ� Java �ļ���
 
 ```java
-// 原始（会被破坏）
-String text = "智能记账";
-Toast.makeText(this, "已记账", Toast.LENGTH_SHORT).show();
+// ԭʼ���ᱻ�ƻ���
+String text = "���ܼ���";
+Toast.makeText(this, "�Ѽ���", Toast.LENGTH_SHORT).show();
 
-// Unicode 转义（ASCII 安全）
+// Unicode ת�壨ASCII ��ȫ��
 String text = "\u667A\u80FD\u8BB0\u8D26";
 Toast.makeText(this, "\u5DF2\u8BB0\u8D26", Toast.LENGTH_SHORT).show();
 ```
 
-Emoji 需要代理对（surrogate pair）：
-- `💰` → `\uD83D\uDCB0`（收入图标）
-- `💳` → `\uD83D\uDCB3`（支出图标）
-- `¥` → `\u00A5`（人民币符号）
+Emoji ��Ҫ�����ԣ�surrogate pair����
+- `�9�0` �� `\uD83D\uDCB0`������ͼ�꣩
+- `�9�3` �� `\uD83D\uDCB3`��֧��ͼ�꣩
+- `�0�6` �� `\u00A5`������ҷ��ţ�
 
-### 快速排查清单
+### �����Ų��嵥
 
-遇到编码错误时，按以下顺序排查：
+�����������ʱ��������˳���Ų飺
 
-1. **运行 `python check_all_encoding.py`** — 扫描全项目编码状态
-2. **搜索 `??` 模式** — `\?\?` 出现在 Java/XML 文件中表示字符损坏
-3. **搜索 `¥` 符号** — 检查是否被破坏为 `?`，改用 `&#xA5;` 或 `\u00A5`
-4. **搜索 emoji 残留** — 搜索 `\uFFFD`（替换字符）或 `�` 字符
-5. **检查 XML 声明头** — 确保 `encoding="utf-8"` 与实际编码一致
-6. **运行 `python fix_encoding.py`** — 自动修复所有检测到的问题
+1. **���� `python check_all_encoding.py`** �� ɨ��ȫ��Ŀ����״̬
+2. **���� `??` ģʽ** �� `\?\?` ������ Java/XML �ļ��б�ʾ�ַ���
+3. **���� `�0�6` ����** �� ����Ƿ��ƻ�Ϊ `?`������ `&#xA5;` �� `\u00A5`
+4. **���� emoji ����** �� ���� `\uFFFD`���滻�ַ����� `�1�7` �ַ�
+5. **��� XML ����ͷ** �� ȷ�� `encoding="utf-8"` ��ʵ�ʱ���һ��
+6. **���� `python fix_encoding.py`** �� �Զ��޸����м�⵽������
 
-### 已修复的文件清单（2026-08-02）
+### ���޸����ļ��嵥��2026-08-02��
 
-以下文件曾出现 GBK 编码问题，已通过 NCR/Unicode 转义修复：
+�����ļ������� GBK �������⣬��ͨ�� NCR/Unicode ת���޸���
 
-**XML 文件（NCR 格式）：**
-- `res/values/strings.xml` — 全部 200+ 条目
-- `res/layout/window_confirm_transaction.xml` — 记账确认弹窗
-- `res/layout/window_confirm_transaction_simple.xml` — 极简样式弹窗
-- `res/layout/window_confirm_transaction_island.xml` — 灵动岛样式弹窗
-- `res/layout/dialog_bg_setting.xml` — 背景设置弹窗
-- `res/layout/dialog_personalize.xml` — 个性化设置弹窗
-- `res/layout/dialog_transaction_style.xml` — 交易提醒样式选择
-- `res/layout/dialog_permission_request.xml` — 权限请求弹窗
-- `res/layout/dialog_notification_settings.xml` — 通知设置弹窗
-- `res/layout/item_bill.xml` — 账单列表项
-- `res/layout/activity_user_manage.xml` — 用户管理页
-- `res/menu/bottom_nav_menu.xml` — 底部导航菜单
-- `res/values/colors.xml` — 颜色定义
-- 以及其他 8 个布局文件
+**XML �ļ���NCR ��ʽ����**
+- `res/values/strings.xml` �� ȫ�� 200+ ��Ŀ
+- `res/layout/window_confirm_transaction.xml` �� ����ȷ�ϵ�������׼��ʽ��
+- `res/layout/window_confirm_transaction_island.xml` �� ����ȷ�ϵ������鶯����ʽ��
+- `res/layout/dialog_bg_setting.xml` �� �������õ���
+- `res/layout/dialog_personalize.xml` �� ���Ի����õ���
+- `res/layout/dialog_transaction_style.xml` �� ����������ʽѡ��
+- `res/layout/dialog_permission_request.xml` �� Ȩ�����󵯴�
+- `res/layout/dialog_notification_settings.xml` �� ֪ͨ���õ���
+- `res/layout/item_bill.xml` �� �˵��б���
+- `res/layout/activity_user_manage.xml` �� �û�����ҳ
+- `res/menu/bottom_nav_menu.xml` �� �ײ������˵�
+- `res/values/colors.xml` �� ��ɫ����
+- �Լ����� 8 �������ļ�
 
-**Java 文件（Unicode 转义格式）：**
-- `SelectToSpeakService.java` — 无障碍服务核心（30+ 处修复）
-- `HomeFragment.java` — 首页（22 处修复）
-- `AllBillsFragment.java` — 全部账单（11 处修复）
+**Java �ļ���Unicode ת���ʽ����**
+- `SelectToSpeakService.java` �� ���ϰ�������ģ�30+ ���޸���
+- `HomeFragment.java` �� ��ҳ��22 ���޸���
+- `AllBillsFragment.java` �� ȫ���˵���11 ���޸���

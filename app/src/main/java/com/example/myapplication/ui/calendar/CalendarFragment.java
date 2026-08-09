@@ -44,7 +44,6 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
     private ImageButton btnPrev, btnNext;
     private LinearLayout calendarGrid;
     private ImageView ivCalendarBg;
-    private ImageView ivPageBg;
     private LinearLayout selectedDayBar;
     private LinearLayout emptyHint;
     private RecyclerView rvDayBills;
@@ -64,7 +63,6 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         expenseText = view.findViewById(R.id.tv_cal_expense);
         calendarGrid = view.findViewById(R.id.calendar_grid);
         ivCalendarBg = view.findViewById(R.id.iv_calendar_bg);
-        ivPageBg = view.findViewById(R.id.iv_page_bg);
         btnPrev = view.findViewById(R.id.btn_prev_month);
         btnNext = view.findViewById(R.id.btn_next_month);
         selectedDayBar = view.findViewById(R.id.selected_day_bar);
@@ -130,7 +128,6 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         });
 
         loadCalendarBackground();
-        loadPageBackground();
 
         return view;
     }
@@ -139,27 +136,7 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
     public void onResume() {
         super.onResume();
         loadCalendarBackground();
-        loadPageBackground();
         viewModel.reloadMonthData();
-    }
-
-    private void loadPageBackground() {
-        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String savedPath = prefs.getString("home_bg_uri", null);
-        if (savedPath != null) {
-            try {
-                if (savedPath.startsWith("content://")) {
-                    ivPageBg.setImageURI(Uri.parse(savedPath));
-                } else {
-                    ivPageBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
-                }
-                ivPageBg.setVisibility(View.VISIBLE);
-            } catch (Exception e) {
-                ivPageBg.setVisibility(View.GONE);
-            }
-        } else {
-            ivPageBg.setVisibility(View.GONE);
-        }
     }
 
     private void loadCalendarBackground() {
@@ -308,7 +285,7 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
             dayNumTv.setBackgroundResource(R.drawable.bg_today);
             dayNumTv.setPadding(dp4, dp4/2, dp4, dp4/2);
             if (!isSelected) {
-                dayNumTv.setTextColor(requireContext().getColor(R.color.ink));
+                dayNumTv.setTextColor(requireContext().getColor(R.color.primary));
             }
         }
 

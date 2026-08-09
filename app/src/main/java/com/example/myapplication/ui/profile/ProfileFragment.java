@@ -90,7 +90,6 @@ public class ProfileFragment extends Fragment {
     private SwitchCompat switchNotify;
     private ScalableVideoView profileVideo;
     private ImageView ivProfileBg;
-    private ImageView ivPageBg;
     private TextView tvBgStatus;
     private TextView tvTransactionStyleValue;
     private boolean isSettingSwitchProgrammatically;
@@ -179,11 +178,9 @@ public class ProfileFragment extends Fragment {
         switchNotify = view.findViewById(R.id.switch_notify);
         profileVideo = view.findViewById(R.id.profile_video);
         ivProfileBg = view.findViewById(R.id.iv_profile_bg);
-        ivPageBg = view.findViewById(R.id.iv_page_bg);
         tvBgStatus = view.findViewById(R.id.tv_bg_status);
         tvTransactionStyleValue = view.findViewById(R.id.tv_transaction_style_value);
         setupBackground();
-        loadPageBackground();
 
         // Load saved avatar
         loadAvatar();
@@ -811,27 +808,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadPageBackground();
         if (profileVideo != null && profileVideo.getVisibility() == View.VISIBLE && !profileVideo.isPlaying()) {
             profileVideo.start();
-        }
-    }
-
-    private void loadPageBackground() {
-        String savedPath = profilePrefs.getString(KEY_HOME_BG_URI, null);
-        if (savedPath != null) {
-            try {
-                if (savedPath.startsWith("content://")) {
-                    ivPageBg.setImageURI(Uri.parse(savedPath));
-                } else {
-                    ivPageBg.setImageURI(Uri.fromFile(new java.io.File(savedPath)));
-                }
-                ivPageBg.setVisibility(View.VISIBLE);
-            } catch (Exception e) {
-                ivPageBg.setVisibility(View.GONE);
-            }
-        } else {
-            ivPageBg.setVisibility(View.GONE);
         }
     }
 

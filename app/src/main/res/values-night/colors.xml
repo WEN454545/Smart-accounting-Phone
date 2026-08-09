@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- °µÉ«Ä£Ê½»ù´¡ÑÕÉ« -->
+    <!-- è‡ªåŠ¨è®°è´¦æ‰©å±•é¢œè‰² -->
     <color name="bar_background">#121212</color>
     <color name="white">#1e1e1e</color>
     <color name="text_white">#ffffff</color>
@@ -17,7 +17,7 @@
     <color name="icon_secondary">#94a3b8</color>
     <color name="switch_track_off">#555555</color>
 
-    <!-- Ö÷ÌâÉ«£¨±£³ÖÓëÇ³É«Ä£Ê½Ò»ÖÂ£© -->
+    <!-- ä¸»åº”ç”¨é¢œè‰²ï¼ˆæ·±è‰²æ¨¡å¼ï¼‰ -->
     <color name="primary">#0d9488</color>
     <color name="primary_dark">#0f766e</color>
     <color name="primary_light">#134e4a</color>
@@ -30,14 +30,17 @@
     <color name="ink">#f1f5f9</color>
     <color name="muted">#94a3b8</color>
     <color name="rule">#333333</color>
+    <color name="surface_semi">#DD1e1e1e</color>
+    <color name="surface_light">#B31e1e1e</color>
 
-    <!-- °ëÍ¸Ã÷¿¨Æ¬±³¾°£¨ËæÖ÷ÌâÇÐ»»£© -->
-    <color name="card_bg_semi">#B31a1a2e</color>
-    <color name="card_border_semi">#18FFFFFF</color>
-    <color name="cal_bar_bg_semi">#991a1a2e</color>
-    <color name="cal_grid_bg_semi">#CC1a1a2e</color>
+    <!-- åŠé€æ˜ŽèƒŒæ™¯è‰²ï¼ˆæ·±è‰²æ¨¡å¼ï¼‰ -->
+    <color name="card_semi_bg">#B31E1E1E</color>
+    <color name="cal_card_bg">#F01e1e1e</color>
+    <color name="header_mask">#88000000</color>
+    <color name="placeholder_bg">#2a2a2a</color>
+    <color name="bg_light">#2a2a2a</color>
 
-    <!-- ·ÖÀàÑÕÉ«£¨°µÉ«ÊÊÅä£© -->
+    <!-- åˆ†ç±»é¢œè‰²ï¼ˆæ·±è‰²æ¨¡å¼ï¼‰ -->
     <color name="cat_food">#422006</color>
     <color name="cat_transport">#1e3a5f</color>
     <color name="cat_shopping">#471a33</color>

@@ -44,11 +44,11 @@
     <color name="muted">#64748b</color>
     <color name="rule">#e2e8f0</color>
 
-    <!-- °ëÍ¸Ã÷¿¨Æ¬±³¾°£¨ËæÖ÷ÌâÇÐ»»£© -->
-    <color name="card_bg_semi">#BFFFFFFF</color>
-    <color name="card_border_semi">#18FFFFFF</color>
-    <color name="cal_bar_bg_semi">#99FFFFFF</color>
-    <color name="cal_grid_bg_semi">#CCFFFFFF</color>
+    <color name="card_semi_bg">#BFFFFFFF</color>
+    <color name="cal_card_bg">#F0FFFFFF</color>
+    <color name="header_mask">#88666666</color>
+    <color name="placeholder_bg">#F0F4F8</color>
+    <color name="bg_light">#E8ECF0</color>
 
     <color name="cat_food">#fef3c7</color>
     <color name="cat_transport">#dbeafe</color>

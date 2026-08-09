@@ -4,13 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/iv_home_bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:visibility="gone" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,7 +29,7 @@
                 android:id="@+id/v_header_mask"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#88666666"
+                android:background="@color/header_mask"
                 android:visibility="gone" />
 
             <LinearLayout

@@ -67,7 +67,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:background="#F0F4F8">
+                android:background="@color/placeholder_bg">
 
                 <View
                     android:layout_width="48dp"
@@ -136,7 +136,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/ink"
                 android:background="@drawable/bg_dialog_rounded"
-                android:backgroundTint="#E8ECF0"
+                android:backgroundTint="@color/bg_light"
                 android:clickable="true"
                 android:focusable="true" />
         </LinearLayout>

@@ -69,7 +69,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:background="#F0F4F8">
+                android:background="@color/placeholder_bg">
 
                 <View
                     android:layout_width="48dp"

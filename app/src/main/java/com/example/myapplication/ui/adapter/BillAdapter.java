@@ -3,6 +3,7 @@ package com.example.myapplication.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.data.entity.Bill;
+import com.example.myapplication.util.CategoryIconHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,9 +75,9 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         holder.amount.setText((isIncome ? "+" : "-") + "\u00A5" + String.format(Locale.CHINA, "%.2f", Math.abs(bill.getAmount())));
         holder.amount.setTextColor(holder.itemView.getContext().getColor(isIncome ? R.color.income : R.color.expense));
 
-        holder.icon.setText(getIconForType(bill.getType()));
         int bgColor = getBgColorForType(bill.getType());
-        holder.icon.setBackgroundColor(holder.itemView.getContext().getColor(bgColor));
+        CategoryIconHelper.bindIcon(holder.icon, holder.iconImage, bill.getType(),
+                getIconForType(bill.getType()), bgColor, holder.itemView.getContext());
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onBillClick(bill);
@@ -141,10 +143,12 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView icon, title, meta, amount;
+        ImageView iconImage;
 
         ViewHolder(View itemView) {
             super(itemView);
             icon = itemView.findViewById(R.id.bill_icon);
+            iconImage = itemView.findViewById(R.id.bill_icon_image);
             title = itemView.findViewById(R.id.bill_title);
             meta = itemView.findViewById(R.id.bill_meta);
             amount = itemView.findViewById(R.id.bill_amount);

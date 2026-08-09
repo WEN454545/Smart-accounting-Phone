@@ -38,7 +38,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/bg_icon_circle"
-            android:backgroundTint="#E8F5E9">
+            android:backgroundTint="@color/income_bg">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
                 android:text="&#x6807;"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#2E7D32" />
+                android:textColor="@color/income" />
         </FrameLayout>
 
         <TextView
@@ -92,7 +92,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/bg_icon_circle"
-            android:backgroundTint="#E3F2FD">
+            android:backgroundTint="@color/primary_light">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
                 android:text="&#x7075;"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#1565C0" />
+                android:textColor="@color/primary" />
         </FrameLayout>
 
         <TextView

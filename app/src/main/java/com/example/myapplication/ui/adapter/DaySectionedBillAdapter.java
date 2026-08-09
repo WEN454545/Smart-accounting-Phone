@@ -3,6 +3,7 @@ package com.example.myapplication.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.data.entity.Bill;
+import com.example.myapplication.util.CategoryIconHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -190,11 +192,13 @@ public class DaySectionedBillAdapter extends RecyclerView.Adapter<DaySectionedBi
 
         static class ViewHolder extends RecyclerView.ViewHolder {
             private final TextView iconText, titleText, amountText, metaText;
+            private final ImageView iconImage;
             private final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 iconText = itemView.findViewById(R.id.bill_icon);
+                iconImage = itemView.findViewById(R.id.bill_icon_image);
                 titleText = itemView.findViewById(R.id.bill_title);
                 amountText = itemView.findViewById(R.id.bill_amount);
                 metaText = itemView.findViewById(R.id.bill_meta);
@@ -203,9 +207,8 @@ public class DaySectionedBillAdapter extends RecyclerView.Adapter<DaySectionedBi
             void bind(Bill bill, BillAdapter.OnBillClickListener listener,
                            BillAdapter.OnBillLongClickListener longClickListener) {
                 String emoji = getIconForType(bill.getType());
-                iconText.setText(emoji);
                 int bgColor = getBgColorForType(bill.getType());
-                iconText.setBackgroundColor(itemView.getContext().getColor(bgColor));
+                CategoryIconHelper.bindIcon(iconText, iconImage, bill.getType(), emoji, bgColor, itemView.getContext());
 
                 titleText.setText(bill.getType());
 

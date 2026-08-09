@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/iv_page_bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:visibility="gone" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -85,6 +74,15 @@
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/ic_mora" />
                         </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:alpha="0.8"
+                            android:text="@string/profile_avatar_change"
+                            android:textColor="@android:color/white"
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -156,9 +154,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/bg"
+                    android:backgroundTint="@color/surface_semi"
                     android:text="@string/profile_import"
-                    android:textColor="@color/ink"
+                    android:textColor="@color/muted"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -167,9 +165,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:backgroundTint="@color/bg"
+                android:backgroundTint="@color/surface_semi"
                 android:text="@string/profile_download"
-                android:textColor="@color/ink"
+                android:textColor="@color/muted"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -196,9 +194,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="@color/bg"
+                android:backgroundTint="@color/surface_semi"
                 android:text="@string/profile_manage"
-                android:textColor="@color/ink"
+                android:textColor="@color/muted"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -274,7 +272,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_bg_customize"
-                    android:textColor="@color/ink"
+                    android:textColor="@color/muted"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -311,7 +309,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/profile_transaction_style_desc"
-                        android:textColor="@color/ink"
+                        android:textColor="@color/muted"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
@@ -321,7 +319,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/style_standard"
-                    android:textColor="@color/ink"
+                    android:textColor="@color/muted"
                     android:textSize="13sp" />
             </LinearLayout>
 
@@ -353,7 +351,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="12.5 MB"
-                    android:textColor="@color/ink"
+                    android:textColor="@color/muted"
                     android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
@@ -371,4 +369,3 @@
 
     </LinearLayout>
 </ScrollView>
-</FrameLayout>
