@@ -4,18 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    android:paddingTop="18dp"
+    android:paddingTop="20dp"
     android:paddingBottom="12dp">
-
-    <!-- Title -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="&#x9009;&#x62E9;&#x4EA4;&#x6613;&#x63D0;&#x9192;&#x6837;&#x5F0F;"
-        android:textColor="@color/ink"
-        android:textSize="18sp"
-        android:textStyle="bold" />
 
     <!-- Standard -->
     <LinearLayout

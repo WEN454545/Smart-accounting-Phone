@@ -182,17 +182,17 @@ public class AssistantManagerActivity extends AppCompatActivity {
         String manufacturer = android.os.Build.MANUFACTURER.toLowerCase();
         String guide;
         if (manufacturer.contains("xiaomi") || manufacturer.contains("redmi")) {
-            guide = "小米/红米自启动设置：\n1. 打开「手机管家」\n2. 点击「应用管理」→「权限」\n3. 找到「智能记账」\n4. 开启「自启动」权限";
+            guide = getString(R.string.auto_start_guide_xiaomi);
         } else if (manufacturer.contains("huawei") || manufacturer.contains("honor")) {
-            guide = "华为/荣耀自启动设置：\n1. 打开「手机管家」\n2. 点击「应用启动管理」\n3. 找到「智能记账」\n4. 关闭「自动管理」，允许自启动";
+            guide = getString(R.string.auto_start_guide_huawei);
         } else if (manufacturer.contains("oppo")) {
-            guide = "OPPO自启动设置：\n1. 打开「手机管家」\n2. 点击「权限隐私」→「自启动管理」\n3. 找到「智能记账」并开启";
+            guide = getString(R.string.auto_start_guide_oppo);
         } else if (manufacturer.contains("vivo")) {
-            guide = "vivo自启动设置：\n1. 打开「i管家」\n2. 点击「应用管理」→「权限管理」\n3. 找到「智能记账」\n4. 开启「自启动」";
+            guide = getString(R.string.auto_start_guide_vivo);
         } else if (manufacturer.contains("samsung")) {
-            guide = "三星自启动设置：\n1. 打开「智能管理器」\n2. 点击「电池」→「应用程序管理」\n3. 找到「智能记账」\n4. 关闭「使应用程序进入休眠」";
+            guide = getString(R.string.auto_start_guide_samsung);
         } else {
-            guide = "请在手机设置中搜索「自启动」或「启动管理」\n找到「智能记账」并开启自启动权限\n\n如找不到，请在「电池」或「应用管理」中查找";
+            guide = getString(R.string.auto_start_guide_other);
         }
         new AlertDialog.Builder(this)
                 .setTitle(R.string.auto_start_guide_title)

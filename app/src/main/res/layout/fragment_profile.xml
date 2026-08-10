@@ -138,26 +138,28 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_export"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/primary"
-                    android:text="@string/profile_export"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp" />
+                android:id="@+id/btn_export"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_tab_selected"
+                android:backgroundTint="@color/primary"
+                android:text="@string/profile_export"
+                android:textColor="@android:color/white"
+                android:textSize="13sp" />
 
-                <Button
-                    android:id="@+id/btn_import"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/surface_semi"
-                    android:text="@string/profile_import"
-                    android:textColor="@color/muted"
-                    android:textSize="13sp" />
+            <Button
+                android:id="@+id/btn_import"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_dialog_rounded"
+                android:backgroundTint="@color/surface_semi"
+                android:text="@string/profile_import"
+                android:textColor="@color/muted"
+                android:textSize="13sp" />
             </LinearLayout>
 
             <Button

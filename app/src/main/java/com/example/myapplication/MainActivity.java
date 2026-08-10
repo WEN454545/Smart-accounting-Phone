@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(MyApplication.getThemeResId());
         super.onCreate(savedInstanceState);
 
         sessionManager = new SessionManager(this);
@@ -119,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
     private void checkAccessibilityPermission() {
         if (!isAccessibilityServiceEnabled()) {
             new AlertDialog.Builder(this)
-                    .setTitle("无障碍服务未开启")
-                    .setMessage("请在系统设置中开启「智能记账」的无障碍服务，否则无法自动识别屏幕账单")
-                    .setPositiveButton("去设置", (d, w) -> {
+                    .setTitle(R.string.main_accessibility_title)
+                    .setMessage(R.string.main_accessibility_message)
+                    .setPositiveButton(R.string.main_go_settings, (d, w) -> {
                         startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     })
                     .setCancelable(false)
@@ -132,9 +133,9 @@ public class MainActivity extends AppCompatActivity {
     private void checkOverlayPermission() {
         if (!Settings.canDrawOverlays(this)) {
             new AlertDialog.Builder(this)
-                    .setTitle("悬浮窗权限未开启")
-                    .setMessage("请在系统设置中开启「智能记账」的悬浮窗权限，否则无法显示记账确认窗口")
-                    .setPositiveButton("去设置", (d, w) -> {
+                    .setTitle(R.string.main_overlay_title)
+                    .setMessage(R.string.main_overlay_message)
+                    .setPositiveButton(R.string.main_go_settings, (d, w) -> {
                         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                                 Uri.parse("package:" + getPackageName()));
                         startActivity(intent);

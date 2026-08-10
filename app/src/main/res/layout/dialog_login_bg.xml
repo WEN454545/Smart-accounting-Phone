@@ -26,7 +26,7 @@
                 android:layout_height="48dp"
                 android:gravity="center"
                 android:background="@drawable/bg_dialog_rounded"
-                android:text="\ud83d\udd12"
+                android:text="&#x1F512;"
                 android:textSize="22sp"
                 android:layout_marginBottom="10dp" />
 

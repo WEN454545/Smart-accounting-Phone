@@ -68,7 +68,7 @@ def check_encoding(filepath):
 
     # 检查是否有乱码字符（跳过本脚本自身和AGENTS.md/CLAUDE.md中的定义）
     filename = os.path.basename(filepath)
-    if any(b > 127 for b in data) and filename != 'check_all_encoding.py':
+    if any(b > 127 for b in data) and filename not in ('check_all_encoding.py', 'ENCODING.md'):
         for gar in MOJIBAKE_CHARS:
             if gar in text:
                 lines = text.split('\n')

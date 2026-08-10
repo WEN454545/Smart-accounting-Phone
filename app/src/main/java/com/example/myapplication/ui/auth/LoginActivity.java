@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(com.example.myapplication.MyApplication.getThemeResId());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 

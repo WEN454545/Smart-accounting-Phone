@@ -45,6 +45,8 @@ import com.example.myapplication.data.entity.Bill;
 import com.example.myapplication.data.repository.BillRepository;
 import com.example.myapplication.ui.auth.ScalableVideoView;
 import com.example.myapplication.ui.crop.CropImageActivity;
+import com.example.myapplication.util.CategoryIconHelper;
+import com.example.myapplication.util.ColorSchemeManager;
 import com.example.myapplication.util.ImageUtils;
 
 import java.io.File;
@@ -317,6 +319,11 @@ public class ProfileFragment extends Fragment {
         dialogView.findViewById(R.id.opt_home_header_bg).setOnClickListener(v -> {
             dialog.dismiss();
             showHomeHeaderBgSettingDialog();
+        });
+
+        dialogView.findViewById(R.id.opt_color_scheme).setOnClickListener(v -> {
+            dialog.dismiss();
+            showColorSchemeDialog();
         });
 
         dialogView.findViewById(R.id.btn_personalize_cancel).setOnClickListener(v -> dialog.dismiss());
@@ -1147,13 +1154,14 @@ public class ProfileFragment extends Fragment {
 
         dialog.show();
 
-        // Set dialog width to 85% of screen width to avoid content squeezing
+        // Set dialog width to 85% of screen width and center on screen
         Window window = dialog.getWindow();
         if (window != null) {
             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
             lp.copyFrom(window.getAttributes());
             lp.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.85);
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            lp.gravity = android.view.Gravity.CENTER;
             window.setAttributes(lp);
         }
     }
@@ -1170,6 +1178,84 @@ public class ProfileFragment extends Fragment {
                         .setDuration(120)
                         .start())
                 .start();
+    }
+
+    private void showColorSchemeDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_color_scheme, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        RadioButton rbTeal = dialogView.findViewById(R.id.rb_scheme_teal);
+        RadioButton rbLavender = dialogView.findViewById(R.id.rb_scheme_lavender);
+        RadioButton rbOcean = dialogView.findViewById(R.id.rb_scheme_ocean);
+        View optTeal = dialogView.findViewById(R.id.opt_scheme_teal);
+        View optLavender = dialogView.findViewById(R.id.opt_scheme_lavender);
+        View optOcean = dialogView.findViewById(R.id.opt_scheme_ocean);
+
+        RadioButton[] radioButtons = {rbTeal, rbLavender, rbOcean};
+        View[] cards = {optTeal, optLavender, optOcean};
+
+        Runnable clearSelection = () -> {
+            for (RadioButton rb : radioButtons) rb.setChecked(false);
+            for (View card : cards) {
+                card.setBackgroundResource(R.drawable.bg_style_card);
+            }
+        };
+
+        class SchemeSelector {
+            void select(RadioButton rb, View card) {
+                clearSelection.run();
+                rb.setChecked(true);
+                card.setBackgroundResource(R.drawable.bg_style_card_selected);
+            }
+        }
+        SchemeSelector selector = new SchemeSelector();
+
+        // Set current selection
+        String currentScheme = ColorSchemeManager.getSelectedScheme(requireContext());
+        switch (currentScheme) {
+            case ColorSchemeManager.SCHEME_LAVENDER_DREAM:
+                selector.select(rbLavender, optLavender);
+                break;
+            case ColorSchemeManager.SCHEME_OCEAN_MINT:
+                selector.select(rbOcean, optOcean);
+                break;
+            default:
+                selector.select(rbTeal, optTeal);
+                break;
+        }
+
+        optTeal.setOnClickListener(v -> {
+            selector.select(rbTeal, optTeal);
+            animateCardPress(optTeal);
+        });
+        optLavender.setOnClickListener(v -> {
+            selector.select(rbLavender, optLavender);
+            animateCardPress(optLavender);
+        });
+        optOcean.setOnClickListener(v -> {
+            selector.select(rbOcean, optOcean);
+            animateCardPress(optOcean);
+        });
+
+        dialogView.findViewById(R.id.btn_scheme_apply).setOnClickListener(v -> {
+            String selectedScheme;
+            if (rbLavender.isChecked()) {
+                selectedScheme = ColorSchemeManager.SCHEME_LAVENDER_DREAM;
+            } else if (rbOcean.isChecked()) {
+                selectedScheme = ColorSchemeManager.SCHEME_OCEAN_MINT;
+            } else {
+                selectedScheme = ColorSchemeManager.SCHEME_TEAL_SAKURA;
+            }
+            ColorSchemeManager.setSelectedScheme(requireContext(), selectedScheme);
+            dialog.dismiss();
+            requireActivity().recreate();
+        });
+
+        dialogView.findViewById(R.id.btn_scheme_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void logout() {

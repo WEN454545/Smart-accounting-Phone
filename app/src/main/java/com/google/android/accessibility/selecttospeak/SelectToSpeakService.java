@@ -862,31 +862,31 @@ public class SelectToSpeakService extends AccessibilityService {
 
     private String getAppNameReadable(String packageName) {
 
-        if (packageName == null) return "自动记账";
+        if (packageName == null) return getString(R.string.svc_app_auto_bookkeep);
 
         String pkg = packageName.toLowerCase();
 
-        if (pkg.contains("tencent.mm")) return "微信";
+        if (pkg.contains("tencent.mm")) return getString(R.string.svc_app_wechat);
 
-        if (pkg.contains("alipay")) return "支付宝";
+        if (pkg.contains("alipay")) return getString(R.string.svc_app_alipay);
 
-        if (pkg.contains("taobao")) return "淘宝";
+        if (pkg.contains("taobao")) return getString(R.string.svc_app_taobao);
 
-        if (pkg.equals("com.jingdong.app.mall")) return "京东"; // 【修改】：使用真实的京东全包名
+        if (pkg.equals("com.jingdong.app.mall")) return getString(R.string.svc_app_jingdong); // 【修改】：使用真实的京东全包名
 
-        if (pkg.contains("pinduoduo")) return "拼多多";
+        if (pkg.contains("pinduoduo")) return getString(R.string.svc_app_pinduoduo);
 
-        if (pkg.equals("com.ss.android.ugc.aweme")) return "抖音";
+        if (pkg.equals("com.ss.android.ugc.aweme")) return getString(R.string.svc_app_douyin);
 
-        if (pkg.contains("meituan")) return "美团";
+        if (pkg.contains("meituan")) return getString(R.string.svc_app_meituan);
 
-        if (pkg.equals("com.aliyun.tongyi")) return "通义千问";
+        if (pkg.equals("com.aliyun.tongyi")) return getString(R.string.svc_app_tongyiqianwen);
 
-        if (pkg.equals("com.unionpay")) return "云闪付";
+        if (pkg.equals("com.unionpay")) return getString(R.string.svc_app_unionpay);
 
-        if (pkg.equals("com.ss.android.ugc.lifeservices")) return "抖省省";
+        if (pkg.equals("com.ss.android.ugc.lifeservices")) return getString(R.string.svc_app_doushengsheng);
 
-        return "自动记账";
+        return getString(R.string.svc_app_auto_bookkeep);
 
     }
 
@@ -1361,7 +1361,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             int finalAssetId = (matchedAssetId > 0) ? matchedAssetId : 0;
 
-            saveToDatabase(amount, type, category, null, note + " (自动屏幕记账)", "", finalAssetId, initialSymbol, "", transactionTime);
+            saveToDatabase(amount, type, category, null, note + " (" + getString(R.string.svc_source_auto) + ")", "", finalAssetId, initialSymbol, "", transactionTime);
 
             return;
 
@@ -1524,7 +1524,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     updateDotUi.run();
 
-                    Toast.makeText(this, isExcludedFromBudget[0] ? "该笔账单将不计入预算" : "该笔账单正常计入预算", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, isExcludedFromBudget[0] ? getString(R.string.svc_toast_budget_excluded) : getString(R.string.svc_toast_budget_included), Toast.LENGTH_SHORT).show();
 
                 });
 
@@ -1690,17 +1690,17 @@ public class SelectToSpeakService extends AccessibilityService {
 
                 if (type == 0 && (category.equals("微信") || category.equals("支付宝") || category.equals("淘宝") || category.equals("京东") || category.equals("拼多多"))) {
 
-                    selectedCategory[0] = "购物";
+                    selectedCategory[0] = getString(R.string.svc_cat_shopping);
 
                 } else if (type == 0 && category.equals("美团")) {
 
-                    selectedCategory[0] = "餐饮";
+                    selectedCategory[0] = getString(R.string.svc_cat_food);
 
                 } else {
 
                     // 未知分类默认选中"其他"
 
-                    selectedCategory[0] = "其他";
+                    selectedCategory[0] = getString(R.string.svc_cat_other);
 
                 }
 
@@ -1716,7 +1716,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                 // 只有选中"其他"时才显示自定义输入框
 
-                etCategory.setVisibility("其他".equals(cat) ? View.VISIBLE : View.GONE);
+                etCategory.setVisibility(getString(R.string.svc_cat_other).equals(cat) ? View.VISIBLE : View.GONE);
 
             });
 
@@ -1724,7 +1724,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 初始状态下，如果默认选中"其他"，也要显示自定义输入框
 
-            if ("其他".equals(selectedCategory[0])) {
+            if (getString(R.string.svc_cat_other).equals(selectedCategory[0])) {
 
                 etCategory.setVisibility(View.VISIBLE);
 
@@ -1736,7 +1736,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             categoryAdapter.setOnCategoryLongClickListener(cat -> {
 
-                if (CategoryManager.isSubCategoryEnabled(this) && !"其他".equals(cat)) {
+                if (CategoryManager.isSubCategoryEnabled(this) && !getString(R.string.svc_cat_other).equals(cat)) {
 
                     if (!cat.equals(selectedCategory[0])) {
 
@@ -1782,7 +1782,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     categoryAdapter.updateData(incomeCategories);
 
-                    String first = incomeCategories.isEmpty() ? "其他" : incomeCategories.get(0);
+                    String first = incomeCategories.isEmpty() ? getString(R.string.svc_cat_other) : incomeCategories.get(0);
 
                     categoryAdapter.setSelectedCategory(first);
 
@@ -1790,7 +1790,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     selectedSubCategory = null;
 
-                    etCategory.setVisibility("其他".equals(first) ? View.VISIBLE : View.GONE);
+                    etCategory.setVisibility(getString(R.string.svc_cat_other).equals(first) ? View.VISIBLE : View.GONE);
 
                 } else {
 
@@ -1798,7 +1798,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     categoryAdapter.updateData(expenseCategories);
 
-                    String first = expenseCategories.isEmpty() ? "其他" : expenseCategories.get(0);
+                    String first = expenseCategories.isEmpty() ? getString(R.string.svc_cat_other) : expenseCategories.get(0);
 
                     categoryAdapter.setSelectedCategory(first);
 
@@ -1806,7 +1806,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     selectedSubCategory = null;
 
-                    etCategory.setVisibility("其他".equals(first) ? View.VISIBLE : View.GONE);
+                    etCategory.setVisibility(getString(R.string.svc_cat_other).equals(first) ? View.VISIBLE : View.GONE);
 
                 }
 
@@ -1840,7 +1840,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     loadedAssets.clear();
 
-                    AssetAccount noAsset = new AssetAccount("不关联资产", 0, 0);
+                    AssetAccount noAsset = new AssetAccount(getString(R.string.svc_no_asset), 0, 0);
 
                     noAsset.id = 0;
 
@@ -1918,11 +1918,9 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-                    if ("其他".equals(finalCatName)) {
-
+                    if (getString(R.string.svc_cat_other).equals(finalCatName)) {
                         String customInput = etCategory.getText().toString().trim();
-
-                        finalCatName = !customInput.isEmpty() ? customInput : (finalTypeInt == 1 ? "退款" : "其他");
+                        finalCatName = !customInput.isEmpty() ? customInput : (finalTypeInt == 1 ? getString(R.string.svc_cat_refund) : getString(R.string.svc_cat_other));
 
                     }
 
@@ -1950,11 +1948,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     closeWindow(windowManager, floatView);
 
-                    Toast.makeText(this, "已记账", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.svc_toast_booked), Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
 
-                    Toast.makeText(this, "金额错误", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.svc_toast_amount_error), Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -2147,7 +2145,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                 NotificationChannel channel = new NotificationChannel(
 
-                        CHANNEL_ID, "自动记账服务监控", NotificationManager.IMPORTANCE_LOW);
+                        CHANNEL_ID, getString(R.string.svc_notification_channel_name), NotificationManager.IMPORTANCE_LOW);
 
                 if (manager != null) manager.createNotificationChannel(channel);
 
@@ -2165,7 +2163,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             Notification notification = builder.setSmallIcon(android.R.drawable.ic_menu_edit)
 
-                    .setContentTitle("Tally").setContentText("招财进宝 财源广进").setContentIntent(pendingIntent).setOngoing(true).build();
+                    .setContentTitle(getString(R.string.svc_notification_title)).setContentText(getString(R.string.svc_notification_text)).setContentIntent(pendingIntent).setOngoing(true).build();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
@@ -2209,7 +2207,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
         TextView tvTitle = subCatView.findViewById(R.id.tv_title);
 
-        tvTitle.setText(parentCategory + " - 选择细分");
+        tvTitle.setText(String.format(getString(R.string.svc_subcategory_title), parentCategory));
 
         ChipGroup cgSubCategories = subCatView.findViewById(R.id.cg_sub_categories);
 
@@ -2277,13 +2275,13 @@ public class SelectToSpeakService extends AccessibilityService {
 
                         selectedSubCategory = null;
 
-                        Toast.makeText(this, "已取消细分", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.svc_toast_subcat_canceled), Toast.LENGTH_SHORT).show();
 
                     } else {
 
                         selectedSubCategory = subCatName;
 
-                        Toast.makeText(this, "已选择: " + subCatName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, String.format(getString(R.string.svc_toast_subcat_selected), subCatName), Toast.LENGTH_SHORT).show();
 
                     }
 
@@ -2546,7 +2544,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // Working 的 type 字段存放分类名（如"餐饮"）
 
-            bill.setType(t.category != null ? t.category : "其他");
+            bill.setType(t.category != null ? t.category : getString(R.string.svc_cat_other));
 
             bill.setAmount(t.amount);
 
@@ -2554,7 +2552,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             bill.setNote(t.note != null ? t.note : "");
 
-            bill.setSource("自动记账");
+            bill.setSource(getString(R.string.svc_source_auto_bookkeep));
 
             bill.setLocation("");
 
@@ -2936,19 +2934,19 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 智能分类 (增加了对日用品和超市的识别)
 
-            String defaultCategory = (finalType == 0) ? "购物" : "其他收入";
+            String defaultCategory = (finalType == 0) ? getString(R.string.svc_cat_shopping) : getString(R.string.svc_cat_other_income);
 
             if (merchantInfo.contains("美团") || merchantInfo.contains("饿了么") || merchantInfo.contains("餐饮") || merchantInfo.contains("饭")) {
 
-                defaultCategory = "餐饮";
+                defaultCategory = getString(R.string.svc_cat_food);
 
             } else if (merchantInfo.contains("闲鱼") || merchantInfo.contains("机")) {
 
-                defaultCategory = (finalType == 1) ? "二手交易" : "购物";
+                defaultCategory = (finalType == 1) ? getString(R.string.svc_cat_secondhand) : getString(R.string.svc_cat_shopping);
 
             } else if (merchantInfo.contains("超市") || merchantInfo.contains("店") || merchantInfo.contains("皂") || merchantInfo.contains("百货")) {
 
-                defaultCategory = "购物";
+                defaultCategory = getString(R.string.svc_cat_shopping);
 
             }
 
@@ -3117,7 +3115,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
         boolean isRedPacketPage = false;
 
-        String redPacketName = "微信红包";
+        String redPacketName = getString(R.string.svc_red_packet);
 
         double amount = -1;
 
@@ -3403,11 +3401,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 触发记账弹窗（type=0 为支出，默认分类这里设为“购物”或“餐饮”）
-            // 先查历史账单分类，查不到再用“购物”作为默认
+            // 触发记账弹窗（type=0 为支出，默认分类这里设为"购物"或"餐饮"）
+            // 先查历史账单分类，查不到再用"购物"作为默认
             final String finalMerchantInfo = merchantInfo;
             AppDatabase.databaseWriteExecutor.execute(() -> {
-                String inferred = inferCategoryFromHistory(finalMerchantInfo, 0, "购物");
+                String inferred = inferCategoryFromHistory(finalMerchantInfo, 0, getString(R.string.svc_cat_shopping));
                 handler.post(() -> showConfirmWindow(finalAmount, 0, inferred, recordIdentifier, autoAssetId, "\u00A5"));
             });
 
@@ -3956,15 +3954,15 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 智能分类
 
-            String defaultCategory = "购物";
+            String defaultCategory = getString(R.string.svc_cat_shopping);
 
             if (note.contains("烧烤") || note.contains("餐饮") || note.contains("面") || note.contains("饭") || note.contains("吃") || note.contains("汉堡") || note.contains("外卖")) {
 
-                defaultCategory = "餐饮";
+                defaultCategory = getString(R.string.svc_cat_food);
 
             } else if (note.contains("拼多多") || note.contains("淘宝") || note.contains("京东") || note.contains("超市")) {
 
-                defaultCategory = "购物";
+                defaultCategory = getString(R.string.svc_cat_shopping);
 
             }
 
@@ -4167,11 +4165,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-            // 弹出记账确认窗口（type=0 为支出，默认分类这里设为“购物”）
-            // 先查历史账单分类，查不到再用“购物”作为默认
+            // 弹出记账确认窗口（type=0 为支出，默认分类这里设为"购物"）
+            // 先查历史账单分类，查不到再用"购物"作为默认
             final String finalMerchantInfo = merchantInfo;
             AppDatabase.databaseWriteExecutor.execute(() -> {
-                String inferred = inferCategoryFromHistory(finalMerchantInfo, 0, "购物");
+                String inferred = inferCategoryFromHistory(finalMerchantInfo, 0, getString(R.string.svc_cat_shopping));
                 handler.post(() -> showConfirmWindow(finalAmount, 0, inferred, recordIdentifier, autoAssetId, "\u00A5"));
             });
 
@@ -4241,7 +4239,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 2. 核心触发节点：严格匹配 "微信红包"
 
-            if ("微信红包".equals(text) || "微信红包".equals(desc)) {
+            if (getString(R.string.svc_red_packet).equals(text) || getString(R.string.svc_red_packet).equals(desc)) {
 
                 hasWeChatRedPacket = true;
 
@@ -4343,7 +4341,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 防抖签名：加入刚才设置的 5分钟(300000)屏蔽，并加入资产名指纹
 
-            String signature = "confirm-" + amount + "-0-微信红包-" + assetName;
+            String signature = "confirm-" + amount + "-0-" + getString(R.string.svc_red_packet) + "-" + assetName;
 
             if (now - lastRecordTime < 300000 && signature.equals(lastContentSignature)) return true;
 
@@ -4359,7 +4357,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault());
 
-            final String timeNote = sdf.format(new Date(now)) + " 微信红包";
+            final String timeNote = sdf.format(new Date(now)) + " " + getString(R.string.svc_red_packet);
 
 
 
@@ -4975,11 +4973,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 智能分类：带有餐饮相关字眼的自动判定为"餐饮"
 
-            String defaultCategory = "购物";
+            String defaultCategory = getString(R.string.svc_cat_shopping);
 
             if (finalPayee.contains("麻辣烫") || finalPayee.contains("店") || finalPayee.contains("餐饮") || finalPayee.contains("吃") || finalPayee.contains("食") || finalPayee.contains("外卖")) {
 
-                defaultCategory = "餐饮";
+                defaultCategory = getString(R.string.svc_cat_food);
 
             }
 
@@ -5189,7 +5187,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 触发记账确认窗口（type: 0 为支出，分类默认给“购物”）
 
-            handler.post(() -> showConfirmWindow(finalAmount, 0, "购物", recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
+            handler.post(() -> showConfirmWindow(finalAmount, 0, getString(R.string.svc_cat_shopping), recordIdentifier, autoAssetId, "\u00A5", finalTimestamp));
 
 
 
@@ -5457,7 +5455,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 动态选择分类：针对个人的扫码通常发生在小摊贩/餐饮店，默认给"餐饮"或"购物"
 
-            String defaultCategory = targetAccount.contains("付款") ? "购物" : "转账";
+            String defaultCategory = targetAccount.contains("付款") ? getString(R.string.svc_cat_shopping) : "转账";
 
 
 
@@ -5767,11 +5765,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 动态选择分类：针对提现、退款等操作通常默认分配到"其他"或"理财"等类目
 
-            String defaultCategory = "其他";
+            String defaultCategory = getString(R.string.svc_cat_other);
 
             if (finalNote.contains("提现") || finalNote.contains("退款") || finalNote.contains("返现")) {
 
-                defaultCategory = (finalType == 1) ? "退款" : "其他";
+                defaultCategory = (finalType == 1) ? getString(R.string.svc_cat_refund) : getString(R.string.svc_cat_other);
 
             }
 
@@ -6057,7 +6055,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 动态选择默认分类
 
-            String defaultCategory = note.contains("拼多多") || note.contains("淘宝") || note.contains("京东") ? "购物" : "云闪付";
+            String defaultCategory = note.contains("拼多多") || note.contains("淘宝") || note.contains("京东") ? getString(R.string.svc_cat_shopping) : "云闪付";
 
 
 
@@ -6247,7 +6245,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 智能分类
 
-            String defaultCategory = "购物";
+            String defaultCategory = getString(R.string.svc_cat_shopping);
 
             if (merchantName.contains("移动") || merchantName.contains("联通") || merchantName.contains("电信") || merchantName.contains("话费")) {
 
@@ -6255,7 +6253,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             } else if (merchantName.contains("美团") || merchantName.contains("外卖")) {
 
-                defaultCategory = "餐饮";
+                defaultCategory = getString(R.string.svc_cat_food);
 
             }
 
@@ -6399,7 +6397,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             final long finalTimestamp = now;
 
-            final String finalCategory = "购物";
+            final String finalCategory = getString(R.string.svc_cat_shopping);
 
 
 
@@ -6559,7 +6557,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             final long finalTimestamp = now;
 
-            final String finalCategory = "购物";
+            final String finalCategory = getString(R.string.svc_cat_shopping);
 
 
 
@@ -6731,7 +6729,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 美团消费大概率是吃饭、外卖或买菜，分类默认打上"餐饮"
 
-            final String finalCategory = "餐饮";
+            final String finalCategory = getString(R.string.svc_cat_food);
 
 
 
@@ -6911,7 +6909,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             final long finalTimestamp = now;
 
-            final String finalCategory = "购物";
+            final String finalCategory = getString(R.string.svc_cat_shopping);
 
 
 
@@ -7347,7 +7345,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 智能分类
 
-            String defaultCategory = "购物";
+            String defaultCategory = getString(R.string.svc_cat_shopping);
 
             if (merchantName.contains("联通") || merchantName.contains("移动") || merchantName.contains("电信") || merchantName.contains("话费") || merchantName.contains("充值")) {
 
@@ -7355,7 +7353,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             } else if (merchantName.contains("餐饮") || merchantName.contains("饭") || merchantName.contains("外卖")) {
 
-                defaultCategory = "餐饮";
+                defaultCategory = getString(R.string.svc_cat_food);
 
             }
 
@@ -7523,7 +7521,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             final long finalTimestamp = now;
 
-            final String finalCategory = "购物";
+            final String finalCategory = getString(R.string.svc_cat_shopping);
 
 
 
@@ -7699,7 +7697,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 默认分类分配为购物
 
-            final String finalCategory = "购物";
+            final String finalCategory = getString(R.string.svc_cat_shopping);
 
 
 

@@ -32,6 +32,7 @@ public class UserManageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(com.example.myapplication.MyApplication.getThemeResId());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_manage);
 

@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ÖÇÄÜ¼ÇÕË (Smart Bookkeeping)** ¡ª an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, statistical charts, multi-user support, and automatic bill detection via accessibility service.
+**æ™ºèƒ½è®°è´¦ (Smart Bookkeeping)** â€” an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, statistical charts, multi-user support, and automatic bill detection via accessibility service.
 
 ## Hard Constraints
 
 - **ALL source files MUST use UTF-8 encoding.** Never use any other encoding (GBK, GB2312, ISO-8859-1, etc.) when creating or editing files. If a file contains Chinese characters, ensure it is saved as UTF-8. When in doubt, use the Write tool to rewrite the file with explicit UTF-8 content.
 - **Before committing, run** `python check_all_encoding.py` to verify no file has encoding issues.
-- **Read [ENCODING.md](ENCODING.md) before every task** ¡ª contains the full encoding policy, common garbled text causes, and fix procedures.
+- **Read [ENCODING.md](ENCODING.md) before every task** â€” contains the full encoding policy, common garbled text causes, and fix procedures.
 - **Before every task**: If you suspect encoding issues, run `python fix_encoding.py` to auto-detect and fix all non-UTF-8 files.
 - All XML declaration headers must specify `encoding="utf-8"` AND the file must actually be saved as UTF-8 (not just declared).
 - All Gradle files must specify `-Dfile.encoding=UTF-8` if JVM args are configured.
@@ -34,122 +34,122 @@ Min SDK: 24 | Target/Compile SDK: 34 | Java 17 | ViewBinding enabled
 
 ```
 app/src/main/java/com/example/myapplication/
-©À©¤©¤ MyApplication.java              ¡ª Application class, holds singleton BillRepository, creates admin user
-©À©¤©¤ MainActivity.java               ¡ª Single Activity, hosts 4 fragments via BottomNavigation, checks login/session
-©À©¤©¤ data/
-©¦   ©À©¤©¤ entity/
-©¦   ©¦   ©À©¤©¤ Bill.java               ¡ª Room @Entity: id, type, amount, timestamp, location, note, source, category, userId
-©¦   ©¦   ©À©¤©¤ Budget.java             ¡ª Room @Entity: yearMonth (PK), totalBudget, createdAt, userId
-©¦   ©¦   ©¸©¤©¤ User.java               ¡ª Room @Entity: id, username, password, isAdmin, createdAt
-©¦   ©À©¤©¤ dao/
-©¦   ©¦   ©À©¤©¤ BillDao.java            ¡ª CRUD + LiveData queries (userId-filtered: getBillsBetween, getIncomeBetween, getExpenseBetween, getExpenseByType, getIncomeByType, getDailySum, deleteBillsBefore, deleteAllBills)
-©¦   ©¦   ©À©¤©¤ BudgetDao.java          ¡ª insert (REPLACE), update, getBudget by yearMonth + userId
-©¦   ©¦   ©À©¤©¤ UserDao.java            ¡ª CRUD + login, getAdminUser, getAllUsers, getAllUsersSync
-©¦   ©¦   ©À©¤©¤ TypeSum.java            ¡ª Result POJO: type, total (for pie chart)
-©¦   ©¦   ©¸©¤©¤ DaySum.java             ¡ª Result POJO: day, income, expense (for calendar + bar chart)
-©¦   ©À©¤©¤ database/
-©¦   ©¦   ©¸©¤©¤ AppDatabase.java        ¡ª Room DB singleton, version 2, entities: Bill, Budget, User
-©¦   ©À©¤©¤ notification/
-©¦   ©¦   ©¸©¤©¤ BudgetNotificationHelper.java ¡ª Budget overrun notifications
-©¦   ©À©¤©¤ repository/
-©¦   ©¦   ©¸©¤©¤ BillRepository.java     ¡ª Data access layer wrapping DAOs with ExecutorService, includes user management
-©¦   ©À©¤©¤ NotificationSettings.java   ¡ª Notification rule configuration
-©¦   ©¸©¤©¤ SessionManager.java         ¡ª Login session persistence (SharedPreferences)
-©À©¤©¤ ui/
-©¦   ©À©¤©¤ auth/
-©¦   ©¦   ©À©¤©¤ SplashActivity.java     ¡ª Launch screen with video/dynamic background
-©¦   ©¦   ©À©¤©¤ LoginActivity.java      ¡ª Username/password login, admin account creation
-©¦   ©¦   ©À©¤©¤ UserManageActivity.java ¡ª Admin user management (add/edit/delete users)
-©¦   ©¦   ©À©¤©¤ DynamicBackgroundView.java ¡ª Animated gradient background
-©¦   ©¦   ©¸©¤©¤ ScalableVideoView.java  ¡ª Scaled video background player
-©¦   ©À©¤©¤ home/
-©¦   ©¦   ©À©¤©¤ HomeFragment.java       ¡ª Income/expense header (date shown as "yyyyÄêMÔÂdÈÕ"), budget card, recent bill list with swipe-delete + click-edit
-©¦   ©¦   ©À©¤©¤ HomeViewModel.java      ¡ª Exposes LiveData for current month's bills, income, expense, budget
-©¦   ©¦   ©À©¤©¤ AllBillsFragment.java   ¡ª All bills view grouped by year-month, with back navigation
-©¦   ©¦   ©¸©¤©¤ AllBillsViewModel.java  ¡ª ViewModel for all bills
-©¦   ©À©¤©¤ calendar/
-©¦   ©¦   ©À©¤©¤ CalendarFragment.java   ¡ª LinearLayout-based calendar grid with prev/next month nav, income/expense per day, color-coded cells
-©¦   ©¦   ©¸©¤©¤ CalendarViewModel.java  ¡ª Manages month state, uses MediatorLiveData for income/expense/dailySums
-©¦   ©À©¤©¤ stats/
-©¦   ©¦   ©À©¤©¤ StatsFragment.java      ¡ª PieChart + BarChart + TrendBarView with week/month/year period tabs; data from Room
-©¦   ©¦   ©À©¤©¤ StatsViewModel.java     ¡ª Period enum (WEEK/MONTH/YEAR), uses MediatorLiveData for expenseByType + dailySums
-©¦   ©¦   ©¸©¤©¤ CsvImportPreviewActivity.java ¡ª CSV import preview and confirmation
-©¦   ©À©¤©¤ profile/
-©¦   ©¦   ©¸©¤©¤ ProfileFragment.java    ¡ª Avatar, budget summary, CSV export, dark mode toggle, cache clear, auto-bookkeeping settings entry
-©¦   ©À©¤©¤ crop/
-©¦   ©¦   ©À©¤©¤ CropImageActivity.java  ¡ª Image cropping activity for avatars/backgrounds
-©¦   ©¦   ©¸©¤©¤ CropImageView.java      ¡ª Custom crop view with pinch-to-zoom and rotation
-©¦   ©À©¤©¤ adapter/
-©¦   ©¦   ©À©¤©¤ BillAdapter.java        ¡ª RecyclerView.Adapter with OnBillClickListener, emoji/PNG icons, color-coded amounts
-©¦   ©¦   ©À©¤©¤ SectionedBillAdapter.java ¡ª Grouped bill list adapter with section headers by year-month
-©¦   ©¦   ©À©¤©¤ DaySectionedBillAdapter.java ¡ª Day-grouped bill list adapter
-©¦   ©¦   ©¸©¤©¤ CsvImportPreviewAdapter.java ¡ª CSV import preview with row selection
-©¦   ©À©¤©¤ dialog/
-©¦   ©¦   ©¸©¤©¤ AddBillDialog.java      ¡ª DialogFragment for add/edit, includes date picker, supports prefill for editing
-©¦   ©¸©¤©¤ view/
-©¦       ©¸©¤©¤ TrendBarView.java       ¡ª Custom trend bar chart view
-©¸©¤©¤ util/
-    ©À©¤©¤ CategoryIconHelper.java     ¡ª Maps bill category names to PNG drawable icon resources
-    ©¸©¤©¤ ImageUtils.java             ¡ª Image scaling, cropping, and format conversion utilities
+â”œâ”€â”€ MyApplication.java              â€” Application class, holds singleton BillRepository, creates admin user
+â”œâ”€â”€ MainActivity.java               â€” Single Activity, hosts 4 fragments via BottomNavigation, checks login/session
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ entity/
+â”‚   â”‚   â”œâ”€â”€ Bill.java               â€” Room @Entity: id, type, amount, timestamp, location, note, source, category, userId
+â”‚   â”‚   â”œâ”€â”€ Budget.java             â€” Room @Entity: yearMonth (PK), totalBudget, createdAt, userId
+â”‚   â”‚   â””â”€â”€ User.java               â€” Room @Entity: id, username, password, isAdmin, createdAt
+â”‚   â”œâ”€â”€ dao/
+â”‚   â”‚   â”œâ”€â”€ BillDao.java            â€” CRUD + LiveData queries (userId-filtered: getBillsBetween, getIncomeBetween, getExpenseBetween, getExpenseByType, getIncomeByType, getDailySum, deleteBillsBefore, deleteAllBills)
+â”‚   â”‚   â”œâ”€â”€ BudgetDao.java          â€” insert (REPLACE), update, getBudget by yearMonth + userId
+â”‚   â”‚   â”œâ”€â”€ UserDao.java            â€” CRUD + login, getAdminUser, getAllUsers, getAllUsersSync
+â”‚   â”‚   â”œâ”€â”€ TypeSum.java            â€” Result POJO: type, total (for pie chart)
+â”‚   â”‚   â””â”€â”€ DaySum.java             â€” Result POJO: day, income, expense (for calendar + bar chart)
+â”‚   â”œâ”€â”€ database/
+â”‚   â”‚   â””â”€â”€ AppDatabase.java        â€” Room DB singleton, version 2, entities: Bill, Budget, User
+â”‚   â”œâ”€â”€ notification/
+â”‚   â”‚   â””â”€â”€ BudgetNotificationHelper.java â€” Budget overrun notifications
+â”‚   â”œâ”€â”€ repository/
+â”‚   â”‚   â””â”€â”€ BillRepository.java     â€” Data access layer wrapping DAOs with ExecutorService, includes user management
+â”‚   â”œâ”€â”€ NotificationSettings.java   â€” Notification rule configuration
+â”‚   â””â”€â”€ SessionManager.java         â€” Login session persistence (SharedPreferences)
+â”œâ”€â”€ ui/
+â”‚   â”œâ”€â”€ auth/
+â”‚   â”‚   â”œâ”€â”€ SplashActivity.java     â€” Launch screen with video/dynamic background
+â”‚   â”‚   â”œâ”€â”€ LoginActivity.java      â€” Username/password login, admin account creation
+â”‚   â”‚   â”œâ”€â”€ UserManageActivity.java â€” Admin user management (add/edit/delete users)
+â”‚   â”‚   â”œâ”€â”€ DynamicBackgroundView.java â€” Animated gradient background
+â”‚   â”‚   â””â”€â”€ ScalableVideoView.java  â€” Scaled video background player
+â”‚   â”œâ”€â”€ home/
+â”‚   â”‚   â”œâ”€â”€ HomeFragment.java       â€” Income/expense header (date shown as "yyyyå¹´Mæœˆdæ—¥"), budget card, recent bill list with swipe-delete + click-edit
+â”‚   â”‚   â”œâ”€â”€ HomeViewModel.java      â€” Exposes LiveData for current month's bills, income, expense, budget
+â”‚   â”‚   â”œâ”€â”€ AllBillsFragment.java   â€” All bills view grouped by year-month, with back navigation
+â”‚   â”‚   â””â”€â”€ AllBillsViewModel.java  â€” ViewModel for all bills
+â”‚   â”œâ”€â”€ calendar/
+â”‚   â”‚   â”œâ”€â”€ CalendarFragment.java   â€” LinearLayout-based calendar grid with prev/next month nav, income/expense per day, color-coded cells
+â”‚   â”‚   â””â”€â”€ CalendarViewModel.java  â€” Manages month state, uses MediatorLiveData for income/expense/dailySums
+â”‚   â”œâ”€â”€ stats/
+â”‚   â”‚   â”œâ”€â”€ StatsFragment.java      â€” PieChart + BarChart + TrendBarView with week/month/year period tabs; data from Room
+â”‚   â”‚   â”œâ”€â”€ StatsViewModel.java     â€” Period enum (WEEK/MONTH/YEAR), uses MediatorLiveData for expenseByType + dailySums
+â”‚   â”‚   â””â”€â”€ CsvImportPreviewActivity.java â€” CSV import preview and confirmation
+â”‚   â”œâ”€â”€ profile/
+â”‚   â”‚   â””â”€â”€ ProfileFragment.java    â€” Avatar, budget summary, CSV export, dark mode toggle, cache clear, auto-bookkeeping settings entry
+â”‚   â”œâ”€â”€ crop/
+â”‚   â”‚   â”œâ”€â”€ CropImageActivity.java  â€” Image cropping activity for avatars/backgrounds
+â”‚   â”‚   â””â”€â”€ CropImageView.java      â€” Custom crop view with pinch-to-zoom and rotation
+â”‚   â”œâ”€â”€ adapter/
+â”‚   â”‚   â”œâ”€â”€ BillAdapter.java        â€” RecyclerView.Adapter with OnBillClickListener, emoji/PNG icons, color-coded amounts
+â”‚   â”‚   â”œâ”€â”€ SectionedBillAdapter.java â€” Grouped bill list adapter with section headers by year-month
+â”‚   â”‚   â”œâ”€â”€ DaySectionedBillAdapter.java â€” Day-grouped bill list adapter
+â”‚   â”‚   â””â”€â”€ CsvImportPreviewAdapter.java â€” CSV import preview with row selection
+â”‚   â”œâ”€â”€ dialog/
+â”‚   â”‚   â””â”€â”€ AddBillDialog.java      â€” DialogFragment for add/edit, includes date picker, supports prefill for editing
+â”‚   â””â”€â”€ view/
+â”‚       â””â”€â”€ TrendBarView.java       â€” Custom trend bar chart view
+â””â”€â”€ util/
+    â”œâ”€â”€ CategoryIconHelper.java     â€” Maps bill category names to PNG drawable icon resources
+    â””â”€â”€ ImageUtils.java             â€” Image scaling, cropping, and format conversion utilities
 ```
 
 ### Auto-bookkeeping subsystem (`com.example.autobookkeep`)
 
 ```
 app/src/main/java/com/example/autobookkeep/
-©À©¤©¤ BackupManager.java              ¡ª Data backup and restore
-©À©¤©¤ PermissionUtils.java            ¡ª Runtime permission helpers
-©À©¤©¤ database/
-©¦   ©À©¤©¤ AppDatabase.java            ¡ª Separate Room DB "autobookkeep_db" (version 1)
-©¦   ©À©¤©¤ Transaction.java            ¡ª Auto-tracked transaction entity
-©¦   ©À©¤©¤ AssetAccount.java           ¡ª Payment asset account entity (WeChat, Alipay, etc.)
-©¦   ©À©¤©¤ TransactionDao.java         ¡ª Transaction CRUD
-©¦   ©¸©¤©¤ AssetAccountDao.java        ¡ª Asset account CRUD
-©À©¤©¤ ui/
-©¦   ©À©¤©¤ AutoSettingsActivity.java   ¡ª Auto-bookkeeping main settings
-©¦   ©À©¤©¤ BudgetSettingsActivity.java ¡ª Monthly budget management
-©¦   ©À©¤©¤ AssistantManagerActivity.java ¡ª Assistant/voice assistant settings
-©¦   ©À©¤©¤ CategorySettingsActivity.java ¡ª Category preference settings
-©¦   ©À©¤©¤ AutoTrackLogActivity.java   ¡ª Accessibility service scan log viewer
-©¦   ©À©¤©¤ CategoryAdapter.java        ¡ª Category list adapter
-©¦   ©¸©¤©¤ CustomHighlightEditText.java ¡ª Custom EditText with text highlighting
-©À©¤©¤ util/
-©¦   ©À©¤©¤ AssistantConfig.java        ¡ª Assistant feature configuration
-©¦   ©À©¤©¤ AutoAssetManager.java       ¡ª Asset account auto-management
-©¦   ©À©¤©¤ AutoTrackLogManager.java    ¡ª Scan log management
-©¦   ©À©¤©¤ AssetSpinnerAdapter.java    ¡ª Asset dropdown spinner adapter
-©¦   ©À©¤©¤ CategoryManager.java        ¡ª Category CRUD and preferences
-©¦   ©À©¤©¤ CurrencyUtils.java          ¡ª Currency formatting and conversion
-©¦   ©¸©¤©¤ KeywordManager.java         ¡ª Screen keyword matching for auto-categorization
-©À©¤©¤ viewmodel/
-©¦   ©¸©¤©¤ FinanceViewModel.java       ¡ª Financial data ViewModel for auto-bookkeeping
-©¸©¤©¤ widget/
-    ©¸©¤©¤ WidgetUtils.java            ¡ª Desktop widget utilities
+â”œâ”€â”€ BackupManager.java              â€” Data backup and restore
+â”œâ”€â”€ PermissionUtils.java            â€” Runtime permission helpers
+â”œâ”€â”€ database/
+â”‚   â”œâ”€â”€ AppDatabase.java            â€” Separate Room DB "autobookkeep_db" (version 1)
+â”‚   â”œâ”€â”€ Transaction.java            â€” Auto-tracked transaction entity
+â”‚   â”œâ”€â”€ AssetAccount.java           â€” Payment asset account entity (WeChat, Alipay, etc.)
+â”‚   â”œâ”€â”€ TransactionDao.java         â€” Transaction CRUD
+â”‚   â””â”€â”€ AssetAccountDao.java        â€” Asset account CRUD
+â”œâ”€â”€ ui/
+â”‚   â”œâ”€â”€ AutoSettingsActivity.java   â€” Auto-bookkeeping main settings
+â”‚   â”œâ”€â”€ BudgetSettingsActivity.java â€” Monthly budget management
+â”‚   â”œâ”€â”€ AssistantManagerActivity.java â€” Assistant/voice assistant settings
+â”‚   â”œâ”€â”€ CategorySettingsActivity.java â€” Category preference settings
+â”‚   â”œâ”€â”€ AutoTrackLogActivity.java   â€” Accessibility service scan log viewer
+â”‚   â”œâ”€â”€ CategoryAdapter.java        â€” Category list adapter
+â”‚   â””â”€â”€ CustomHighlightEditText.java â€” Custom EditText with text highlighting
+â”œâ”€â”€ util/
+â”‚   â”œâ”€â”€ AssistantConfig.java        â€” Assistant feature configuration
+â”‚   â”œâ”€â”€ AutoAssetManager.java       â€” Asset account auto-management
+â”‚   â”œâ”€â”€ AutoTrackLogManager.java    â€” Scan log management
+â”‚   â”œâ”€â”€ AssetSpinnerAdapter.java    â€” Asset dropdown spinner adapter
+â”‚   â”œâ”€â”€ CategoryManager.java        â€” Category CRUD and preferences
+â”‚   â”œâ”€â”€ CurrencyUtils.java          â€” Currency formatting and conversion
+â”‚   â””â”€â”€ KeywordManager.java         â€” Screen keyword matching for auto-categorization
+â”œâ”€â”€ viewmodel/
+â”‚   â””â”€â”€ FinanceViewModel.java       â€” Financial data ViewModel for auto-bookkeeping
+â””â”€â”€ widget/
+    â””â”€â”€ WidgetUtils.java            â€” Desktop widget utilities
 ```
 
 ### Accessibility service
 
 ```
 app/src/main/java/com/google/android/accessibility/selecttospeak/
-©¸©¤©¤ SelectToSpeakService.java       ¡ª AccessibilityService for screen auto-tracking; detects payment pages (WeChat, Alipay, Pinduoduo, JD, UnionPay) and extracts transaction info
+â””â”€â”€ SelectToSpeakService.java       â€” AccessibilityService for screen auto-tracking; detects payment pages (WeChat, Alipay, Pinduoduo, JD, UnionPay) and extracts transaction info
 ```
 
 ## Key Dependencies
 
-- **Room** ¡ª local SQLite ORM (bills + budgets + users tables in main DB; transactions + asset accounts in autobookkeep DB)
-- **MPAndroidChart** (v3.1.0 via JitPack) ¡ª pie and bar charts in stats
-- **Material Components** ¡ª BottomNavigationView, FAB, themes
-- **Lifecycle (ViewModel + LiveData)** ¡ª MVVM architecture; all data flows through ViewModel ¡ú Fragment
-- **CardView** ¡ª floating window cards for transaction confirmation
-- **FlexboxLayout** ¡ª category grid layout
-- **Glide** ¡ª image/GIF/video loading for backgrounds and avatars
-- **Navigation** ¡ª fragment navigation framework
+- **Room** â€” local SQLite ORM (bills + budgets + users tables in main DB; transactions + asset accounts in autobookkeep DB)
+- **MPAndroidChart** (v3.1.0 via JitPack) â€” pie and bar charts in stats
+- **Material Components** â€” BottomNavigationView, FAB, themes
+- **Lifecycle (ViewModel + LiveData)** â€” MVVM architecture; all data flows through ViewModel â†’ Fragment
+- **CardView** â€” floating window cards for transaction confirmation
+- **FlexboxLayout** â€” category grid layout
+- **Glide** â€” image/GIF/video loading for backgrounds and avatars
+- **Navigation** â€” fragment navigation framework
 
 ## Color System (colors.xml)
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| primary | #0d9488 | Teal ¡ª buttons, active states |
+| primary | #0d9488 | Teal â€” buttons, active states |
 | primary_dark | #0f766e | Status bar, gradient end |
 | income | #22c55e | Income amounts |
 | expense | #ef4444 | Expense amounts |
@@ -163,16 +163,16 @@ Category colors (cat_food, cat_transport, cat_shopping, cat_entertainment, cat_h
 
 ## Important Patterns
 
-- **Fragments never access DAOs directly** ¡ª go through `MyApplication.getRepository()`
+- **Fragments never access DAOs directly** â€” go through `MyApplication.getRepository()`
 - **Fragments create ViewModels** via `new ViewModelProvider(this).get(XxxViewModel.class)`
-- **Room queries return LiveData** ¡ª Fragments observe, never poll
+- **Room queries return LiveData** â€” Fragments observe, never poll
 - **Write operations** (insert/update/delete) go through Repository's ExecutorService, off the main thread
-- **Bill editing** ¡ª click a bill item in the list to open the dialog pre-filled; swipe left/right to delete
-- **Budget** ¡ª click the budget card on Home to open a set-budget dialog; stored per yearMonth
-- **MediatorLiveData for dynamic queries** ¡ª CalendarViewModel and StatsViewModel use MediatorLiveData to wrap data sources that change when month/period changes; old source is removed before adding new one to avoid stale observers
-- **Calendar uses nested LinearLayout** ¡ª CalendarFragment builds the calendar grid using nested LinearLayouts (vertical rows + horizontal columns) with layout_weight for equal distribution; more reliable than GridLayout for dynamic content
-- **Multi-user isolation** ¡ª All bill/budget queries are filtered by userId; SessionManager persists current login session
-- **Auto-bookkeeping** ¡ª AccessibilityService monitors screen content, matches keywords to categories, extracts amounts, and shows floating confirmation window
-- **Two separate Room databases** ¡ª main `bill_database` for bills/budgets/users; `autobookkeep_db` for auto-tracked transactions and asset accounts
-- **Transaction confirmation window** ¡ª uses `showConfirmWindow` as a style dispatcher (standard/island styles); `showStandardConfirmWindow` handles the full standard window logic directly without going through the dispatcher to avoid circular calls
-- **Category icons** ¡ª [CategoryIconHelper.java](app/src/main/java/com/example/myapplication/util/CategoryIconHelper.java) maps category names to PNG drawable resources; falls back to emoji display when no icon exists
+- **Bill editing** â€” click a bill item in the list to open the dialog pre-filled; swipe left/right to delete
+- **Budget** â€” click the budget card on Home to open a set-budget dialog; stored per yearMonth
+- **MediatorLiveData for dynamic queries** â€” CalendarViewModel and StatsViewModel use MediatorLiveData to wrap data sources that change when month/period changes; old source is removed before adding new one to avoid stale observers
+- **Calendar uses nested LinearLayout** â€” CalendarFragment builds the calendar grid using nested LinearLayouts (vertical rows + horizontal columns) with layout_weight for equal distribution; more reliable than GridLayout for dynamic content
+- **Multi-user isolation** â€” All bill/budget queries are filtered by userId; SessionManager persists current login session
+- **Auto-bookkeeping** â€” AccessibilityService monitors screen content, matches keywords to categories, extracts amounts, and shows floating confirmation window
+- **Two separate Room databases** â€” main `bill_database` for bills/budgets/users; `autobookkeep_db` for auto-tracked transactions and asset accounts
+- **Transaction confirmation window** â€” uses `showConfirmWindow` as a style dispatcher (standard/island styles); `showStandardConfirmWindow` handles the full standard window logic directly without going through the dispatcher to avoid circular calls
+- **Category icons** â€” [CategoryIconHelper.java](app/src/main/java/com/example/myapplication/util/CategoryIconHelper.java) maps category names to PNG drawable resources; falls back to emoji display when no icon exists

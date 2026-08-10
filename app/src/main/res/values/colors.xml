@@ -66,4 +66,27 @@
     <color name="cat_transfer">#dbeafe</color>
     <color name="cat_redpacket">#fee2e2</color>
     <color name="cat_refund">#dcfce7</color>
+
+    <!-- Anime / secondary colors for UI accent -->
+    <color name="anime_sakura">#F8A4C8</color>
+    <color name="anime_lavender">#C4B5FD</color>
+    <color name="anime_sky">#7DD3FC</color>
+    <color name="anime_mint">#6EE7B7</color>
+    <color name="anime_peach">#FED7AA</color>
+    <color name="surface_elevated">#F8FAFC</color>
+    <color name="card_shadow">#1A0D9488</color>
+
+    <!-- Color scheme: Lavender Dream -->
+    <color name="scheme_lavender_primary">#7C3AED</color>
+    <color name="scheme_lavender_primary_dark">#6D28D9</color>
+    <color name="scheme_lavender_accent">#F9A8D4</color>
+    <color name="scheme_lavender_secondary">#93C5FD</color>
+    <color name="scheme_lavender_bg">#F5F3FF</color>
+
+    <!-- Color scheme: Ocean Mint -->
+    <color name="scheme_ocean_primary">#0891B2</color>
+    <color name="scheme_ocean_primary_dark">#0E7490</color>
+    <color name="scheme_ocean_accent">#6EE7B7</color>
+    <color name="scheme_ocean_secondary">#FDE68A</color>
+    <color name="scheme_ocean_bg">#ECFEFF</color>
 </resources>

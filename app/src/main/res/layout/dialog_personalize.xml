@@ -359,11 +359,70 @@
                 android:textColor="@color/muted" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="@color/rule" />
+
+        <!-- Color Scheme Option -->
+        <LinearLayout
+            android:id="@+id/opt_color_scheme"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_dialog_rounded"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="16dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:text="&#x1F3A8;" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x914D;&#x8272;&#x65B9;&#x6848;"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/ink" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="&#x9009;&#x62E9;&#x4F60;&#x559C;&#x6B22;&#x7684;&#x4E3B;&#x9898;&#x8272;&#x5F69;"
+                    android:textSize="11sp"
+                    android:textColor="@color/muted"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=">"
+                android:textSize="18sp"
+                android:textColor="@color/muted" />
+        </LinearLayout>
+
         <!-- Cancel -->
         <TextView
             android:id="@+id/btn_personalize_cancel"
             android:layout_width="match_parent"
             android:layout_height="44dp"
+            android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="&#x53D6;&#x6D88;"
             android:textSize="14sp"

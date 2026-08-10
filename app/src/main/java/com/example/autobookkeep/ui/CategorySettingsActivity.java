@@ -1,9 +1,15 @@
 package com.example.autobookkeep.ui;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.util.CategoryIconHelper;
 import com.example.autobookkeep.util.CategoryManager;
 
 import java.util.ArrayList;
@@ -20,12 +27,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 记账分类预设页面 — 管理支出/收入分类
+ * Category presets page - manage expense/income categories
  */
 public class CategorySettingsActivity extends AppCompatActivity {
 
     private RecyclerView rvExpense, rvIncome;
-    private CategoryAdapter expenseAdapter, incomeAdapter;
+    private CategorySettingsAdapter expenseAdapter, incomeAdapter;
     private List<String> expenseList, incomeList;
 
     @Override
@@ -40,16 +47,12 @@ public class CategorySettingsActivity extends AppCompatActivity {
         rvExpense = findViewById(R.id.rv_expense);
         rvIncome = findViewById(R.id.rv_income);
 
-        expenseAdapter = new CategoryAdapter(expenseList, (name, position) -> {
-            showEditDialog(name, true, position);
-        }, (name, position) -> {
-            showDeleteDialog(name, true, position);
-        });
-        incomeAdapter = new CategoryAdapter(incomeList, (name, position) -> {
-            showEditDialog(name, false, position);
-        }, (name, position) -> {
-            showDeleteDialog(name, false, position);
-        });
+        expenseAdapter = new CategorySettingsAdapter(this, expenseList,
+                (name, position) -> showEditDialog(name, true, position),
+                (name, position) -> showDeleteDialog(name, true, position));
+        incomeAdapter = new CategorySettingsAdapter(this, incomeList,
+                (name, position) -> showEditDialog(name, false, position),
+                (name, position) -> showDeleteDialog(name, false, position));
 
         rvExpense.setLayoutManager(new LinearLayoutManager(this));
         rvExpense.setAdapter(expenseAdapter);
@@ -61,91 +64,99 @@ public class CategorySettingsActivity extends AppCompatActivity {
     }
 
     private void showAddDialog(boolean isExpense) {
-        EditText input = new EditText(this);
-        input.setHint("输入分类名称");
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        int dp16 = (int) (16 * getResources().getDisplayMetrics().density);
-        input.setPadding(dp16, dp16, dp16, dp16);
-        input.setLayoutParams(lp);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_category_edit, null);
+        TextView tvTitle = dialogView.findViewById(R.id.tv_dialog_title);
+        EditText input = dialogView.findViewById(R.id.et_category_name);
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(isExpense ? "添加支出分类" : "添加收入分类")
-                .setView(input)
-                .setPositiveButton("确定", (d, w) -> {
-                    String name = input.getText().toString().trim();
-                    if (name.isEmpty()) {
-                        Toast.makeText(this, "名称不能为空", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    List<String> list = isExpense ? expenseList : incomeList;
-                    if (list.contains(name)) {
-                        Toast.makeText(this, "分类已存在", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    list.add(name);
-                    saveAndRefresh(isExpense);
-                })
-                .setNegativeButton("取消", null)
+        tvTitle.setText(isExpense ? "\u6DFB\u52A0\u652F\u51FA\u5206\u7C7B" : "\u6DFB\u52A0\u6536\u5165\u5206\u7C7B");
+        input.setHint("\u8F93\u5165\u5206\u7C7B\u540D\u79F0");
+
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
                 .create();
+
+        dialogView.findViewById(R.id.btn_confirm).setOnClickListener(v -> {
+            String name = input.getText().toString().trim();
+            if (name.isEmpty()) {
+                Toast.makeText(this, "\u540D\u79F0\u4E0D\u80FD\u4E3A\u7A7A", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            List<String> list = isExpense ? expenseList : incomeList;
+            if (list.contains(name)) {
+                Toast.makeText(this, "\u5206\u7C7B\u5DF2\u5B58\u5728", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            list.add(name);
+            saveAndRefresh(isExpense);
+            dialog.dismiss();
+        });
+
+        dialogView.findViewById(R.id.btn_cancel).setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
     private void showEditDialog(String oldName, boolean isExpense, int position) {
-        if ("自定义".equals(oldName)) {
-            Toast.makeText(this, "\"自定义\"是保留分类，不可编辑", Toast.LENGTH_SHORT).show();
+        if ("\u81EA\u5B9A\u4E49".equals(oldName)) {
+            Toast.makeText(this, "\"\u81EA\u5B9A\u4E49\"\u662F\u4FDD\u7559\u5206\u7C7B\uFF0C\u4E0D\u53EF\u7F16\u8F91", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        EditText input = new EditText(this);
-        input.setText(oldName);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        int dp16 = (int) (16 * getResources().getDisplayMetrics().density);
-        input.setPadding(dp16, dp16, dp16, dp16);
-        input.setLayoutParams(lp);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_category_edit, null);
+        TextView tvTitle = dialogView.findViewById(R.id.tv_dialog_title);
+        EditText input = dialogView.findViewById(R.id.et_category_name);
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("编辑分类名称")
-                .setView(input)
-                .setPositiveButton("确定", (d, w) -> {
-                    String newName = input.getText().toString().trim();
-                    if (newName.isEmpty()) {
-                        Toast.makeText(this, "名称不能为空", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    List<String> list = isExpense ? expenseList : incomeList;
-                    if (!newName.equals(oldName) && list.contains(newName)) {
-                        Toast.makeText(this, "分类已存在", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    list.set(position, newName);
-                    saveAndRefresh(isExpense);
-                })
-                .setNegativeButton("取消", null)
+        tvTitle.setText("\u7F16\u8F91\u5206\u7C7B\u540D\u79F0");
+        input.setText(oldName);
+        input.setSelection(oldName.length());
+
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
                 .create();
+
+        dialogView.findViewById(R.id.btn_confirm).setOnClickListener(v -> {
+            String newName = input.getText().toString().trim();
+            if (newName.isEmpty()) {
+                Toast.makeText(this, "\u540D\u79F0\u4E0D\u80FD\u4E3A\u7A7A", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            List<String> list = isExpense ? expenseList : incomeList;
+            if (!newName.equals(oldName) && list.contains(newName)) {
+                Toast.makeText(this, "\u5206\u7C7B\u5DF2\u5B58\u5728", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            list.set(position, newName);
+            saveAndRefresh(isExpense);
+            dialog.dismiss();
+        });
+
+        dialogView.findViewById(R.id.btn_cancel).setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
     private void showDeleteDialog(String name, boolean isExpense, int position) {
-        if ("自定义".equals(name)) {
-            Toast.makeText(this, "\"自定义\"是保留分类，不可删除", Toast.LENGTH_SHORT).show();
+        if ("\u81EA\u5B9A\u4E49".equals(name)) {
+            Toast.makeText(this, "\"\u81EA\u5B9A\u4E49\"\u662F\u4FDD\u7559\u5206\u7C7B\uFF0C\u4E0D\u53EF\u5220\u9664", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        new AlertDialog.Builder(this)
-                .setTitle("删除分类")
-                .setMessage("确定要删除「" + name + "」吗？")
-                .setPositiveButton("删除", (d, w) -> {
-                    List<String> list = isExpense ? expenseList : incomeList;
-                    list.remove(position);
-                    saveAndRefresh(isExpense);
-                    Toast.makeText(this, "已删除", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("取消", null)
-                .show();
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_delete_category, null);
+        TextView tvCategoryName = dialogView.findViewById(R.id.tv_category_name);
+        tvCategoryName.setText(name);
+
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.ThemeOverlay_RoundedDialog)
+                .setView(dialogView)
+                .create();
+
+        dialogView.findViewById(R.id.btn_confirm).setOnClickListener(v -> {
+            List<String> list = isExpense ? expenseList : incomeList;
+            list.remove(position);
+            saveAndRefresh(isExpense);
+            dialog.dismiss();
+            Toast.makeText(this, "\u5DF2\u5220\u9664", Toast.LENGTH_SHORT).show();
+        });
+
+        dialogView.findViewById(R.id.btn_cancel).setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     private void saveAndRefresh(boolean isExpense) {
@@ -160,59 +171,132 @@ public class CategorySettingsActivity extends AppCompatActivity {
         }
     }
 
-    // Inner adapter
-    private static class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
+    /**
+     * RecyclerView adapter for category settings with icon support
+     */
+    private static class CategorySettingsAdapter extends RecyclerView.Adapter<CategorySettingsAdapter.ViewHolder> {
 
+        private final Context context;
         private final List<String> items;
-        private final OnCategoryClickListener onClickListener;
-        private final OnCategoryLongClickListener onLongClickListener;
+        private final OnCategoryActionListener onEditListener;
+        private final OnCategoryActionListener onDeleteListener;
 
-        interface OnCategoryClickListener {
-            void onCategoryClick(String name, int position);
+        interface OnCategoryActionListener {
+            void onAction(String name, int position);
         }
 
-        interface OnCategoryLongClickListener {
-            void onCategoryLongClick(String name, int position);
-        }
-
-        CategoryAdapter(List<String> items, OnCategoryClickListener click,
-                        OnCategoryLongClickListener longClick) {
+        CategorySettingsAdapter(Context context, List<String> items,
+                                OnCategoryActionListener editListener,
+                                OnCategoryActionListener deleteListener) {
+            this.context = context;
             this.items = items;
-            this.onClickListener = click;
-            this.onLongClickListener = longClick;
+            this.onEditListener = editListener;
+            this.onDeleteListener = deleteListener;
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(android.view.ViewGroup parent, int viewType) {
-            TextView tv = new TextView(parent.getContext());
-            tv.setLayoutParams(new RecyclerView.LayoutParams(
-                    RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
-            int dp12 = (int) (12 * parent.getContext().getResources().getDisplayMetrics().density);
-            tv.setPadding(dp12, dp12, dp12, dp12);
-            tv.setTextSize(15);
-            tv.setTextColor(parent.getContext().getResources().getColor(R.color.ink));
-            return new ViewHolder(tv);
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_category_card, parent, false);
+            return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             String name = items.get(position);
-            holder.textView.setText(name);
-            holder.textView.setOnClickListener(v -> {
-                if (onClickListener != null) onClickListener.onCategoryClick(name, position);
+            holder.tvName.setText(name);
+
+            // Set icon using CategoryIconHelper
+            int iconResId = CategoryIconHelper.getIconResId(name);
+            int bgColorRes = getCategoryBgColor(name);
+            int bgColor = context.getColor(bgColorRes);
+
+            if (iconResId != 0) {
+                holder.ivIcon.setImageResource(iconResId);
+                holder.ivIcon.setBackground(createRoundedBg(bgColor));
+                holder.ivIcon.setVisibility(View.VISIBLE);
+                holder.tvIcon.setVisibility(View.GONE);
+            } else {
+                holder.tvIcon.setText(getCategoryEmoji(name));
+                holder.tvIcon.setBackground(createRoundedBg(bgColor));
+                holder.tvIcon.setVisibility(View.VISIBLE);
+                holder.ivIcon.setVisibility(View.GONE);
+            }
+
+            holder.btnEdit.setOnClickListener(v -> {
+                if (onEditListener != null) onEditListener.onAction(name, holder.getAdapterPosition());
             });
-            holder.textView.setOnLongClickListener(v -> {
-                if (onLongClickListener != null) onLongClickListener.onCategoryLongClick(name, position);
-                return true;
+            holder.btnDelete.setOnClickListener(v -> {
+                if (onDeleteListener != null) onDeleteListener.onAction(name, holder.getAdapterPosition());
             });
         }
 
         @Override
         public int getItemCount() { return items.size(); }
 
+        private GradientDrawable createRoundedBg(int color) {
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setShape(GradientDrawable.RECTANGLE);
+            float radius = 12 * context.getResources().getDisplayMetrics().density;
+            drawable.setCornerRadius(radius);
+            drawable.setColor(color);
+            return drawable;
+        }
+
+        private int getCategoryBgColor(String category) {
+            if (category == null) return R.color.cat_other;
+            switch (category) {
+                case "\u9910\u996E": return R.color.cat_food;
+                case "\u8D2D\u7269": return R.color.cat_shopping;
+                case "\u4EA4\u901A": return R.color.cat_transport;
+                case "\u65C5\u884C": return R.color.cat_travel;
+                case "\u901A\u8BAF": return R.color.cat_communication;
+                case "\u5A31\u4E50": return R.color.cat_entertainment;
+                case "\u4F4F\u623F": return R.color.cat_housing;
+                case "\u4EBA\u60C5": return R.color.cat_social;
+                case "\u533B\u7597": return R.color.cat_medical;
+                case "\u6559\u80B2": return R.color.cat_education;
+                case "\u7F8E\u5BB9": return R.color.cat_beauty;
+                case "\u8F6C\u8D26": return R.color.cat_transfer;
+                case "\u7EA2\u5305": return R.color.cat_redpacket;
+                case "\u9000\u6B3E": return R.color.cat_refund;
+                default: return R.color.cat_other;
+            }
+        }
+
+        private String getCategoryEmoji(String category) {
+            if (category == null) return "\u2753";
+            switch (category) {
+                case "\u9910\u996E": return "\uD83C\uDF72";
+                case "\u8D2D\u7269": return "\uD83D\uDED2";
+                case "\u4EA4\u901A": return "\uD83D\uDE8C";
+                case "\u65C5\u884C": return "\u2708\uFE0F";
+                case "\u901A\u8BAF": return "\uD83D\uDCF1";
+                case "\u5A31\u4E50": return "\uD83C\uDFAE";
+                case "\u4F4F\u623F": return "\uD83C\uDFE0";
+                case "\u4EBA\u60C5": return "\uD83C\uDF81";
+                case "\u533B\u7597": return "\uD83D\uDC8A";
+                case "\u6559\u80B2": return "\uD83D\uDCDA";
+                case "\u7F8E\u5BB9": return "\uD83D\uDC84";
+                case "\u8F6C\u8D26": return "\uD83D\uDCB0";
+                case "\u7EA2\u5305": return "\uD83E\uDDE7";
+                case "\u9000\u6B3E": return "\uD83D\uDCB5";
+                case "\u5176\u4ED6": return "\u2753";
+                default: return "\u2753";
+            }
+        }
+
         static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textView;
-            ViewHolder(TextView tv) { super(tv); textView = tv; }
+            TextView tvName, tvIcon;
+            ImageView ivIcon, btnEdit, btnDelete;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                tvName = itemView.findViewById(R.id.tv_category_name);
+                tvIcon = itemView.findViewById(R.id.tv_category_icon);
+                ivIcon = itemView.findViewById(R.id.iv_category_icon);
+                btnEdit = itemView.findViewById(R.id.btn_edit);
+                btnDelete = itemView.findViewById(R.id.btn_delete);
+            }
         }
     }
 }

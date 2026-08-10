@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.myapplication.data.entity.User;
 import com.example.myapplication.data.repository.BillRepository;
+import com.example.myapplication.util.ColorSchemeManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,12 +16,21 @@ public class MyApplication extends Application {
 
     private static BillRepository repository;
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static int themeResId;
 
     @Override
     public void onCreate() {
         super.onCreate();
         repository = new BillRepository(this);
         ensureAdminExists();
+
+        // Initialize theme from saved preference
+        themeResId = ColorSchemeManager.getThemeResId(this);
+    }
+
+    /** Returns the theme resource ID for the current color scheme */
+    public static int getThemeResId() {
+        return themeResId;
     }
 
     private void ensureAdminExists() {

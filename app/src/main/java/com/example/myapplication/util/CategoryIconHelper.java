@@ -1,6 +1,8 @@
 package com.example.myapplication.util;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,6 +14,8 @@ import com.example.myapplication.R;
  * Categories without a PNG icon return 0 (callers fall back to emoji).
  */
 public final class CategoryIconHelper {
+
+    private static final float ICON_CORNER_RADIUS_DP = 12f;
 
     private CategoryIconHelper() {}
 
@@ -52,14 +56,24 @@ public final class CategoryIconHelper {
         int bgColor = context.getColor(bgColorRes);
         if (iconResId != 0) {
             imageView.setImageResource(iconResId);
-            imageView.setBackgroundColor(bgColor);
+            imageView.setBackground(createRoundedBg(bgColor, context));
             imageView.setVisibility(View.VISIBLE);
             emojiView.setVisibility(View.GONE);
         } else {
             emojiView.setText(emoji);
-            emojiView.setBackgroundColor(bgColor);
+            emojiView.setBackground(createRoundedBg(bgColor, context));
             emojiView.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
         }
+    }
+
+    private static GradientDrawable createRoundedBg(int color, Context context) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setCornerRadius(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, ICON_CORNER_RADIUS_DP,
+                context.getResources().getDisplayMetrics()));
+        drawable.setColor(color);
+        return drawable;
     }
 }

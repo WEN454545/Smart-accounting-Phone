@@ -12,11 +12,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,7 +49,7 @@ public class AddBillDialog extends DialogFragment {
     private Bill editBill;
     private boolean isExpense = true;
     private long selectedDate = System.currentTimeMillis();
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年M月d日 HH:mm", Locale.CHINA);
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy\u5E74M\u6708d\u65E5 HH:mm", Locale.CHINA);
     private long userId;
 
     public void setOnSaveListener(OnSaveListener listener) {
@@ -77,7 +75,8 @@ public class AddBillDialog extends DialogFragment {
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_bill, null);
 
         EditText amountInput = view.findViewById(R.id.input_amount);
-        Spinner categorySpinner = view.findViewById(R.id.input_category);
+        FrameLayout frameCategoryPicker = view.findViewById(R.id.frame_category_picker);
+        TextView tvSelectedCategory = view.findViewById(R.id.tv_selected_category);
         EditText noteInput = view.findViewById(R.id.input_note);
         TextView dateInput = view.findViewById(R.id.input_date);
         Button btnExpense = view.findViewById(R.id.btn_expense);
@@ -88,36 +87,33 @@ public class AddBillDialog extends DialogFragment {
         CategoryManager.initDefaults(requireContext());
         List<String> expenseCategories = CategoryManager.getExpenseCategories(requireContext());
         List<String> incomeCategories = CategoryManager.getIncomeCategories(requireContext());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item,
-                new ArrayList<>(expenseCategories));
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
 
-        // 用户切换分类时，若备注是自动填充的（等于原始分类名或上一个选中分类），同步更新
-        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            private String previousCategory = "";
+        final String[] selectedCategory = {expenseCategories.get(0)};
+        tvSelectedCategory.setText(selectedCategory[0]);
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String newCategory = parent.getItemAtPosition(position).toString();
-                String currentNote = noteInput.getText().toString().trim();
-                // 编辑模式下：若备注等于原始分类名或上一个选中分类，同步更新（空备注不自动填充）
-                if (editBill != null) {
-                    if (!currentNote.isEmpty() && (currentNote.equals(editBill.getType()) || currentNote.equals(previousCategory))) {
-                        noteInput.setText(newCategory);
-                    }
-                }
-                previousCategory = newCategory;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+        // Category picker click - show selection dialog
+        frameCategoryPicker.setOnClickListener(pv -> {
+            List<String> cats = isExpense ? expenseCategories : incomeCategories;
+            String[] catArray = cats.toArray(new String[0]);
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(isExpense ? "\u652F\u51FA\u5206\u7C7B" : "\u6536\u5165\u5206\u7C7B")
+                    .setItems(catArray, (d, which) -> {
+                        selectedCategory[0] = catArray[which];
+                        tvSelectedCategory.setText(selectedCategory[0]);
+                        // Sync note if it matches the previous category
+                        String currentNote = noteInput.getText().toString().trim();
+                        if (editBill != null && !currentNote.isEmpty() && currentNote.equals(editBill.getType())) {
+                            noteInput.setText(selectedCategory[0]);
+                        }
+                    })
+                    .setNegativeButton("\u53D6\u6D88", null)
+                    .show();
         });
 
         // Set default date
         dateInput.setText(dateFormat.format(selectedDate));
 
-        // Edit mode — prefill fields
+        // Edit mode - prefill fields
         if (editBill != null) {
             amountInput.setText(String.valueOf(Math.abs(editBill.getAmount())));
             noteInput.setText(editBill.getNote());
@@ -127,17 +123,18 @@ public class AddBillDialog extends DialogFragment {
             if ("income".equals(editBill.getCategory())) {
                 isExpense = false;
                 setIncomeStyle(btnIncome, btnExpense);
-                adapter.clear();
-                adapter.addAll(incomeCategories);
-                adapter.notifyDataSetChanged();
                 String cat = editBill.getType();
-                int idx = incomeCategories.indexOf(cat);
-                if (idx >= 0) categorySpinner.setSelection(idx);
+                if (incomeCategories.contains(cat)) {
+                    selectedCategory[0] = cat;
+                    tvSelectedCategory.setText(cat);
+                }
             } else {
                 setExpenseStyle(btnExpense, btnIncome);
                 String cat = editBill.getType();
-                int idx = expenseCategories.indexOf(cat);
-                if (idx >= 0) categorySpinner.setSelection(idx);
+                if (expenseCategories.contains(cat)) {
+                    selectedCategory[0] = cat;
+                    tvSelectedCategory.setText(cat);
+                }
             }
         }
 
@@ -147,7 +144,7 @@ public class AddBillDialog extends DialogFragment {
             cal.setTimeInMillis(selectedDate);
             new DatePickerDialog(requireContext(),
                     (dialogView, year, month, dayOfMonth) -> {
-                        // 日期选完后弹出时间选择器
+                        // Date selected, then show time picker
                         Calendar calTmp = Calendar.getInstance();
                         calTmp.setTimeInMillis(selectedDate);
                         new TimePickerDialog(requireContext(),
@@ -172,19 +169,15 @@ public class AddBillDialog extends DialogFragment {
         btnExpense.setOnClickListener(v -> {
             isExpense = true;
             setExpenseStyle(btnExpense, btnIncome);
-            adapter.clear();
-            adapter.addAll(expenseCategories);
-            adapter.notifyDataSetChanged();
-            categorySpinner.setSelection(0);
+            selectedCategory[0] = expenseCategories.get(0);
+            tvSelectedCategory.setText(selectedCategory[0]);
         });
 
         btnIncome.setOnClickListener(v -> {
             isExpense = false;
             setIncomeStyle(btnIncome, btnExpense);
-            adapter.clear();
-            adapter.addAll(incomeCategories);
-            adapter.notifyDataSetChanged();
-            categorySpinner.setSelection(0);
+            selectedCategory[0] = incomeCategories.get(0);
+            tvSelectedCategory.setText(selectedCategory[0]);
         });
 
         btnCancel.setOnClickListener(v -> dismiss());
@@ -192,16 +185,16 @@ public class AddBillDialog extends DialogFragment {
         btnSave.setOnClickListener(v -> {
             String amountStr = amountInput.getText().toString().trim();
             if (amountStr.isEmpty()) {
-                amountInput.setError("请输入金额");
+                amountInput.setError("\u8BF7\u8F93\u5165\u91D1\u989D");
                 return;
             }
 
             double amount = Double.parseDouble(amountStr);
             if (isExpense) amount = -Math.abs(amount);
 
-            String cat = categorySpinner.getSelectedItem().toString();
+            String cat = selectedCategory[0];
             String note = noteInput.getText().toString().trim();
-            // 编辑模式下：若备注等于原分类，同步更新为新分类
+            // In edit mode: sync note if it equals original category
             if (editBill != null && note.equals(editBill.getType())) {
                 note = cat;
             }
@@ -209,7 +202,7 @@ public class AddBillDialog extends DialogFragment {
 
             Bill bill;
             if (editBill != null) {
-                // 编辑模式：直接修改原始对象，保留 id，确保 Room @Update 正确匹配
+                // Edit mode: modify original object, preserve id for Room @Update
                 editBill.setType(cat);
                 editBill.setAmount(amount);
                 editBill.setTimestamp(selectedDate);

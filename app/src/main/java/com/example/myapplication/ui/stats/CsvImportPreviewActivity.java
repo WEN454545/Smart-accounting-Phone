@@ -40,6 +40,7 @@ public class CsvImportPreviewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme(com.example.myapplication.MyApplication.getThemeResId());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_csv_import_preview);
 

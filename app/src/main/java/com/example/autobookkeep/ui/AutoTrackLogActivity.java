@@ -300,9 +300,9 @@ public class AutoTrackLogActivity extends AppCompatActivity {
 
     private void showAccessibilityPermissionDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("无障碍服务未开启")
-                .setMessage("节点抓取依赖无障碍服务，请在系统设置中开启「智能记账」的无障碍服务")
-                .setPositiveButton("去设置", (d, w) -> {
+                .setTitle(R.string.log_accessibility_title)
+                .setMessage(R.string.log_accessibility_message)
+                .setPositiveButton(R.string.accessibility_btn, (d, w) -> {
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                 })
                 .setCancelable(false)

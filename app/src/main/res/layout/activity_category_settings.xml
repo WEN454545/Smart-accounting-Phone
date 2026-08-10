@@ -4,59 +4,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/bar_background"
+    android:background="@color/bg"
     android:padding="16dp">
 
+    <!-- Title -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:paddingBottom="24dp"
+        android:paddingBottom="20dp"
         android:paddingTop="8dp">
 
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_settings"
-            android:tint="?android:attr/textColorPrimary"
-            android:layout_marginEnd="12dp"/>
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="12dp">
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_settings"
+                android:tint="@color/primary"
+                android:padding="8dp" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&#x8BB0;&#x8D26;&#x5206;&#x7C7B;&#x9884;&#x8BBE;"
-            android:textSize="28sp"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary"/>
+            android:textColor="@color/ink" />
     </LinearLayout>
 
-    <!-- &#x652F;&#x51FA;&#x5206;&#x7C7B; -->
+    <!-- Expense Category -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/white"
-        android:layout_marginBottom="16dp">
+        app:cardCornerRadius="24dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/surface"
+        android:layout_marginBottom="14dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="18dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:padding="16dp">
+                android:paddingBottom="14dp">
 
                 <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:background="@drawable/ic_dot_filled"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/bg_color_dot_sakura"
+                    android:layout_marginEnd="10dp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -65,61 +77,64 @@
                     android:text="&#x652F;&#x51FA;&#x5206;&#x7C7B;"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="?android:attr/textColorPrimary"/>
+                    android:textColor="@color/ink" />
 
                 <TextView
                     android:id="@+id/btn_add_expense"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="+ &#x6DFB;&#x52A0;"
-                    android:textSize="14sp"
-                    android:textColor="@color/app_blue"
+                    android:textSize="13sp"
+                    android:textColor="@color/primary"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="8dp"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"/>
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="8dp"
+                    android:background="@drawable/bg_tab_unselected"
+                    android:foreground="?attr/selectableItemBackgroundBorderless" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/rule"/>
+                android:background="@color/rule" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_expense"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:padding="8dp"/>
+                android:paddingVertical="6dp"
+                android:clipToPadding="false" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- &#x6536;&#x5165;&#x5206;&#x7C7B; -->
+    <!-- Income Category -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        app:cardBackgroundColor="@color/white">
+        app:cardCornerRadius="24dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/surface">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="18dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:padding="16dp">
+                android:paddingBottom="14dp">
 
                 <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:background="@drawable/ic_dot_filled"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/bg_color_dot_ocean_accent"
+                    android:layout_marginEnd="10dp" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -128,32 +143,35 @@
                     android:text="&#x6536;&#x5165;&#x5206;&#x7C7B;"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="?android:attr/textColorPrimary"/>
+                    android:textColor="@color/ink" />
 
                 <TextView
                     android:id="@+id/btn_add_income"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="+ &#x6DFB;&#x52A0;"
-                    android:textSize="14sp"
-                    android:textColor="@color/app_blue"
+                    android:textSize="13sp"
+                    android:textColor="@color/primary"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="8dp"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"/>
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="8dp"
+                    android:background="@drawable/bg_tab_unselected"
+                    android:foreground="?attr/selectableItemBackgroundBorderless" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/rule"/>
+                android:background="@color/rule" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_income"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:padding="8dp"/>
+                android:paddingVertical="6dp"
+                android:clipToPadding="false" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

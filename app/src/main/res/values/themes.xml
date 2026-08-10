@@ -10,8 +10,47 @@
         <item name="android:navigationBarColor">@color/surface</item>
     </style>
 
-    <style name="ThemeOverlay.RoundedDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
-        <item name="dialogCornerRadius">16dp</item>
+    <!-- Teal Sakura (default) -->
+    <style name="Theme.MyApplication.Teal" parent="Theme.MyApplication" />
+
+    <!-- Lavender Dream -->
+    <style name="Theme.MyApplication.Lavender" parent="Theme.MyApplication">
+        <item name="colorPrimary">@color/scheme_lavender_primary</item>
+        <item name="colorPrimaryVariant">@color/scheme_lavender_primary_dark</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/scheme_lavender_accent</item>
+        <item name="colorSecondaryVariant">@color/scheme_lavender_secondary</item>
+        <item name="android:statusBarColor">@color/scheme_lavender_primary_dark</item>
+        <item name="android:navigationBarColor">@color/scheme_lavender_bg</item>
+    </style>
+
+    <!-- Ocean Mint -->
+    <style name="Theme.MyApplication.Ocean" parent="Theme.MyApplication">
+        <item name="colorPrimary">@color/scheme_ocean_primary</item>
+        <item name="colorPrimaryVariant">@color/scheme_ocean_primary_dark</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/scheme_ocean_accent</item>
+        <item name="colorSecondaryVariant">@color/scheme_ocean_secondary</item>
+        <item name="android:statusBarColor">@color/scheme_ocean_primary_dark</item>
+        <item name="android:navigationBarColor">@color/scheme_ocean_bg</item>
+    </style>
+
+    <style name="ThemeOverlay.RoundedDialog" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="ThemeOverlay.RoundedBottomSheet" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundedBottomSheet</item>
+    </style>
+
+    <style name="RoundedBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/RoundedBottomSheetShape</item>
+    </style>
+
+    <style name="RoundedBottomSheetShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
     </style>
 
     <style name="Base.Theme.AutoBookkeep" parent="Theme.Material3.DayNight.NoActionBar">

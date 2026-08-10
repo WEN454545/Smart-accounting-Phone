@@ -68,7 +68,7 @@ public class StatsFragment extends Fragment {
         setupPieChart(pieExpenseChart);
         setupPieChart(pieIncomeChart);
 
-        // Tab 鍒囨崲
+        // Tab ??
         TextView tabWeek = view.findViewById(R.id.tab_week);
         TextView tabMonth = view.findViewById(R.id.tab_month);
         TextView tabYear = view.findViewById(R.id.tab_year);
@@ -77,7 +77,7 @@ public class StatsFragment extends Fragment {
         tabMonth.setOnClickListener(v -> selectTab(StatsViewModel.Period.MONTH, tabWeek, tabMonth, tabYear));
         tabYear.setOnClickListener(v -> selectTab(StatsViewModel.Period.YEAR, tabWeek, tabMonth, tabYear));
 
-        // 宸﹀彸绠ご鍒囨崲
+        // ??????
         btnPeriodPrev.setOnClickListener(v -> {
             StatsViewModel.Period p = viewModel.getPeriod().getValue();
             if (p == null) return;
@@ -97,12 +97,12 @@ public class StatsFragment extends Fragment {
             }
         });
 
-        // 鏁版嵁瑙傚療
+        // ????
         viewModel.getExpenseByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieExpenseChart, typeSums, legendExpense));
         viewModel.getIncomeByType().observe(getViewLifecycleOwner(), typeSums -> updatePieChart(pieIncomeChart, typeSums, legendIncome));
         viewModel.getTrendData().observe(getViewLifecycleOwner(), periodSums -> trendView.setData(periodSums));
 
-        // 鍛ㄦ湡鏍囩鏇存柊
+        // ??????
         viewModel.getStatsYear().observe(getViewLifecycleOwner(), y -> updatePeriodLabel());
         viewModel.getStatsMonth().observe(getViewLifecycleOwner(), m -> updatePeriodLabel());
         viewModel.getStatsWeekOffset().observe(getViewLifecycleOwner(), o -> updatePeriodLabel());
@@ -155,8 +155,8 @@ public class StatsFragment extends Fragment {
         chart.setHoleRadius(42f);
         chart.setTransparentCircleRadius(48f);
         chart.setExtraOffsets(8f, 5f, 8f, 5f);
-        chart.setEntryLabelColor(Color.parseColor("#1e293b"));
-        chart.setEntryLabelTextSize(10f);
+        chart.setEntryLabelColor(Color.WHITE);
+        chart.setEntryLabelTextSize(11f);
         chart.setEntryLabelTypeface(android.graphics.Typeface.DEFAULT_BOLD);
         chart.setDrawEntryLabels(true);
         chart.getLegend().setEnabled(false);
@@ -200,11 +200,9 @@ public class StatsFragment extends Fragment {
 
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setColors(CAT_COLORS);
-        dataSet.setValueTextSize(10f);
-        int accentColor = (chart == pieExpenseChart) ?
-                getResources().getColor(R.color.expense, requireContext().getTheme()) :
-                getResources().getColor(R.color.income, requireContext().getTheme());
-        dataSet.setValueTextColor(accentColor);
+        dataSet.setValueTextSize(11f);
+        dataSet.setValueTextColor(Color.WHITE);
+        dataSet.setValueTypeface(android.graphics.Typeface.DEFAULT_BOLD);
         // Labels inside the slice
         dataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
         dataSet.setYValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
@@ -218,7 +216,7 @@ public class StatsFragment extends Fragment {
                 if (percentage < 10.0f) {
                     return "";
                 }
-                return String.format(java.util.Locale.CHINA, "%.1f%%", percentage);
+                return String.format(java.util.Locale.CHINA, "%.0f%%\n\u00A5%.1f", percentage, value);
             }
         });
         chart.setData(pieData);
@@ -283,11 +281,13 @@ public class StatsFragment extends Fragment {
 
             // Category name + percentage
             TextView label = new TextView(getContext());
-            label.setText(String.format(java.util.Locale.CHINA, " %s %.1f%%", item.name, item.percentage));
+            label.setText(String.format(java.util.Locale.CHINA, " %s %.1f%%\r\n\u00A5%.1f", item.name, item.percentage, item.value));
             label.setTextColor(Color.parseColor("#64748b"));
             label.setTextSize(11f);
-            label.setMaxLines(1);
-            label.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+            label.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
             itemLayout.addView(label);
 
             currentRow.addView(itemLayout);
