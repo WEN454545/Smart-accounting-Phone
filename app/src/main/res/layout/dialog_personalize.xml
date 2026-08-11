@@ -1,435 +1,395 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="300dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="0dp"
-    app:cardBackgroundColor="@color/white">
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet_rounded"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="12dp">
 
+    <!-- Drag handle -->
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_personalize_drag_handle" />
+
+    <!-- Header: title + close -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
-
-        <!-- Header -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_marginBottom="24dp">
-
-            <TextView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:background="@drawable/bg_dialog_rounded"
-                android:text="&#x1F3A8;"
-                android:textSize="24sp"
-                android:layout_marginBottom="10dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="&#x4E2A;&#x6027;&#x5316;&#x8BBE;&#x7F6E;"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="&#x81EA;&#x5B9A;&#x4E49;&#x4E3B;&#x9875;&#x80CC;&#x666F;&#x548C;&#x4E3B;&#x9898;"
-                android:textSize="12sp"
-                android:textColor="@color/muted"
-                android:layout_marginTop="4dp" />
-        </LinearLayout>
-
-        <!-- Profile Background Option -->
-        <LinearLayout
-            android:id="@+id/opt_profile_bg"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_dialog_rounded"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:text="&#x1F3A8;" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#x81EA;&#x5B9A;&#x4E49;&#x4E3B;&#x9875;&#x80CC;&#x666F;"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/ink" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#x9009;&#x62E9;&#x4F60;&#x559C;&#x6B22;&#x7684;&#x80CC;&#x666F;&#x56FE;&#x7247;&#x6216;&#x89C6;&#x9891;"
-                    android:textSize="11sp"
-                    android:textColor="@color/muted"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=">"
-                android:textSize="18sp"
-                android:textColor="@color/muted" />
-        </LinearLayout>
-
-        <!-- Login Background Option -->
-        <LinearLayout
-            android:id="@+id/opt_login_bg"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_dialog_rounded"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:text="&#x1F510;" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_login_bg"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/ink" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_login_bg_subtitle"
-                    android:textSize="11sp"
-                    android:textColor="@color/muted"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=">"
-                android:textSize="18sp"
-                android:textColor="@color/muted" />
-        </LinearLayout>
-
-        <!-- Home Background Option -->
-        <LinearLayout
-            android:id="@+id/opt_home_bg"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_dialog_rounded"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:text="&#x1F3E0;" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_home_bg"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/ink" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_home_bg_subtitle"
-                    android:textSize="11sp"
-                    android:textColor="@color/muted"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=">"
-                android:textSize="18sp"
-                android:textColor="@color/muted" />
-        </LinearLayout>
-
-        <!-- Dialog Bill Background Option -->
-        <LinearLayout
-            android:id="@+id/opt_dialog_bill_bg"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_dialog_rounded"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:text="&#x1F4DD;" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_dialog_bill_bg"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/ink" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_dialog_bill_bg_subtitle"
-                    android:textSize="11sp"
-                    android:textColor="@color/muted"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=">"
-                android:textSize="18sp"
-                android:textColor="@color/muted" />
-        </LinearLayout>
-
-        <!-- Calendar Background Option -->
-        <LinearLayout
-            android:id="@+id/opt_cal_bg"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_dialog_rounded"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:text="&#x1F4C5;" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#x81EA;&#x5B9A;&#x4E49;&#x65E5;&#x5386;&#x80CC;&#x666F;"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/ink" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#x4E3A;&#x65E5;&#x5386;&#x7F51;&#x683C;&#x533A;&#x57DF;&#x8BBE;&#x7F6E;&#x80CC;&#x666F;&#x56FE;&#x7247;"
-                    android:textSize="11sp"
-                    android:textColor="@color/muted"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=">"
-                android:textSize="18sp"
-                android:textColor="@color/muted" />
-        </LinearLayout>
-
-        <!-- Home Header Background Option -->
-        <LinearLayout
-            android:id="@+id/opt_home_header_bg"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_dialog_rounded"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="20dp">
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:text="&#x1F3A8;" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_home_header_bg"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/ink" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_home_header_bg_subtitle"
-                    android:textSize="11sp"
-                    android:textColor="@color/muted"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=">"
-                android:textSize="18sp"
-                android:textColor="@color/muted" />
-        </LinearLayout>
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="14dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="8dp"
-            android:background="@color/rule" />
+            android:layout_width="4dp"
+            android:layout_height="18dp"
+            android:background="@drawable/bg_profile_section_header" />
 
-        <!-- Color Scheme Option -->
-        <LinearLayout
-            android:id="@+id/opt_color_scheme"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_dialog_rounded"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:text="@string/profile_personalize"
+            android:textColor="@color/ink"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btn_personalize_close"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="12dp">
+            android:padding="4dp"
+            android:src="@drawable/ic_close"
+            app:tint="@color/muted" />
+    </LinearLayout>
 
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:text="&#x1F3A8;" />
+    <!-- Group: Background settings -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
+        <View
+            android:layout_width="3dp"
+            android:layout_height="13dp"
+            android:background="@drawable/bg_profile_section_header"
+            android:backgroundTint="#800D9488" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#x914D;&#x8272;&#x65B9;&#x6848;"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/ink" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="&#x80CC;&#x666F;&#x8BBE;&#x7F6E;"
+            android:textColor="@color/muted"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="&#x9009;&#x62E9;&#x4F60;&#x559C;&#x6B22;&#x7684;&#x4E3B;&#x9898;&#x8272;&#x5F69;"
-                    android:textSize="11sp"
-                    android:textColor="@color/muted"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
+    <!-- Grid row 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <!-- Profile Background -->
+        <LinearLayout
+            android:id="@+id/opt_profile_bg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_personalize_grid_item"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="14dp">
+
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:backgroundTint="@color/profile_icon_bg_purple"
+                android:background="@drawable/bg_profile_icon_circle"
+                android:padding="6dp"
+                android:src="@drawable/ic_profile_palette"
+                app:tint="@color/profile_icon_fg_purple" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=">"
-                android:textSize="18sp"
-                android:textColor="@color/muted" />
+                android:layout_marginTop="8dp"
+                android:text="@string/profile_bg_setting"
+                android:textColor="@color/ink"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:ellipsize="end" />
         </LinearLayout>
 
-        <!-- Cancel -->
-        <TextView
-            android:id="@+id/btn_personalize_cancel"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="&#x53D6;&#x6D88;"
-            android:textSize="14sp"
-            android:textColor="@color/muted"
-            android:background="?android:attr/selectableItemBackground"
+        <!-- Login Background -->
+        <LinearLayout
+            android:id="@+id/opt_login_bg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="6dp"
+            android:background="@drawable/bg_personalize_grid_item"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="14dp">
 
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:backgroundTint="@color/profile_icon_bg_blue"
+                android:background="@drawable/bg_profile_icon_circle"
+                android:padding="6dp"
+                android:src="@drawable/ic_dialog_lock"
+                app:tint="@color/profile_icon_fg_blue" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/profile_login_bg"
+                android:textColor="@color/ink"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <!-- Home Background -->
+        <LinearLayout
+            android:id="@+id/opt_home_bg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_personalize_grid_item"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="14dp">
+
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:backgroundTint="@color/profile_icon_bg_teal"
+                android:background="@drawable/bg_profile_icon_circle"
+                android:padding="6dp"
+                android:src="@drawable/ic_dialog_home"
+                app:tint="@color/profile_icon_fg_teal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/profile_home_bg"
+                android:textColor="@color/ink"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:ellipsize="end" />
+        </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+    <!-- Grid row 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <!-- Dialog Bill Background -->
+        <LinearLayout
+            android:id="@+id/opt_dialog_bill_bg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_personalize_grid_item"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="14dp">
+
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:backgroundTint="@color/profile_icon_bg_amber"
+                android:background="@drawable/bg_profile_icon_circle"
+                android:padding="6dp"
+                android:src="@drawable/ic_dialog_memo"
+                app:tint="@color/profile_icon_fg_amber" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/profile_dialog_bill_bg"
+                android:textColor="@color/ink"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <!-- Calendar Background -->
+        <LinearLayout
+            android:id="@+id/opt_cal_bg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="6dp"
+            android:background="@drawable/bg_personalize_grid_item"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="14dp">
+
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:backgroundTint="@color/profile_icon_bg_green"
+                android:background="@drawable/bg_profile_icon_circle"
+                android:padding="6dp"
+                android:src="@drawable/ic_nav_calendar"
+                app:tint="@color/profile_icon_fg_green" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/profile_cal_bg_setting"
+                android:textColor="@color/ink"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <!-- Home Header Background -->
+        <LinearLayout
+            android:id="@+id/opt_home_header_bg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_personalize_grid_item"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="14dp">
+
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:backgroundTint="@color/profile_icon_bg_slate"
+                android:background="@drawable/bg_profile_icon_circle"
+                android:padding="6dp"
+                android:src="@drawable/ic_image"
+                app:tint="@color/profile_icon_fg_slate" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/profile_home_header_bg"
+                android:textColor="@color/ink"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:ellipsize="end" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Group: Theme -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="13dp"
+            android:background="@drawable/bg_profile_section_header"
+            android:backgroundTint="#800D9488" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="&#x4E3B;&#x9898;"
+            android:textColor="@color/muted"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Color scheme entry (horizontal card with preview dot + name) -->
+    <LinearLayout
+        android:id="@+id/opt_color_scheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_personalize_theme_item"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp">
+
+        <!-- Preview color dot (tinted by Java) -->
+        <View
+            android:id="@+id/view_color_scheme_dot"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:background="@drawable/bg_color_dot_teal" />
+
+        <TextView
+            android:id="@+id/tv_color_scheme_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:text="&#x9752;&#x74F7;&#x6A31;"
+            android:textColor="@color/ink"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_profile_arrow"
+            app:tint="@color/muted" />
+    </LinearLayout>
+
+    <!-- Cancel -->
+    <TextView
+        android:id="@+id/btn_personalize_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:textColor="@color/muted"
+        android:textSize="14sp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>

@@ -89,4 +89,28 @@
     <color name="scheme_ocean_accent">#6EE7B7</color>
     <color name="scheme_ocean_secondary">#FDE68A</color>
     <color name="scheme_ocean_bg">#ECFEFF</color>
+
+    <!-- Profile screen: icon circle tints (soft pastel) -->
+    <color name="profile_icon_bg_blue">#E0EBFF</color>
+    <color name="profile_icon_fg_blue">#3B82F6</color>
+    <color name="profile_icon_bg_purple">#EDE4FF</color>
+    <color name="profile_icon_fg_purple">#8B5CF6</color>
+    <color name="profile_icon_bg_teal">#D6F5EE</color>
+    <color name="profile_icon_fg_teal">#0D9488</color>
+    <color name="profile_icon_bg_amber">#FEEBD7</color>
+    <color name="profile_icon_fg_amber">#F59E0B</color>
+    <color name="profile_icon_bg_green">#DCFCE7</color>
+    <color name="profile_icon_fg_green">#16A34A</color>
+    <color name="profile_icon_bg_slate">#E2E8F0</color>
+    <color name="profile_icon_fg_slate">#475569</color>
+    <color name="profile_icon_bg_rose">#FFE4E6</color>
+    <color name="profile_icon_fg_rose">#E11D48</color>
+
+    <!-- Profile screen: section accent + surfaces -->
+    <color name="profile_section_accent">#0D9488</color>
+    <color name="profile_card_bg">#F2FFFFFF</color>
+    <color name="profile_card_border">#14CBD5CC</color>
+    <color name="profile_header_scrim">#66000000</color>
+    <color name="profile_logout_bg">#FEE2E2</color>
+    <color name="profile_logout_fg">#DC2626</color>
 </resources>

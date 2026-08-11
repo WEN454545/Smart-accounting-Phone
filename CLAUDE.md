@@ -90,6 +90,7 @@ app/src/main/java/com/example/myapplication/
 │       └── TrendBarView.java       — Custom trend bar chart view
 └── util/
     ├── CategoryIconHelper.java     — Maps bill category names to PNG drawable icon resources
+    ├── ColorSchemeManager.java     — Color scheme switching (teal, lavender, ocean, etc.) with persistence
     └── ImageUtils.java             — Image scaling, cropping, and format conversion utilities
 ```
 

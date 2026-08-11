@@ -94,6 +94,7 @@ public class ProfileFragment extends Fragment {
     private ImageView ivProfileBg;
     private TextView tvBgStatus;
     private TextView tvTransactionStyleValue;
+    private TextView tvProfileUsername;
     private boolean isSettingSwitchProgrammatically;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
@@ -182,10 +183,14 @@ public class ProfileFragment extends Fragment {
         ivProfileBg = view.findViewById(R.id.iv_profile_bg);
         tvBgStatus = view.findViewById(R.id.tv_bg_status);
         tvTransactionStyleValue = view.findViewById(R.id.tv_transaction_style_value);
+        tvProfileUsername = view.findViewById(R.id.tv_profile_username);
         setupBackground();
 
         // Load saved avatar
         loadAvatar();
+
+        // Load current username
+        loadUsername();
 
         // Update transaction style display
         updateTransactionStyleDisplay();
@@ -287,9 +292,21 @@ public class ProfileFragment extends Fragment {
 
     private void showPersonalizeDialog() {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_personalize, null);
-        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
-                .setView(dialogView)
-                .create();
+        com.google.android.material.bottomsheet.BottomSheetDialog dialog =
+                new com.google.android.material.bottomsheet.BottomSheetDialog(requireContext(), R.style.ThemeOverlay_RoundedBottomSheet);
+        dialog.setContentView(dialogView);
+
+        // Update color scheme preview with current selection
+        String currentScheme = ColorSchemeManager.getSelectedScheme(requireContext());
+        TextView tvSchemeName = dialogView.findViewById(R.id.tv_color_scheme_name);
+        View dot = dialogView.findViewById(R.id.view_color_scheme_dot);
+        if (tvSchemeName != null) {
+            tvSchemeName.setText(ColorSchemeManager.getSchemeDisplayName(currentScheme));
+        }
+        if (dot != null) {
+            dot.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                    ColorSchemeManager.getCurrentPrimaryColor(requireContext())));
+        }
 
         dialogView.findViewById(R.id.opt_profile_bg).setOnClickListener(v -> {
             dialog.dismiss();
@@ -327,6 +344,11 @@ public class ProfileFragment extends Fragment {
         });
 
         dialogView.findViewById(R.id.btn_personalize_cancel).setOnClickListener(v -> dialog.dismiss());
+
+        View closeBtn = dialogView.findViewById(R.id.btn_personalize_close);
+        if (closeBtn != null) {
+            closeBtn.setOnClickListener(v -> dialog.dismiss());
+        }
 
         dialog.show();
     }
@@ -862,6 +884,19 @@ public class ProfileFragment extends Fragment {
         } catch (Exception e) {
             Toast.makeText(requireContext(), R.string.profile_avatar_failed, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // ---- Username ----
+
+    private void loadUsername() {
+        long userId = sessionManager.getUserId();
+        new Thread(() -> {
+            com.example.myapplication.data.entity.User user = repository.getUserById(userId);
+            if (user != null && tvProfileUsername != null) {
+                requireActivity().runOnUiThread(() ->
+                        tvProfileUsername.setText(user.getUsername()));
+            }
+        }).start();
     }
 
     // ---- Notification ----
