@@ -29,6 +29,8 @@ import android.widget.LinearLayout;
 
 import android.widget.NumberPicker;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import android.widget.ProgressBar;
 
 import android.widget.TextView;
@@ -177,9 +179,9 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         requestNotificationPermission();
 
 
-        // \u70B9\u51FB\u65E5\u671F\u5F39\u51FA\u5E74\u6708\u9009\u62E9\u5668
+        // \u70B9\u51FB\u65E5\u671F\u533A\u57DF\u5F39\u51FA\u5E74\u6708\u9009\u62E9\u5668\uFF08\u6574\u4E2A ll_date_picker \u53EF\u70B9\u51FB\uFF09
 
-        dateText.setOnClickListener(v -> showYearMonthPicker());
+        view.findViewById(R.id.ll_date_picker).setOnClickListener(v -> showYearMonthPicker());
 
 
         adapter = new DaySectionedBillAdapter(this);
@@ -299,9 +301,12 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         int monthVal = curMonth;
 
 
-        // \u53CC NumberPicker \u5E74\u6708\u9009\u62E9\u5668
+        View content = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_year_month_picker, null);
 
-        NumberPicker yearPicker = new NumberPicker(requireContext());
+        NumberPicker yearPicker = content.findViewById(R.id.picker_year);
+
+        NumberPicker monthPicker = content.findViewById(R.id.picker_month);
+
 
         yearPicker.setMinValue(2015);
 
@@ -311,8 +316,6 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
         yearPicker.setWrapSelectorWheel(false);
 
-
-        NumberPicker monthPicker = new NumberPicker(requireContext());
 
         monthPicker.setMinValue(1);
 
@@ -331,40 +334,40 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
         });
 
 
-        LinearLayout layout = new LinearLayout(requireContext());
+        Calendar today = Calendar.getInstance();
 
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-
-        layout.setPadding(32, 16, 32, 0);
-
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-
-        layout.addView(yearPicker, lp);
-
-        layout.addView(monthPicker, lp);
+        boolean isCurrentMonth = (yearVal == today.get(Calendar.YEAR) && monthVal == today.get(Calendar.MONTH));
 
 
-        AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
 
-                .setTitle("\u9009\u62E9\u5E74\u6708")
-
-                .setView(layout)
+                .setView(content)
 
                 .setPositiveButton("\u786E\u5B9A", (d, w) -> {
 
                     int selectedYear = yearPicker.getValue();
 
-                    int selectedMonth = monthPicker.getValue() - 1; // \u8F6C\u4E3A Calendar.MONTH (0-11)
+                    int selectedMonth = monthPicker.getValue() - 1;
 
                     viewModel.goToYearMonth(selectedYear, selectedMonth);
 
                 })
 
-                .setNegativeButton("\u53D6\u6D88", null)
+                .setNegativeButton("\u53D6\u6D88", null);
 
-                .create();
 
-        dialog.show();
+        if (!isCurrentMonth) {
+
+            builder.setNeutralButton("\u672C\u6708", (d, w) -> {
+
+                viewModel.goToYearMonth(today.get(Calendar.YEAR), today.get(Calendar.MONTH));
+
+            });
+
+        }
+
+
+        builder.show();
 
     }
 
