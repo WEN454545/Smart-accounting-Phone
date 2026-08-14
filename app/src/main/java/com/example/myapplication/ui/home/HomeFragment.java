@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.graphics.drawable.GradientDrawable;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
@@ -68,6 +69,7 @@ import com.example.myapplication.ui.adapter.DaySectionedBillAdapter;
 
 import com.example.myapplication.ui.dialog.AddBillDialog;
 
+import com.example.myapplication.util.ColorSchemeManager;
 import com.example.myapplication.util.ImageUtils;
 
 
@@ -158,6 +160,16 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
         // Load home header background
         loadHomeHeaderBackground();
+
+        // Apply theme-aware gradient to header background
+        View headerFrame = (View) headerContent.getParent();
+        int primaryColor = ColorSchemeManager.getCurrentPrimaryColor(requireContext());
+        int primaryDarkColor = ColorSchemeManager.getCurrentPrimaryDarkColor(requireContext());
+        GradientDrawable headerGradient = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{primaryColor, (primaryDarkColor & 0x00FFFFFF) | 0x80000000});
+        headerGradient.setCornerRadii(new float[]{0, 0, 0, 0, 28f, 28f, 28f, 28f});
+        headerFrame.setBackground(headerGradient);
 
 
         // \u4E3B\u52A8\u8BF7\u6C42\u901A\u77E5\u6743\u9650\uFF08Android 13+\uFF09

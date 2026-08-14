@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.util.CategoryIconHelper;
 import com.example.autobookkeep.util.CategoryManager;
+import com.example.autobookkeep.util.CategoryManager.IconInfo;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,10 +51,12 @@ public class CategorySettingsActivity extends AppCompatActivity {
 
         expenseAdapter = new CategorySettingsAdapter(this, expenseList,
                 (name, position) -> showEditDialog(name, true, position),
-                (name, position) -> showDeleteDialog(name, true, position));
+                (name, position) -> showDeleteDialog(name, true, position),
+                (name, position) -> showIconPicker(name, true, position));
         incomeAdapter = new CategorySettingsAdapter(this, incomeList,
                 (name, position) -> showEditDialog(name, false, position),
-                (name, position) -> showDeleteDialog(name, false, position));
+                (name, position) -> showDeleteDialog(name, false, position),
+                (name, position) -> showIconPicker(name, false, position));
 
         rvExpense.setLayoutManager(new LinearLayoutManager(this));
         rvExpense.setAdapter(expenseAdapter);
@@ -171,6 +175,50 @@ public class CategorySettingsActivity extends AppCompatActivity {
         }
     }
 
+    private void showIconPicker(String categoryName, boolean isExpense, int position) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_icon_picker, null);
+        com.google.android.flexbox.FlexboxLayout flexbox = dialogView.findViewById(R.id.flexbox_icons);
+
+        BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.ThemeOverlay_RoundedBottomSheet);
+        dialog.setContentView(dialogView);
+
+        List<IconInfo> icons = CategoryManager.getAllAvailableIcons(this);
+        String currentIconName = CategoryManager.getCategoryIconName(this, categoryName);
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (IconInfo info : icons) {
+            View itemView = inflater.inflate(R.layout.item_icon_picker, flexbox, false);
+            ImageView ivIcon = itemView.findViewById(R.id.iv_icon);
+            TextView tvLabel = itemView.findViewById(R.id.tv_label);
+
+            ivIcon.setImageResource(info.resId);
+            tvLabel.setText(info.label);
+
+            // Highlight current selection
+            boolean isSelected = info.resName.equals(currentIconName);
+            itemView.setAlpha(isSelected ? 1.0f : 0.5f);
+
+            itemView.setOnClickListener(v -> {
+                if (info.resName.equals(currentIconName)) {
+                    // Deselect - restore default
+                    CategoryManager.setCategoryIcon(CategorySettingsActivity.this, categoryName, null);
+                } else {
+                    CategoryManager.setCategoryIcon(CategorySettingsActivity.this, categoryName, info.resName);
+                }
+                if (isExpense) {
+                    expenseAdapter.notifyItemChanged(position);
+                } else {
+                    incomeAdapter.notifyItemChanged(position);
+                }
+                dialog.dismiss();
+            });
+
+            flexbox.addView(itemView);
+        }
+
+        dialog.show();
+    }
+
     /**
      * RecyclerView adapter for category settings with icon support
      */
@@ -180,6 +228,7 @@ public class CategorySettingsActivity extends AppCompatActivity {
         private final List<String> items;
         private final OnCategoryActionListener onEditListener;
         private final OnCategoryActionListener onDeleteListener;
+        private final OnCategoryActionListener onIconClickListener;
 
         interface OnCategoryActionListener {
             void onAction(String name, int position);
@@ -187,11 +236,13 @@ public class CategorySettingsActivity extends AppCompatActivity {
 
         CategorySettingsAdapter(Context context, List<String> items,
                                 OnCategoryActionListener editListener,
-                                OnCategoryActionListener deleteListener) {
+                                OnCategoryActionListener deleteListener,
+                                OnCategoryActionListener iconClickListener) {
             this.context = context;
             this.items = items;
             this.onEditListener = editListener;
             this.onDeleteListener = deleteListener;
+            this.onIconClickListener = iconClickListener;
         }
 
         @Override
@@ -205,8 +256,14 @@ public class CategorySettingsActivity extends AppCompatActivity {
             String name = items.get(position);
             holder.tvName.setText(name);
 
-            // Set icon using CategoryIconHelper
-            int iconResId = CategoryIconHelper.getIconResId(name);
+            // Check custom icon mapping first
+            String customIconName = CategoryManager.getCategoryIconName(context, name);
+            int iconResId;
+            if (customIconName != null && !customIconName.isEmpty()) {
+                iconResId = context.getResources().getIdentifier(customIconName, "drawable", context.getPackageName());
+            } else {
+                iconResId = CategoryIconHelper.getIconResId(name);
+            }
             int bgColorRes = getCategoryBgColor(name);
             int bgColor = context.getColor(bgColorRes);
 
@@ -220,6 +277,14 @@ public class CategorySettingsActivity extends AppCompatActivity {
                 holder.tvIcon.setBackground(createRoundedBg(bgColor));
                 holder.tvIcon.setVisibility(View.VISIBLE);
                 holder.ivIcon.setVisibility(View.GONE);
+            }
+
+            // Click on icon to change
+            View iconContainer = holder.itemView.findViewById(R.id.icon_container);
+            if (iconContainer != null) {
+                iconContainer.setOnClickListener(v -> {
+                    if (onIconClickListener != null) onIconClickListener.onAction(name, holder.getAdapterPosition());
+                });
             }
 
             holder.btnEdit.setOnClickListener(v -> {

@@ -91,7 +91,7 @@
                 android:text="&#x7075;"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/primary" />
+                android:textColor="?attr/colorPrimary" />
         </FrameLayout>
 
         <TextView
@@ -148,7 +148,7 @@
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:background="@drawable/bg_card"
-            android:backgroundTint="@color/primary"
+            android:backgroundTint="?attr/colorPrimary"
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>

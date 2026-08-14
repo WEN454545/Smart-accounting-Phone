@@ -36,7 +36,7 @@
     </style>
 
     <style name="ThemeOverlay.RoundedDialog" parent="ThemeOverlay.AppCompat.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/bg_dialog_rounded</item>
     </style>
 
     <style name="ThemeOverlay.RoundedBottomSheet" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">

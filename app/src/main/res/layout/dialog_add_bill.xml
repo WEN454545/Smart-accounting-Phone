@@ -170,7 +170,7 @@
             android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:background="@drawable/bg_tab_selected"
-            android:backgroundTint="@color/primary"
+            android:backgroundTint="?attr/colorPrimary"
             android:text="@string/add_bill_save"
             android:textColor="@android:color/white"
             android:textSize="15sp" />

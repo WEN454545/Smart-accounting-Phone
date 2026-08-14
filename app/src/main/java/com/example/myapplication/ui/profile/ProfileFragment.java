@@ -32,6 +32,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -95,6 +96,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvBgStatus;
     private TextView tvTransactionStyleValue;
     private TextView tvProfileUsername;
+    private TextView tvCacheSize;
     private boolean isSettingSwitchProgrammatically;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
@@ -184,6 +186,7 @@ public class ProfileFragment extends Fragment {
         tvBgStatus = view.findViewById(R.id.tv_bg_status);
         tvTransactionStyleValue = view.findViewById(R.id.tv_transaction_style_value);
         tvProfileUsername = view.findViewById(R.id.tv_profile_username);
+        tvCacheSize = view.findViewById(R.id.tv_cache_size);
         setupBackground();
 
         // Load saved avatar
@@ -194,6 +197,9 @@ public class ProfileFragment extends Fragment {
 
         // Update transaction style display
         updateTransactionStyleDisplay();
+
+        // Load cache size
+        loadCacheSize();
 
         // Avatar click -> pick from gallery
         view.findViewById(R.id.layout_avatar).setOnClickListener(v -> {
@@ -776,7 +782,7 @@ public class ProfileFragment extends Fragment {
         tvCrop.setOnClickListener(v -> {
             currentScaleType[0] = ImageView.ScaleType.CENTER_CROP;
             tvCrop.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(requireContext(), R.color.primary)));
+                    ColorSchemeManager.getCurrentPrimaryColor(requireContext())));
             tvCrop.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), android.R.color.white));
             tvFit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE8ECF0));
             tvFit.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.ink));
@@ -787,7 +793,7 @@ public class ProfileFragment extends Fragment {
         tvFit.setOnClickListener(v -> {
             currentScaleType[0] = ImageView.ScaleType.FIT_CENTER;
             tvFit.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                    androidx.core.content.ContextCompat.getColor(requireContext(), R.color.primary)));
+                    ColorSchemeManager.getCurrentPrimaryColor(requireContext())));
             tvFit.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), android.R.color.white));
             tvCrop.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFE8ECF0));
             tvCrop.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.ink));
@@ -1069,13 +1075,73 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    private void loadCacheSize() {
+        Context ctx = requireContext();
+        new Thread(() -> {
+            long totalSize = 0;
+            try {
+                // Avatars directory
+                File avatarsDir = new File(ctx.getFilesDir(), "avatars");
+                if (avatarsDir.exists()) {
+                    totalSize += getDirSize(avatarsDir);
+                }
+                // Image cache directory
+                File cacheDir = new File(ctx.getCacheDir(), "bg_cache");
+                if (cacheDir.exists()) {
+                    totalSize += getDirSize(cacheDir);
+                }
+            } catch (Exception ignored) {
+            }
+
+            final String sizeText = formatSize(totalSize);
+            requireActivity().runOnUiThread(() -> {
+                if (tvCacheSize != null) {
+                    tvCacheSize.setText(sizeText);
+                }
+            });
+        }).start();
+    }
+
+    private long getDirSize(File dir) {
+        long size = 0;
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        size += getDirSize(file);
+                    } else {
+                        size += file.length();
+                    }
+                }
+            }
+        }
+        return size;
+    }
+
+    private String formatSize(long bytes) {
+        if (bytes <= 0) return "0 B";
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return String.format(Locale.US, "%.1f KB", bytes / 1024.0);
+        return String.format(Locale.US, "%.1f MB", bytes / (1024.0 * 1024.0));
+    }
+
     private void clearCache() {
-        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("清除旧数据")
-                .setMessage("此操作将删除上一年及更早的所有账单记录，只保留今年的数据。确定要清除吗？")
-                .setPositiveButton("确定清除", (dialog, which) -> clearOldBills())
-                .setNegativeButton("取消", null)
-                .show();
+        String cacheSize = tvCacheSize != null ? tvCacheSize.getText().toString() : "0 B";
+        String message = "\u786E\u5B9A\u8981\u6E05\u9664\u7F13\u5B58\u6570\u636E\u5417\uFF1F\n\u5F53\u524D\u7F13\u5B58\u5927\u5C0F\uFF1A" + cacheSize
+                + "\n\n\u6B64\u64CD\u4F5C\u5C06\u5220\u9664\u4E0A\u4E00\u5E74\u53CA\u66F4\u65E9\u7684\u6240\u6709\u8D26\u5355\u8BB0\u5F55\uFF0C\u53EA\u4FDD\u7559\u4ECA\u5E74\u7684\u6570\u636E\u3002";
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_RoundedDialog)
+                .setTitle("\u6E05\u9664\u7F13\u5B58")
+                .setMessage(message)
+                .setPositiveButton("\u786E\u5B9A\u6E05\u9664", (d, which) -> clearOldBills())
+                .setNegativeButton("\u53D6\u6D88", null)
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getWindow().setBackgroundDrawableResource(R.drawable.bg_user_dialog);
+        });
+        dialog.show();
     }
 
     private void clearOldBills() {
@@ -1092,11 +1158,13 @@ public class ProfileFragment extends Fragment {
                 notificationSettings.resetLastNotified();
                 // 同时清除图片缓存
                 ImageUtils.clearDiskCache(requireContext());
-                requireActivity().runOnUiThread(() ->
-                        Toast.makeText(requireContext(), "已清除 " + deletedCount + " 条旧记录", Toast.LENGTH_SHORT).show());
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "\u5DF2\u6E05\u9664 " + deletedCount + " \u6761\u65E7\u8BB0\u5F55", Toast.LENGTH_SHORT).show();
+                    loadCacheSize();
+                });
             } catch (Exception e) {
                 requireActivity().runOnUiThread(() ->
-                        Toast.makeText(requireContext(), "清除失败: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        Toast.makeText(requireContext(), "\u6E05\u9664\u5931\u8D25: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }).start();
     }

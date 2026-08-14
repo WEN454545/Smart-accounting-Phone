@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&#x53D6;&#x6D88;"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="15sp" />
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&#x5BFC;&#x5165;"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="15sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&#x5DF2;&#x9009; 0 &#x6761;"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -88,7 +88,7 @@
             android:background="@drawable/bg_card"
             android:gravity="center"
             android:text="&#x5168;&#x9009;"
-            android:textColor="@color/primary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="14sp"
             android:textStyle="bold" />
 

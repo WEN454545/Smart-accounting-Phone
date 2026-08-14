@@ -1,271 +1,279 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">智能记账</string>
-    <string name="action_settings">设置</string>
-    <string name="accessibility_service_description">自动记账辅助服务，自动识别微信、支付宝、拼多多支付页面</string>
-    <string name="usage_tips">使用步骤：\n1. 开启辅助服务\n2. 授予悬浮窗权限\n3. 打开支付应用\n4. 确认并记录账单</string>
-
-    <string name="auto_settings_title">自动记账设置</string>
-    <string name="category_settings_title">分类偏好设置</string>
-    <string name="category_settings_desc">自定义收支分类</string>
-    <string name="assistant_settings_title">记账助手设置</string>
-    <string name="assistant_settings_desc">管理自动记账开关</string>
-    <string name="budget_settings_title">月度预算管理</string>
-    <string name="budget_settings_desc">设置月度预算限额</string>
-
-    <string name="log_settings_title">自动记账捕获日志</string>
-    <string name="log_settings_desc">开启后查看无障碍服务扫描到的所有节点信息</string>
-    <string name="log_view_title">查看日志</string>
-    <string name="log_view_desc">查看无障碍服务扫描到的节点信息</string>
-    <string name="log_capture_enabled">日志捕获已开启</string>
-    <string name="log_capture_disabled">日志捕获已关闭</string>
-    <string name="log_view_need_enable">请先开启日志捕获开关</string>
-
-    <string name="battery_title">电池优化</string>
-    <string name="battery_desc">关闭电池优化可防止后台被杀</string>
-    <string name="battery_btn">去设置</string>
-    <string name="battery_optimized">已关闭电池优化</string>
-    <string name="battery_not_optimized">电池优化已开启，建议关闭</string>
-    <string name="battery_already_optimized">已关闭电池优化，无需操作</string>
-    <string name="auto_start_title">自启动管理</string>
-    <string name="auto_start_desc">开启自启动确保服务长期存活</string>
-    <string name="auto_start_btn">查看引导</string>
-    <string name="auto_start_guide_title">自启动设置引导</string>
-
-    <string name="assistant_manager_title">记账助手管理</string>
-    <string name="auto_track_title">开启屏幕自动追踪</string>
-    <string name="auto_track_desc">需开启无障碍服务</string>
-    <string name="assets_title">显示资产总览</string>
-    <string name="assets_desc">在底部导航栏显示</string>
-    <string name="details_title">显示详细账单</string>
-    <string name="details_desc">在底部导航栏显示</string>
-    <string name="overlay_title">悬浮窗权限</string>
-    <string name="overlay_desc">开启悬浮窗</string>
-    <string name="overlay_btn">去开启</string>
-    <string name="overlay_enabled">已开启</string>
-    <string name="overlay_enabled_status">悬浮窗权限已开启</string>
-    <string name="keywords_title">屏幕获取关键词</string>
-    <string name="add_keyword">+ 添加</string>
-
-    <string name="accessibility_title">无障碍服务未开启</string>
-    <string name="accessibility_message">请进入系统设置中开启智能记账的无障碍服务</string>
-    <string name="accessibility_btn">去设置</string>
-
-    <string name="track_enabled">已开启屏幕自动追踪</string>
-    <string name="track_disabled">已关闭屏幕自动追踪</string>
-    <string name="assets_enabled">已开启资产总览</string>
-    <string name="assets_disabled">已关闭资产总览</string>
-    <string name="details_enabled">已开启详细账单</string>
-    <string name="details_disabled">已关闭详细账单</string>
-
-    <string name="overlay_already_enabled">悬浮窗权限已开启</string>
-    <string name="overlay_enabled_btn">已开启</string>
-    <string name="overlay_disabled">点击开启悬浮窗权限</string>
-
-    <string name="app_wechat">微信</string>
-    <string name="app_alipay">支付宝</string>
-    <string name="app_pinduoduo">拼多多</string>
-    <string name="app_jingdong">京东</string>
-    <string name="app_unionpay">云闪付</string>
-
-    <string name="income_label">收入</string>
-    <string name="expense_label">支出</string>
-
-    <string name="enter_keyword">请输入关键词</string>
-    <string name="keyword_added">关键词已添加</string>
-    <string name="keyword_updated">关键词已更新</string>
-    <string name="keyword_deleted">关键词已删除</string>
-
-    <string name="delete_keyword">删除关键词</string>
-    <string name="delete_confirm">确认删除 [%1$s - %2$s]?</string>
-    <string name="delete_btn">删除</string>
-    <string name="cancel_btn">取消</string>
-
-    <string name="home_this_month">本月账单</string>
-    <string name="home_view_all">查看全部</string>
-    <string name="home_income">本月收入</string>
-    <string name="home_expense">本月支出</string>
-    <string name="home_budget">月度预算</string>
-    <string name="home_budget_remaining">剩余</string>
-    <string name="home_budget_used">已用</string>
-
-    <string name="cal_prev_month">上一月</string>
-    <string name="cal_next_month">下一月</string>
-    <string name="cal_income">收入</string>
-    <string name="cal_expense">支出</string>
-    <string name="cal_empty_hint">当天无账单可查看</string>
-    <string name="cal_calendar">日历</string>
-    <string name="cal_selected_date">选择日期</string>
-
-    <string name="stats_week">周</string>
-    <string name="stats_month">月</string>
-    <string name="stats_year">年</string>
-    <string name="stats_expense_category">支出分类占比</string>
-    <string name="stats_income_category">收入分类占比</string>
-    <string name="stats_trend">收支趋势</string>
-    <string name="stats_period_label">2026/07</string>
-    <string name="stats_week_label">第1周</string>
-
-    <string name="add_bill_title">记录账单</string>
-    <string name="add_bill_expense">支出</string>
-    <string name="add_bill_income">收入</string>
-    <string name="add_bill_amount">金额</string>
-    <string name="add_bill_amount_hint">0.00</string>
-    <string name="add_bill_category">分类</string>
-    <string name="add_bill_date">日期</string>
-    <string name="add_bill_date_hint">选择日期</string>
-    <string name="add_bill_note">备注</string>
-    <string name="add_bill_note_hint">输入备注</string>
-    <string name="add_bill_save">保存</string>
-
-    <string name="splash_tip">点击屏幕任意处进入</string>
-
-    <string name="login_title">智能记账</string>
-    <string name="login_subtitle">Regression-二创版</string>
-    <string name="login_username">用户名</string>
-    <string name="login_password">密码</string>
-    <string name="login_btn">登录</string>
-    <string name="register_btn">注册账号</string>
-    <string name="login_admin_hint">管理员: admin / 123456</string>
-
-    <string name="all_bills_title">全部账单</string>
-    <string name="back">返回</string>
-    <string name="delete_all">删除全部</string>
-
-    <string name="profile_title">智能记账</string>
-    <string name="profile_subtitle">让每一笔账单都清晰</string>
-    <string name="profile_avatar_change">更换头像</string>
-    <string name="profile_avatar_failed">头像保存失败</string>
-    <string name="profile_avatar_saved">头像已保存</string>
-    <string name="profile_data">数据管理</string>
-    <string name="profile_export">导出 CSV</string>
-    <string name="profile_import">导入 CSV</string>
-    <string name="profile_download">下载 CSV 模板</string>
-    <string name="profile_user">用户管理</string>
-    <string name="profile_manage">管理用户与权限</string>
-    <string name="profile_settings">设置</string>
-    <string name="profile_notify">通知提醒</string>
-    <string name="profile_notify_on">已开启</string>
-    <string name="profile_cache">清除缓存</string>
-    <string name="profile_logout">退出登录</string>
-    <string name="profile_bg_setting">自定义背景</string>
-    <string name="profile_personalize">个性化设置</string>
-    <string name="profile_cal_bg_setting">日历背景</string>
-    <string name="profile_cal_bg_subtitle">为日历网格区域设置背景图片</string>
-    <string name="profile_bg_customize">可自定义</string>
-    <string name="profile_bg_default">默认背景</string>
-    <string name="profile_bg_custom_video">自定义视频</string>
-    <string name="profile_bg_custom_image">自定义图片</string>
-    <string name="profile_bg_reset">恢复默认</string>
-    <string name="profile_bg_choose">选择视频或图片</string>
-    <string name="choose_bg_icon">选择</string>
-    <string name="reset_bg_icon">重置</string>
-    <string name="bg_placeholder_hint">(点击下方选择背景)</string>
-    <string name="cal_bg_choose">选择背景图片</string>
-    <string name="cal_bg_placeholder">(未设置自定义背景)</string>
-    <string name="cancel">取消</string>
-    <string name="profile_login_bg_setting">登录页背景</string>
-    <string name="profile_login_bg_subtitle">为登录页面设置背景图片</string>
-    <string name="profile_home_bg_setting">主页背景</string>
-    <string name="profile_home_bg_subtitle">为首页设置背景图片</string>
-    <string name="login_bg_choose">选择背景图片</string>
-    <string name="home_bg_choose">选择背景图片</string>
-    <string name="login_bg_placeholder">(未设置自定义背景)</string>
-    <string name="home_bg_placeholder">(未设置自定义背景)</string>
-    <string name="profile_login_bg">登录页背景</string>
-    <string name="profile_home_bg">主页背景</string>
-    <string name="profile_dialog_bill_bg">记账弹窗背景</string>
-    <string name="profile_dialog_bill_bg_subtitle">为记账弹窗设置背景图片</string>
-    <string name="profile_dialog_bill_bg_setting">记账弹窗背景</string>
-    <string name="dialog_bill_bg_choose">选择背景图片</string>
-    <string name="dialog_bill_bg_placeholder">(未设置自定义背景)</string>
-    <string name="profile_home_header_bg">主页顶部背景</string>
-    <string name="profile_home_header_bg_subtitle">设置首页顶部区域的背景图片</string>
-    <string name="profile_home_header_bg_setting">主页顶部背景</string>
-    <string name="home_header_bg_choose">选择背景图片</string>
-    <string name="home_header_bg_placeholder">(未设置自定义背景)</string>
-    <string name="home_header_bg_size_hint">推荐选择横向图片，尺寸建议 1080x400 以上</string>
-    <string name="scale_mode_crop">裁剪填充</string>
-    <string name="scale_mode_fit">等比例缩放</string>
-    <string name="scale_mode_label">显示模式：</string>
-    <string name="crop_cancel">取消</string>
-    <string name="crop_confirm">确认</string>
-    <string name="crop_reset">重置</string>
-    <string name="crop_hint">拖动选取框 | 双指缩放</string>
-    <string name="crop_no_image">未选择图片</string>
-    <string name="crop_failed">裁剪失败</string>
-    <string name="crop_save_failed">保存裁剪图片失败</string>
-    <string name="profile_transaction_style">交易提醒样式</string>
-    <string name="profile_transaction_style_desc">设置自动识别账单后的展示方式</string>
-    <string name="style_standard">标准</string>
-    <string name="style_island">灵动岛</string>
-    <string name="style_saved">提醒样式已保存</string>
-
-    <!-- ===== 新增：从 Java 硬编码迁移的字符串 ===== -->
-
-    <!-- MainActivity 无障碍服务/悬浮窗弹窗 -->
-    <string name="main_accessibility_title">无障碍服务未开启</string>
-    <string name="main_accessibility_message">请在系统设置中开启「智能记账」的无障碍服务，否则无法自动识别屏幕账单</string>
-    <string name="main_overlay_title">悬浮窗权限未开启</string>
-    <string name="main_overlay_message">请在系统设置中开启「智能记账」的悬浮窗权限，否则无法显示记账确认窗口</string>
-    <string name="main_go_settings">去设置</string>
-
-    <!-- AutoTrackLogActivity 无障碍权限弹窗 -->
-    <string name="log_accessibility_title">无障碍服务未开启</string>
-    <string name="log_accessibility_message">节点抓取依赖无障碍服务，请在系统设置中开启「智能记账」的无障碍服务</string>
-
-    <!-- SelectToSpeakService 应用名 -->
-    <string name="svc_app_auto_bookkeep">自动记账</string>
-    <string name="svc_app_wechat">微信</string>
-    <string name="svc_app_alipay">支付宝</string>
-    <string name="svc_app_taobao">淘宝</string>
-    <string name="svc_app_jingdong">京东</string>
-    <string name="svc_app_pinduoduo">拼多多</string>
-    <string name="svc_app_douyin">抖音</string>
-    <string name="svc_app_meituan">美团</string>
-    <string name="svc_app_tongyiqianwen">通义千问</string>
-    <string name="svc_app_unionpay">云闪付</string>
-    <string name="svc_app_doushengsheng">抖省省</string>
-
-    <!-- SelectToSpeakService 分类名 -->
-    <string name="svc_cat_other">其他</string>
-    <string name="svc_cat_shopping">购物</string>
-    <string name="svc_cat_food">餐饮</string>
-    <string name="svc_cat_secondhand">二手交易</string>
-    <string name="svc_cat_other_income">其他收入</string>
-    <string name="svc_cat_refund">退款</string>
-
-    <!-- SelectToSpeakService Toast 提示 -->
-    <string name="svc_toast_booked">已记账</string>
-    <string name="svc_toast_amount_error">金额错误</string>
-    <string name="svc_toast_budget_excluded">该笔账单将不计入预算</string>
-    <string name="svc_toast_budget_included">该笔账单正常计入预算</string>
-    <string name="svc_toast_subcat_canceled">已取消细分</string>
-    <string name="svc_toast_subcat_selected">已选择: %s</string>
-
-    <!-- SelectToSpeakService 通知 -->
-    <string name="svc_notification_channel_name">自动记账服务监控</string>
-    <string name="svc_notification_title">Tally</string>
-    <string name="svc_notification_text">招财进宝 财源广进</string>
-
-    <!-- SelectToSpeakService 自动记账来源 -->
-    <string name="svc_source_auto">自动屏幕记账</string>
-    <string name="svc_source_auto_bookkeep">自动记账</string>
-
-    <!-- SelectToSpeakService 选择细分弹窗 -->
-    <string name="svc_subcategory_title">%s - 选择细分</string>
-
-    <!-- SelectToSpeakService 微信红包 -->
-    <string name="svc_red_packet">微信红包</string>
-
-    <!-- SelectToSpeakService 不关联资产 -->
-    <string name="svc_no_asset">不关联资产</string>
-
-    <!-- AssistantManagerActivity 自启动引导 -->
-    <string name="auto_start_guide_xiaomi">小米/红米自启动设置：\n1. 打开「手机管家」\n2. 点击「应用管理」→「权限」\n3. 找到「智能记账」\n4. 开启「自启动」权限</string>
-    <string name="auto_start_guide_huawei">华为/荣耀自启动设置：\n1. 打开「手机管家」\n2. 点击「应用启动管理」\n3. 找到「智能记账」\n4. 关闭「自动管理」，允许自启动</string>
-    <string name="auto_start_guide_oppo">OPPO自启动设置：\n1. 打开「手机管家」\n2. 点击「权限隐私」→「自启动管理」\n3. 找到「智能记账」并开启</string>
-    <string name="auto_start_guide_vivo">vivo自启动设置：\n1. 打开「i管家」\n2. 点击「应用管理」→「权限管理」\n3. 找到「智能记账」\n4. 开启「自启动」</string>
-    <string name="auto_start_guide_samsung">三星自启动设置：\n1. 打开「智能管理器」\n2. 点击「电池」→「应用程序管理」\n3. 找到「智能记账」\n4. 关闭「使应用程序进入休眠」</string>
-    <string name="auto_start_guide_other">请在手机设置中搜索「自启动」或「启动管理」\n找到「智能记账」并开启自启动权限\n\n如找不到，请在「电池」或「应用管理」中查找</string>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">智能记账</string>
+    <string name="action_settings">设置</string>
+    <string name="accessibility_service_description">自动记账辅助服务，自动识别微信、支付宝、拼多多支付页面</string>
+    <string name="usage_tips">使用步骤：\n1. 开启辅助服务\n2. 授予悬浮窗权限\n3. 打开支付应用\n4. 确认并记录账单</string>
+
+    <string name="auto_settings_title">自动记账设置</string>
+    <string name="category_settings_title">分类偏好设置</string>
+    <string name="category_settings_desc">自定义收支分类</string>
+    <string name="assistant_settings_title">记账助手设置</string>
+    <string name="assistant_settings_desc">管理自动记账开关</string>
+    <string name="budget_settings_title">月度预算管理</string>
+    <string name="budget_settings_desc">设置月度预算限额</string>
+
+    <string name="log_settings_title">自动记账捕获日志</string>
+    <string name="log_settings_desc">开启后查看无障碍服务扫描到的所有节点信息</string>
+    <string name="log_view_title">查看日志</string>
+    <string name="log_view_desc">查看无障碍服务扫描到的节点信息</string>
+    <string name="log_capture_enabled">日志捕获已开启</string>
+    <string name="log_capture_disabled">日志捕获已关闭</string>
+    <string name="log_view_need_enable">请先开启日志捕获开关</string>
+
+    <string name="battery_title">电池优化</string>
+    <string name="battery_desc">关闭电池优化可防止后台被杀</string>
+    <string name="battery_btn">去设置</string>
+    <string name="battery_optimized">已关闭电池优化</string>
+    <string name="battery_not_optimized">电池优化已开启，建议关闭</string>
+    <string name="battery_already_optimized">已关闭电池优化，无需操作</string>
+    <string name="auto_start_title">自启动管理</string>
+    <string name="auto_start_desc">开启自启动确保服务长期存活</string>
+    <string name="auto_start_btn">查看引导</string>
+    <string name="auto_start_guide_title">自启动设置引导</string>
+
+    <string name="assistant_manager_title">记账助手管理</string>
+    <string name="auto_track_title">开启屏幕自动追踪</string>
+    <string name="auto_track_desc">需开启无障碍服务</string>
+    <string name="assets_title">&#x663E;&#x793A;&#x8D44;&#x4EA7;&#x603B;&#x89C8;</string>
+    <string name="assets_desc">&#x8BB0;&#x8D26;&#x786E;&#x8BA4;&#x7A97;&#x53E3;&#x4E2D;&#x9009;&#x62E9;&#x8D44;&#x4EA7;&#x8D26;&#x6237;</string>
+    <string name="currency_title">&#x591A;&#x5E01;&#x79CD;&#x652F;&#x6301;</string>
+    <string name="currency_desc">&#x8BB0;&#x8D26;&#x65F6;&#x53EF;&#x5207;&#x6362;&#x5E01;&#x79CD;&#x7B26;&#x53F7;</string>
+    <string name="voice_title">&#x8BB0;&#x8D26;&#x8BED;&#x97F3;&#x64AD;&#x62A5;</string>
+    <string name="voice_desc">&#x81EA;&#x52A8;&#x8BB0;&#x8D26;&#x540E;&#x8BED;&#x97F3;&#x64AD;&#x62A5;&#x91D1;&#x989D;</string>
+    <string name="voice_type_title">&#x8BED;&#x97F3;&#x7C7B;&#x578B;</string>
+    <string name="voice_type_desc">&#x9009;&#x62E9;&#x64AD;&#x62A5;&#x8BED;&#x97F3;&#x98CE;&#x683C;</string>
+    <string name="user_select_title">&#x8BB0;&#x8D66;&#x7528;&#x6237;</string>
+    <string name="user_select_desc">&#x81EA;&#x52A8;&#x8BB0;&#x8D26;&#x8BB0;&#x5165;&#x6B64;&#x7528;&#x6237;</string>
+    <string name="overlay_title">悬浮窗权限</string>
+    <string name="overlay_desc">开启悬浮窗</string>
+    <string name="overlay_btn">去开启</string>
+    <string name="overlay_enabled">已开启</string>
+    <string name="overlay_enabled_status">悬浮窗权限已开启</string>
+    <string name="keywords_title">屏幕获取关键词</string>
+    <string name="add_keyword">+ 添加</string>
+
+    <string name="accessibility_title">无障碍服务未开启</string>
+    <string name="accessibility_message">请进入系统设置中开启智能记账的无障碍服务</string>
+    <string name="accessibility_btn">去设置</string>
+
+    <string name="track_enabled">已开启屏幕自动追踪</string>
+    <string name="track_disabled">已关闭屏幕自动追踪</string>
+    <string name="assets_enabled">&#x5DF2;&#x5F00;&#x542F;&#x8D44;&#x4EA7;&#x603B;&#x89C8;</string>
+    <string name="assets_disabled">&#x5DF2;&#x5173;&#x95ED;&#x8D44;&#x4EA7;&#x603B;&#x89C8;</string>
+    <string name="currency_enabled">&#x5DF2;&#x5F00;&#x542F;&#x591A;&#x5E01;&#x79CD;&#x652F;&#x6301;</string>
+    <string name="currency_disabled">&#x5DF2;&#x5173;&#x95ED;&#x591A;&#x5E01;&#x79CD;&#x652F;&#x6301;</string>
+    <string name="voice_enabled">&#x5DF2;&#x5F00;&#x542F;&#x8BED;&#x97F3;&#x64AD;&#x62A5;</string>
+    <string name="voice_disabled">&#x5DF2;&#x5173;&#x95ED;&#x8BED;&#x97F3;&#x64AD;&#x62A5;</string>
+
+    <string name="overlay_already_enabled">悬浮窗权限已开启</string>
+    <string name="overlay_enabled_btn">已开启</string>
+    <string name="overlay_disabled">点击开启悬浮窗权限</string>
+
+    <string name="app_wechat">微信</string>
+    <string name="app_alipay">支付宝</string>
+    <string name="app_pinduoduo">拼多多</string>
+    <string name="app_jingdong">京东</string>
+    <string name="app_unionpay">云闪付</string>
+
+    <string name="income_label">收入</string>
+    <string name="expense_label">支出</string>
+
+    <string name="enter_keyword">请输入关键词</string>
+    <string name="keyword_added">关键词已添加</string>
+    <string name="keyword_updated">关键词已更新</string>
+    <string name="keyword_deleted">关键词已删除</string>
+
+    <string name="delete_keyword">删除关键词</string>
+    <string name="delete_confirm">确认删除 [%1$s - %2$s]?</string>
+    <string name="delete_btn">删除</string>
+    <string name="cancel_btn">取消</string>
+
+    <string name="home_this_month">本月账单</string>
+    <string name="home_view_all">查看全部</string>
+    <string name="home_income">本月收入</string>
+    <string name="home_expense">本月支出</string>
+    <string name="home_budget">月度预算</string>
+    <string name="home_budget_remaining">剩余</string>
+    <string name="home_budget_used">已用</string>
+
+    <string name="cal_prev_month">上一月</string>
+    <string name="cal_next_month">下一月</string>
+    <string name="cal_income">收入</string>
+    <string name="cal_expense">支出</string>
+    <string name="cal_empty_hint">当天无账单可查看</string>
+    <string name="cal_calendar">日历</string>
+    <string name="cal_selected_date">选择日期</string>
+
+    <string name="stats_week">周</string>
+    <string name="stats_month">月</string>
+    <string name="stats_year">年</string>
+    <string name="stats_expense_category">支出分类占比</string>
+    <string name="stats_income_category">收入分类占比</string>
+    <string name="stats_trend">收支趋势</string>
+    <string name="stats_period_label">2026/07</string>
+    <string name="stats_week_label">第1周</string>
+
+    <string name="add_bill_title">记录账单</string>
+    <string name="add_bill_expense">支出</string>
+    <string name="add_bill_income">收入</string>
+    <string name="add_bill_amount">金额</string>
+    <string name="add_bill_amount_hint">0.00</string>
+    <string name="add_bill_category">分类</string>
+    <string name="add_bill_date">日期</string>
+    <string name="add_bill_date_hint">选择日期</string>
+    <string name="add_bill_note">备注</string>
+    <string name="add_bill_note_hint">输入备注</string>
+    <string name="add_bill_save">保存</string>
+
+    <string name="splash_tip">点击屏幕任意处进入</string>
+
+    <string name="login_title">智能记账</string>
+    <string name="login_subtitle">Regression-二创版</string>
+    <string name="login_username">用户名</string>
+    <string name="login_password">密码</string>
+    <string name="login_btn">登录</string>
+    <string name="register_btn">注册账号</string>
+    <string name="login_admin_hint">管理员: admin / 123456</string>
+
+    <string name="all_bills_title">全部账单</string>
+    <string name="back">返回</string>
+    <string name="delete_all">删除全部</string>
+
+    <string name="profile_title">智能记账</string>
+    <string name="profile_subtitle">让每一笔账单都清晰</string>
+    <string name="profile_avatar_change">更换头像</string>
+    <string name="profile_avatar_failed">头像保存失败</string>
+    <string name="profile_avatar_saved">头像已保存</string>
+    <string name="profile_data">数据管理</string>
+    <string name="profile_export">导出 CSV</string>
+    <string name="profile_import">导入 CSV</string>
+    <string name="profile_download">下载 CSV 模板</string>
+    <string name="profile_user">用户管理</string>
+    <string name="profile_manage">管理用户与权限</string>
+    <string name="profile_settings">设置</string>
+    <string name="profile_notify">通知提醒</string>
+    <string name="profile_notify_on">已开启</string>
+    <string name="profile_cache">清除缓存</string>
+    <string name="profile_logout">退出登录</string>
+    <string name="profile_bg_setting">自定义背景</string>
+    <string name="profile_personalize">个性化设置</string>
+    <string name="profile_cal_bg_setting">日历背景</string>
+    <string name="profile_cal_bg_subtitle">为日历网格区域设置背景图片</string>
+    <string name="profile_bg_customize">可自定义</string>
+    <string name="profile_bg_default">默认背景</string>
+    <string name="profile_bg_custom_video">自定义视频</string>
+    <string name="profile_bg_custom_image">自定义图片</string>
+    <string name="profile_bg_reset">恢复默认</string>
+    <string name="profile_bg_choose">选择视频或图片</string>
+    <string name="choose_bg_icon">选择</string>
+    <string name="reset_bg_icon">重置</string>
+    <string name="bg_placeholder_hint">(点击下方选择背景)</string>
+    <string name="cal_bg_choose">选择背景图片</string>
+    <string name="cal_bg_placeholder">(未设置自定义背景)</string>
+    <string name="cancel">取消</string>
+    <string name="profile_login_bg_setting">登录页背景</string>
+    <string name="profile_login_bg_subtitle">为登录页面设置背景图片</string>
+    <string name="profile_home_bg_setting">主页背景</string>
+    <string name="profile_home_bg_subtitle">为首页设置背景图片</string>
+    <string name="login_bg_choose">选择背景图片</string>
+    <string name="home_bg_choose">选择背景图片</string>
+    <string name="login_bg_placeholder">(未设置自定义背景)</string>
+    <string name="home_bg_placeholder">(未设置自定义背景)</string>
+    <string name="profile_login_bg">登录页背景</string>
+    <string name="profile_home_bg">主页背景</string>
+    <string name="profile_dialog_bill_bg">记账弹窗背景</string>
+    <string name="profile_dialog_bill_bg_subtitle">为记账弹窗设置背景图片</string>
+    <string name="profile_dialog_bill_bg_setting">记账弹窗背景</string>
+    <string name="dialog_bill_bg_choose">选择背景图片</string>
+    <string name="dialog_bill_bg_placeholder">(未设置自定义背景)</string>
+    <string name="profile_home_header_bg">主页顶部背景</string>
+    <string name="profile_home_header_bg_subtitle">设置首页顶部区域的背景图片</string>
+    <string name="profile_home_header_bg_setting">主页顶部背景</string>
+    <string name="home_header_bg_choose">选择背景图片</string>
+    <string name="home_header_bg_placeholder">(未设置自定义背景)</string>
+    <string name="home_header_bg_size_hint">推荐选择横向图片，尺寸建议 1080x400 以上</string>
+    <string name="scale_mode_crop">裁剪填充</string>
+    <string name="scale_mode_fit">等比例缩放</string>
+    <string name="scale_mode_label">显示模式：</string>
+    <string name="crop_cancel">取消</string>
+    <string name="crop_confirm">确认</string>
+    <string name="crop_reset">重置</string>
+    <string name="crop_hint">拖动选取框 | 双指缩放</string>
+    <string name="crop_no_image">未选择图片</string>
+    <string name="crop_failed">裁剪失败</string>
+    <string name="crop_save_failed">保存裁剪图片失败</string>
+    <string name="profile_transaction_style">交易提醒样式</string>
+    <string name="profile_transaction_style_desc">设置自动识别账单后的展示方式</string>
+    <string name="style_standard">标准</string>
+    <string name="style_island">灵动岛</string>
+    <string name="style_saved">提醒样式已保存</string>
+
+    <!-- ===== 新增：从 Java 硬编码迁移的字符串 ===== -->
+
+    <!-- MainActivity 无障碍服务/悬浮窗弹窗 -->
+    <string name="main_accessibility_title">无障碍服务未开启</string>
+    <string name="main_accessibility_message">请在系统设置中开启「智能记账」的无障碍服务，否则无法自动识别屏幕账单</string>
+    <string name="main_overlay_title">悬浮窗权限未开启</string>
+    <string name="main_overlay_message">请在系统设置中开启「智能记账」的悬浮窗权限，否则无法显示记账确认窗口</string>
+    <string name="main_go_settings">去设置</string>
+
+    <!-- AutoTrackLogActivity 无障碍权限弹窗 -->
+    <string name="log_accessibility_title">无障碍服务未开启</string>
+    <string name="log_accessibility_message">节点抓取依赖无障碍服务，请在系统设置中开启「智能记账」的无障碍服务</string>
+
+    <!-- SelectToSpeakService 应用名 -->
+    <string name="svc_app_auto_bookkeep">自动记账</string>
+    <string name="svc_app_wechat">微信</string>
+    <string name="svc_app_alipay">支付宝</string>
+    <string name="svc_app_taobao">淘宝</string>
+    <string name="svc_app_jingdong">京东</string>
+    <string name="svc_app_pinduoduo">拼多多</string>
+    <string name="svc_app_douyin">抖音</string>
+    <string name="svc_app_meituan">美团</string>
+    <string name="svc_app_tongyiqianwen">通义千问</string>
+    <string name="svc_app_unionpay">云闪付</string>
+    <string name="svc_app_doushengsheng">抖省省</string>
+
+    <!-- SelectToSpeakService 分类名 -->
+    <string name="svc_cat_other">其他</string>
+    <string name="svc_cat_shopping">购物</string>
+    <string name="svc_cat_food">餐饮</string>
+    <string name="svc_cat_secondhand">二手交易</string>
+    <string name="svc_cat_other_income">其他收入</string>
+    <string name="svc_cat_refund">退款</string>
+
+    <!-- SelectToSpeakService Toast 提示 -->
+    <string name="svc_toast_booked">已记账</string>
+    <string name="svc_toast_amount_error">金额错误</string>
+    <string name="svc_toast_budget_excluded">该笔账单将不计入预算</string>
+    <string name="svc_toast_budget_included">该笔账单正常计入预算</string>
+    <string name="svc_toast_subcat_canceled">已取消细分</string>
+    <string name="svc_toast_subcat_selected">已选择: %s</string>
+
+    <!-- SelectToSpeakService 通知 -->
+    <string name="svc_notification_channel_name">自动记账服务监控</string>
+    <string name="svc_notification_title">Tally</string>
+    <string name="svc_notification_text">招财进宝 财源广进</string>
+
+    <!-- SelectToSpeakService 自动记账来源 -->
+    <string name="svc_source_auto">自动屏幕记账</string>
+    <string name="svc_source_auto_bookkeep">自动记账</string>
+
+    <!-- SelectToSpeakService 选择细分弹窗 -->
+    <string name="svc_subcategory_title">%s - 选择细分</string>
+
+    <!-- SelectToSpeakService 微信红包 -->
+    <string name="svc_red_packet">微信红包</string>
+
+    <!-- SelectToSpeakService 不关联资产 -->
+    <string name="svc_no_asset">不关联资产</string>
+
+    <!-- AssistantManagerActivity 自启动引导 -->
+    <string name="auto_start_guide_xiaomi">小米/红米自启动设置：\n1. 打开「手机管家」\n2. 点击「应用管理」→「权限」\n3. 找到「智能记账」\n4. 开启「自启动」权限</string>
+    <string name="auto_start_guide_huawei">华为/荣耀自启动设置：\n1. 打开「手机管家」\n2. 点击「应用启动管理」\n3. 找到「智能记账」\n4. 关闭「自动管理」，允许自启动</string>
+    <string name="auto_start_guide_oppo">OPPO自启动设置：\n1. 打开「手机管家」\n2. 点击「权限隐私」→「自启动管理」\n3. 找到「智能记账」并开启</string>
+    <string name="auto_start_guide_vivo">vivo自启动设置：\n1. 打开「i管家」\n2. 点击「应用管理」→「权限管理」\n3. 找到「智能记账」\n4. 开启「自启动」</string>
+    <string name="auto_start_guide_samsung">三星自启动设置：\n1. 打开「智能管理器」\n2. 点击「电池」→「应用程序管理」\n3. 找到「智能记账」\n4. 关闭「使应用程序进入休眠」</string>
+    <string name="auto_start_guide_other">请在手机设置中搜索「自启动」或「启动管理」\n找到「智能记账」并开启自启动权限\n\n如找不到，请在「电池」或「应用管理」中查找</string>
 </resources>

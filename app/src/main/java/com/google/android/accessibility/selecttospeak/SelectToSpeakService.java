@@ -69,7 +69,8 @@ import android.widget.TextView;
 
 import android.widget.Toast;
 
-
+import android.speech.tts.TextToSpeech;
+import android.media.MediaPlayer;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
@@ -155,6 +156,8 @@ public class SelectToSpeakService extends AccessibilityService {
     private TransactionDao dao;
 
     private AssistantConfig config;
+
+    private TextToSpeech tts;
 
 
 
@@ -699,6 +702,13 @@ public class SelectToSpeakService extends AccessibilityService {
             Log.e(TAG, "Service init failed", e);
 
         }
+
+        // 初始化语音播报 TTS
+        tts = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS && tts != null) {
+                tts.setLanguage(Locale.CHINESE);
+            }
+        });
 
     }
 
@@ -1349,7 +1359,8 @@ public class SelectToSpeakService extends AccessibilityService {
         SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
         SharedPreferences profilePrefs = getSharedPreferences("profile_settings", MODE_PRIVATE);
 
-        boolean isCurrencyEnabled = prefs.getBoolean("enable_currency", false);
+        if (config == null) config = new AssistantConfig(this);
+        boolean isCurrencyEnabled = config.isCurrencyEnabled();
 
         boolean isPhotoBackupEnabled = prefs.getBoolean("enable_photo_backup", false);
 
@@ -1362,6 +1373,8 @@ public class SelectToSpeakService extends AccessibilityService {
             int finalAssetId = (matchedAssetId > 0) ? matchedAssetId : 0;
 
             saveToDatabase(amount, type, category, null, note + " (" + getString(R.string.svc_source_auto) + ")", "", finalAssetId, initialSymbol, "", transactionTime);
+
+            announceTransaction(amount, type, category, initialSymbol);
 
             return;
 
@@ -1816,7 +1829,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             if (config == null) config = new AssistantConfig(this);
 
-            if (config.isAssetsEnabled()) {
+            if (true) {
 
                 spAsset.setVisibility(View.VISIBLE);
 
@@ -1928,7 +1941,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
                     int assetIdInt = 0;
 
-                    if (config.isAssetsEnabled() && spAsset.getSelectedItemPosition() < loadedAssets.size()) {
+                    if (spAsset.getSelectedItemPosition() < loadedAssets.size()) {
 
                         assetIdInt = loadedAssets.get(spAsset.getSelectedItemPosition()).id;
 
@@ -1949,6 +1962,8 @@ public class SelectToSpeakService extends AccessibilityService {
                     closeWindow(windowManager, floatView);
 
                     Toast.makeText(this, getString(R.string.svc_toast_booked), Toast.LENGTH_SHORT).show();
+
+                    announceTransaction(finalAmountValue, finalTypeInt, finalCatName, finalSymbol);
 
                 } catch (Exception e) {
 
@@ -2038,6 +2053,7 @@ public class SelectToSpeakService extends AccessibilityService {
                         symbol, null, transactionTime);
                 closeWindow(windowManager, floatView);
                 Toast.makeText(this, "\u5DF2\u8BB0\u8D26", Toast.LENGTH_SHORT).show();
+                announceTransaction(amount, type, category, symbol);
             });
 
             // 取消按钮
@@ -2073,6 +2089,7 @@ public class SelectToSpeakService extends AccessibilityService {
                             symbol, null, transactionTime);
                     closeWindow(windowManager, floatView);
                     Toast.makeText(this, "\u5DF2\u8BB0\u8D26", Toast.LENGTH_SHORT).show();
+                    announceTransaction(amount, type, category, symbol);
                 }
             }, 5000);
         } catch (Exception e) {
@@ -2556,11 +2573,21 @@ public class SelectToSpeakService extends AccessibilityService {
 
             bill.setLocation("");
 
-            // 获取当前登录用户的 userId，未登录则默认 1
+            // 获取配置的记账用户 ID，未配置则使用当前登录用户
 
-            SessionManager sm = new SessionManager(this);
+            long trackUserId = config.getAutoTrackUserId();
 
-            bill.setUserId(sm.isLoggedIn() ? sm.getUserId() : 1);
+            if (trackUserId > 0) {
+
+                bill.setUserId(trackUserId);
+
+            } else {
+
+                SessionManager sm = new SessionManager(this);
+
+                bill.setUserId(sm.isLoggedIn() ? sm.getUserId() : 1);
+
+            }
 
             workingDb.billDao().insert(bill);
 
@@ -7726,6 +7753,51 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
     @Override public void onInterrupt() {}
+
+    @Override
+    public void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+            tts = null;
+        }
+        super.onDestroy();
+    }
+
+    /**
+     * \u8BED\u97F3\u64AD\u62A5\uFF1A\u5F00\u542F\u65F6\u5728\u8BB0\u8D26\u6210\u529F\u540E\u64AD\u62A5\u91D1\u989D\u4E0E\u5206\u7C7B
+     * voiceType 0 = \u7CFB\u7EDF TTS \u64AD\u62A5\uFF0C1 = \u831C\u7279\u83C8\u8389\u8BED\u97F3\u64AD\u653E
+     */
+    private void announceTransaction(double amount, int type, String category, String currencySymbol) {
+        if (config == null || !config.isVoiceAnnounceEnabled()) return;
+
+        if (config.getVoiceType() == 1) {
+            // \u831C\u7279\u83C8\u8389\u8BED\u97F3\uFF1A\u968F\u673A\u64AD\u653E\u4E00\u6BB5\u89D2\u8272\u8BED\u97F3
+            int[] clips = {R.raw.citlali_voice_1, R.raw.citlali_voice_2,
+                    R.raw.citlali_voice_3, R.raw.citlali_voice_4};
+            int clipRes = clips[(int) (Math.random() * clips.length)];
+            try {
+                MediaPlayer mp = MediaPlayer.create(this, clipRes);
+                if (mp != null) {
+                    mp.setOnCompletionListener(MediaPlayer::release);
+                    mp.setOnErrorListener((mp1, what, extra) -> { mp1.release(); return true; });
+                    mp.start();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Citlali voice playback failed", e);
+            }
+        } else {
+            // \u7CFB\u7EDF TTS \u64AD\u62A5
+            if (tts == null) return;
+            String symbol = (currencySymbol != null && !currencySymbol.isEmpty()) ? currencySymbol : "\u00A5";
+            String typeText = (type == 1) ? "\u6536\u5165" : "\u652F\u51FA";
+            String cat = (category != null && !category.isEmpty()) ? category : typeText;
+            String msg = "\u5DF2\u8BB0\u8D26 " + typeText + " " + symbol + String.format("%.2f", amount) + " " + cat;
+            tts.setPitch(1.0f);
+            tts.setSpeechRate(1.0f);
+            tts.speak(msg, TextToSpeech.QUEUE_FLUSH, null, "tx_announce");
+        }
+    }
 
     /**
      * Decode a bitmap from the given URI/file path, scaled to fit within maxWidth pixels.

@@ -231,14 +231,14 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_profile_import"
-                        app:tint="@color/primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:text="@string/profile_import"
-                        android:textColor="@color/primary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -546,7 +546,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
                     android:text="@string/style_standard"
-                    android:textColor="@color/primary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -594,10 +594,10 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/tv_cache_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
-                    android:text="12.5 MB"
                     android:textColor="@color/muted"
                     android:textSize="12sp" />
 

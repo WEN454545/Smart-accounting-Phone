@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -81,6 +82,24 @@ public class SectionedBillAdapter extends RecyclerView.Adapter<SectionedBillAdap
         SectionBillAdapter adapter = new SectionBillAdapter(bills, listener, longClickListener);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
         holder.recyclerView.setAdapter(adapter);
+
+        // Swipe-to-delete
+        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder vh, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int direction) {
+                int pos = vh.getAdapterPosition();
+                if (pos >= 0 && pos < bills.size() && longClickListener != null) {
+                    longClickListener.onBillLongClick(bills.get(pos));
+                }
+                adapter.notifyItemChanged(pos);
+            }
+        });
+        touchHelper.attachToRecyclerView(holder.recyclerView);
     }
 
     @Override

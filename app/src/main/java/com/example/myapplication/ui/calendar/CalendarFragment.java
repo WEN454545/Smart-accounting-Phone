@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -27,6 +28,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.dao.DaySum;
 import com.example.myapplication.data.entity.Bill;
 import com.example.myapplication.ui.adapter.BillAdapter;
+import com.example.myapplication.util.ColorSchemeManager;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -266,13 +268,21 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         cell.setPadding(dp4, dp4/2, dp4, dp4/2);
 
         boolean hasBg = ivCalendarBg.getDrawable() != null;
-        int bgColorRes;
         if (isSelected) {
-            bgColorRes = hasBg ? R.drawable.bg_cal_cell_selected_bg : R.drawable.bg_cal_cell_selected;
+            int primaryColor = ColorSchemeManager.getCurrentPrimaryColor(requireContext());
+            if (hasBg) {
+                // Semi-transparent primary (80% opacity)
+                GradientDrawable gd = new GradientDrawable();
+                gd.setColor((primaryColor & 0x00FFFFFF) | 0xCC000000);
+                gd.setCornerRadius(8 * density);
+                cell.setBackground(gd);
+            } else {
+                cell.setBackgroundResource(R.drawable.bg_cal_cell_selected);
+            }
         } else {
-            bgColorRes = hasBg ? R.drawable.bg_cal_cell_neutral_bg : R.drawable.bg_cal_cell_neutral;
+            int bgColorRes = hasBg ? R.drawable.bg_cal_cell_neutral_bg : R.drawable.bg_cal_cell_neutral;
+            cell.setBackgroundResource(bgColorRes);
         }
-        cell.setBackgroundResource(bgColorRes);
 
         TextView dayNumTv = new TextView(requireContext());
         dayNumTv.setText(String.valueOf(dayNum));
@@ -285,7 +295,7 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
             dayNumTv.setBackgroundResource(R.drawable.bg_today);
             dayNumTv.setPadding(dp4, dp4/2, dp4, dp4/2);
             if (!isSelected) {
-                dayNumTv.setTextColor(requireContext().getColor(R.color.primary));
+                dayNumTv.setTextColor(ColorSchemeManager.getCurrentPrimaryColor(requireContext()));
             }
         }
 

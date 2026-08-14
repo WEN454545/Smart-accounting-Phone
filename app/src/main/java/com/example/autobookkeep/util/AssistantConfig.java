@@ -7,8 +7,9 @@ public class AssistantConfig {
     private static final String PREF_NAME = "autobookkeep_config";
 
     private static final String KEY_ENABLE = "key_enable_auto_track";
-    private static final String KEY_ENABLE_ASSETS = "key_enable_assets_module";
-    private static final String KEY_ENABLE_DETAILS = "key_enable_details_module";
+    private static final String KEY_AUTO_TRACK_USER_ID = "key_auto_track_user_id";
+    private static final String KEY_ENABLE_VOICE_ANNOUNCE = "key_enable_voice_announce";
+    private static final String KEY_VOICE_TYPE = "key_voice_type";
     private static final String KEY_DEFAULT_ASSET_ID = "key_default_asset_id";
     private static final String KEY_DEFAULT_CURRENCY = "default_currency_symbol";
     private static final String KEY_ENABLE_CURRENCY = "enable_currency";
@@ -28,20 +29,29 @@ public class AssistantConfig {
         prefs.edit().putBoolean(KEY_ENABLE, enabled).apply();
     }
 
-    public boolean isAssetsEnabled() {
-        return prefs.getBoolean(KEY_ENABLE_ASSETS, false);
+    public long getAutoTrackUserId() {
+        return prefs.getLong(KEY_AUTO_TRACK_USER_ID, -1);
     }
 
-    public void setAssetsEnabled(boolean enabled) {
-        prefs.edit().putBoolean(KEY_ENABLE_ASSETS, enabled).apply();
+    public void setAutoTrackUserId(long userId) {
+        prefs.edit().putLong(KEY_AUTO_TRACK_USER_ID, userId).apply();
     }
 
-    public boolean isDetailsEnabled() {
-        return prefs.getBoolean(KEY_ENABLE_DETAILS, false);
+    public boolean isVoiceAnnounceEnabled() {
+        return prefs.getBoolean(KEY_ENABLE_VOICE_ANNOUNCE, false);
     }
 
-    public void setDetailsEnabled(boolean enabled) {
-        prefs.edit().putBoolean(KEY_ENABLE_DETAILS, enabled).apply();
+    public void setVoiceAnnounceEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_ENABLE_VOICE_ANNOUNCE, enabled).apply();
+    }
+
+    // 0 = system TTS, 1 = Citlali-style TTS
+    public int getVoiceType() {
+        return prefs.getInt(KEY_VOICE_TYPE, 0);
+    }
+
+    public void setVoiceType(int type) {
+        prefs.edit().putInt(KEY_VOICE_TYPE, type).apply();
     }
 
     public int getDefaultAssetId() {
@@ -58,6 +68,10 @@ public class AssistantConfig {
 
     public boolean isCurrencyEnabled() {
         return prefs.getBoolean(KEY_ENABLE_CURRENCY, false);
+    }
+
+    public void setCurrencyEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_ENABLE_CURRENCY, enabled).apply();
     }
 
     public boolean isPhotoBackupEnabled() {
