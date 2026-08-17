@@ -191,25 +191,17 @@ public class StatsViewModel extends AndroidViewModel {
     // ==================== 时间计算 ====================
 
     private long getWeekStart() {
-        Integer y = statsYear.getValue();
-        Integer m = statsMonth.getValue();
         Integer offset = statsWeekOffset.getValue();
-        if (y == null) y = Calendar.getInstance().get(Calendar.YEAR);
-        if (m == null) m = Calendar.getInstance().get(Calendar.MONTH);
         if (offset == null) offset = 0;
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, y);
-        cal.set(Calendar.MONTH, m);
-        cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
-
-        // 找到本月第一个周一
+        // 从今天向前找到本周的周一（包含今天的那一周）
         while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
-            cal.add(Calendar.DAY_OF_MONTH, 1);
+            cal.add(Calendar.DAY_OF_MONTH, -1);
         }
         cal.add(Calendar.DAY_OF_YEAR, offset * 7);
         return cal.getTimeInMillis();

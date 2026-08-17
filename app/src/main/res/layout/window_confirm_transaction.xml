@@ -11,7 +11,7 @@
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:cardCornerRadius="32dp"
+        app:cardCornerRadius="28dp"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/app_background">
 
@@ -34,12 +34,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="18dp">
 
+                    <!-- Title bar -->
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
+                        android:layout_marginBottom="14dp">
 
                         <ImageView
                             android:id="@+id/iv_window_exclude_budget"
@@ -58,16 +59,19 @@
                             android:text="&#x8BB0;&#x4E00;&#x7B14;"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="?android:attr/textColorPrimary"/>
+                            android:textColor="?android:attr/textColorPrimary" />
                     </RelativeLayout>
 
+                    <!-- Category grid (icon + text) -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_window_category"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="140dp"
                         android:layout_marginBottom="12dp"
-                        android:overScrollMode="never" />
+                        android:overScrollMode="never"
+                        android:nestedScrollingEnabled="true" />
 
+                    <!-- Income / Expense toggle -->
                     <RadioGroup
                         android:id="@+id/rg_window_type"
                         android:layout_width="match_parent"
@@ -79,139 +83,165 @@
                         <RadioButton
                             android:id="@+id/rb_window_expense"
                             android:layout_width="0dp"
-                            android:layout_height="48dp"
+                            android:layout_height="44dp"
                             android:layout_weight="1"
                             android:text="&#x652F;&#x51FA;"
                             android:gravity="center"
                             android:button="@null"
                             android:background="@drawable/bg_type_selector"
                             android:textColor="@color/text_type_selector"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:layout_marginEnd="4dp"/>
+                            android:layout_marginEnd="4dp" />
 
                         <RadioButton
                             android:id="@+id/rb_window_income"
                             android:layout_width="0dp"
-                            android:layout_height="48dp"
+                            android:layout_height="44dp"
                             android:layout_weight="1"
                             android:text="&#x6536;&#x5165;"
                             android:gravity="center"
                             android:button="@null"
                             android:background="@drawable/bg_type_selector"
                             android:textColor="@color/text_type_selector"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
-                            android:layout_marginStart="4dp"/>
+                            android:layout_marginStart="4dp" />
                     </RadioGroup>
 
-                    <Spinner
-                        android:id="@+id/sp_asset"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:spinnerMode="dropdown"
-                        android:dropDownHeight="160dp"
-                        android:background="@drawable/bg_input_field"
-                        android:popupBackground="@drawable/bg_input_field"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="12dp"
-                        android:layout_marginBottom="16dp"/>
-
-                    <com.example.autobookkeep.ui.CustomHighlightEditText
-                        android:id="@+id/et_window_target"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:hint="&#x8F93;&#x5165;&#x8D1F;&#x503A;/&#x501F;&#x51FA;&#x5BF9;&#x8C61;"
-                        android:textColor="?android:attr/textColorPrimary"
-                        android:textColorHint="@color/text_hint"
-                        android:textSize="16sp"
-                        android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="18dp"
-                        android:paddingVertical="10dp"
-                        android:layout_marginBottom="16dp"
-                        android:visibility="gone"/>
-
+                    <!-- User selector row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginBottom="16dp">
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_nav_profile"
+                            android:alpha="0.5"
+                            android:layout_marginEnd="6dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="&#x8BB0;&#x8D26;&#x7528;&#x6237;"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary" />
+
+                        <Spinner
+                            android:id="@+id/sp_asset"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="8dp"
+                            android:spinnerMode="dropdown"
+                            android:dropDownHeight="160dp"
+                            android:background="@drawable/bg_input_field"
+                            android:popupBackground="@drawable/bg_spinner_dropdown"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="10dp" />
+                    </LinearLayout>
+
+                    <com.example.autobookkeep.ui.CustomHighlightEditText
+                        android:id="@+id/et_window_target"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:hint="&#x8F93;&#x5165;&#x8D1F;&#x503A;/&#x501F;&#x51FA;&#x5BF9;&#x8C61;"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textColorHint="@color/text_hint"
+                        android:textSize="15sp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="10dp"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone" />
+
+                    <!-- Amount + currency -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
 
                         <com.example.autobookkeep.ui.CustomHighlightEditText
                             android:id="@+id/et_window_amount"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="56dp"
+                            android:layout_height="52dp"
                             android:hint="&#x91D1;&#x989D;"
                             android:inputType="numberDecimal"
                             android:textSize="16sp"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textColorHint="@color/text_hint"
                             android:background="@drawable/bg_input_field"
-                            android:paddingHorizontal="20dp"
-                            android:paddingVertical="10dp"/>
+                            android:paddingHorizontal="18dp"
+                            android:paddingVertical="10dp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_window_currency"
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
                             android:layout_marginStart="8dp"
                             android:text="&#xA5;"
                             android:textSize="18sp"
                             android:textColor="@color/text_primary"
                             android:backgroundTint="@color/input_bg"
-                            app:cornerRadius="16dp"
+                            app:cornerRadius="14dp"
                             android:padding="0dp"
                             android:insetTop="0dp"
                             android:insetBottom="0dp"
                             android:visibility="gone"
                             app:rippleColor="@android:color/transparent"
-                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton" />
                     </LinearLayout>
 
                     <com.example.autobookkeep.ui.CustomHighlightEditText
                         android:id="@+id/et_window_category"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="52dp"
                         android:hint="&#x81EA;&#x5B9A;&#x4E49;&#x5206;&#x7C7B;"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textColorHint="@color/text_hint"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="18dp"
+                        android:paddingHorizontal="16dp"
                         android:paddingVertical="10dp"
-                        android:layout_marginBottom="16dp"
-                        android:visibility="gone"/>
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone" />
 
-                    <!-- &#x65F6;&#x95F4;&#x9009;&#x62E9;&#x5668; -->
+                    <!-- Date selector -->
                     <TextView
                         android:id="@+id/tv_window_date"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="52dp"
                         android:gravity="center_vertical"
                         android:clickable="true"
                         android:focusable="false"
                         android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="18dp"
+                        android:paddingHorizontal="16dp"
                         android:paddingVertical="10dp"
-                        android:layout_marginBottom="16dp"
-                        android:textSize="16sp"
+                        android:layout_marginBottom="12dp"
+                        android:textSize="15sp"
                         android:textColor="?android:attr/textColorPrimary" />
 
-                    <!-- &#x5907;&#x6CE8; -->
+                    <!-- Note -->
                     <com.example.autobookkeep.ui.CustomHighlightEditText
                         android:id="@+id/et_window_note"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="52dp"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textColorHint="@color/text_hint"
                         android:hint="&#x5907;&#x6CE8;"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:background="@drawable/bg_input_field"
-                        android:paddingHorizontal="18dp"
+                        android:paddingHorizontal="16dp"
                         android:paddingVertical="10dp"
-                        android:layout_marginBottom="20dp"/>
+                        android:layout_marginBottom="16dp" />
 
+                    <!-- Action buttons -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -221,29 +251,29 @@
                             android:id="@+id/btn_window_cancel"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="56dp"
+                            android:layout_height="52dp"
                             android:text="&#x53D6; &#x6D88;"
                             android:textColor="@color/text_primary"
                             android:backgroundTint="@color/input_bg"
                             android:layout_marginEnd="8dp"
-                            app:cornerRadius="16dp"
+                            app:cornerRadius="14dp"
                             app:elevation="0dp"
                             app:pressedTranslationZ="0dp"
-                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_window_save"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="56dp"
+                            android:layout_height="52dp"
                             android:text="&#x786E;&#x8BA4;&#x4FDD;&#x5B58;"
                             android:textColor="@color/text_white"
                             android:textStyle="bold"
                             android:backgroundTint="@color/app_blue"
-                            app:cornerRadius="16dp"
+                            app:cornerRadius="14dp"
                             app:elevation="0dp"
                             app:pressedTranslationZ="0dp"
-                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton" />
                     </LinearLayout>
 
                 </LinearLayout>

@@ -75,6 +75,20 @@ public class AddBillDialog extends DialogFragment {
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_bill, null);
 
         EditText amountInput = view.findViewById(R.id.input_amount);
+        Button currencyBtn = view.findViewById(R.id.btn_currency);
+        final String[] selectedCurrency = {"\u00A5"};
+        currencyBtn.setOnClickListener(v -> {
+            String[] symbols = com.example.autobookkeep.util.CurrencyUtils.CURRENCY_DISPLAY;
+            new androidx.appcompat.app.AlertDialog.Builder(getContext())
+                    .setTitle("\u9009\u62E9\u8D27\u5E01")
+                    .setItems(symbols, (dialog, which) -> {
+                        if (which >= 0 && which < com.example.autobookkeep.util.CurrencyUtils.CURRENCY_SYMBOLS.length) {
+                            selectedCurrency[0] = com.example.autobookkeep.util.CurrencyUtils.CURRENCY_SYMBOLS[which];
+                            currencyBtn.setText(selectedCurrency[0]);
+                        }
+                    })
+                    .show();
+        });
         FrameLayout frameCategoryPicker = view.findViewById(R.id.frame_category_picker);
         TextView tvSelectedCategory = view.findViewById(R.id.tv_selected_category);
         EditText noteInput = view.findViewById(R.id.input_note);
@@ -116,6 +130,8 @@ public class AddBillDialog extends DialogFragment {
         // Edit mode - prefill fields
         if (editBill != null) {
             amountInput.setText(String.valueOf(Math.abs(editBill.getAmount())));
+            selectedCurrency[0] = editBill.getCurrencySymbol() != null ? editBill.getCurrencySymbol() : "\u00A5";
+            currencyBtn.setText(selectedCurrency[0]);
             noteInput.setText(editBill.getNote());
             selectedDate = editBill.getTimestamp();
             dateInput.setText(dateFormat.format(selectedDate));
@@ -204,15 +220,27 @@ public class AddBillDialog extends DialogFragment {
             if (editBill != null) {
                 // Edit mode: modify original object, preserve id for Room @Update
                 editBill.setType(cat);
-                editBill.setAmount(amount);
+                String cur = selectedCurrency[0];
+                    double cnyAmt = cur.equals("\u00A5") ? amount :
+                            com.example.autobookkeep.util.CurrencyUtils.convertToCNY(Math.abs(amount), cur);
+                    if (isExpense) cnyAmt = -Math.abs(cnyAmt);
+                    editBill.setAmount(cnyAmt);
+                    double origAmt = isExpense ? -Math.abs(amount) : amount;
+                    editBill.setOriginalAmount(origAmt);
+                    editBill.setCurrencySymbol(selectedCurrency[0]);
                 editBill.setTimestamp(selectedDate);
                 editBill.setNote(note);
                 editBill.setCategory(incomeExpense);
                 editBill.setSource("manual");
                 bill = editBill;
             } else {
-                bill = new Bill(cat, amount, selectedDate, "", note, "manual",
-                        incomeExpense, userId);
+                String cur = selectedCurrency[0];
+                double cnyAmt = cur.equals("\u00A5") ? amount :
+                        com.example.autobookkeep.util.CurrencyUtils.convertToCNY(Math.abs(amount), cur);
+                if (isExpense) cnyAmt = -Math.abs(cnyAmt);
+                double origAmt = isExpense ? -Math.abs(amount) : amount;
+                bill = new Bill(cat, cnyAmt, selectedDate, "", note, "manual",
+                        incomeExpense, userId, cur, origAmt);
             }
 
             if (listener != null) listener.onSave(bill);

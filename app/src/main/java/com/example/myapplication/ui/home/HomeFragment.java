@@ -195,6 +195,8 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
         view.findViewById(R.id.fab_add).setOnClickListener(v -> showAddDialog(null));
 
+        view.findViewById(R.id.budget_card).setOnClickListener(v -> showBudgetEditDialog());
+
 
         view.findViewById(R.id.tv_view_all).setOnClickListener(v -> {
 
@@ -449,6 +451,43 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
 
     }
 
+
+    private void showBudgetEditDialog() {
+        Budget currentBudget = viewModel.getBudget().getValue();
+        double currentTotal = (currentBudget != null && currentBudget.getTotalBudget() > 0)
+                ? currentBudget.getTotalBudget() : 5000;
+
+        android.view.View dialogView = android.view.LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_set_budget, null);
+        android.widget.TextView subtitle = dialogView.findViewById(R.id.tv_budget_subtitle);
+        android.widget.EditText input = dialogView.findViewById(R.id.et_budget_amount);
+        subtitle.setText(viewModel.getYearMonth() + " \u7684\u9884\u7B97\u91D1\u989D\uFF08\u5143\uFF09");
+        input.setText(String.valueOf((int) currentTotal));
+        input.selectAll();
+
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setPositiveButton("\u786E\u5B9A", (dialog, which) -> {
+                    String str = input.getText().toString().trim();
+                    if (str.isEmpty()) return;
+                    try {
+                        double amount = Double.parseDouble(str);
+                        if (amount <= 0) {
+                            android.widget.Toast.makeText(requireContext(),
+                                    "\u9884\u7B97\u5FC5\u987B\u5927\u4E8E0", android.widget.Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Budget budget = new Budget(viewModel.getYearMonth(), amount,
+                                System.currentTimeMillis(), 0);
+                        viewModel.saveBudget(budget);
+                    } catch (NumberFormatException e) {
+                        android.widget.Toast.makeText(requireContext(),
+                                "\u8F93\u5165\u683C\u5F0F\u9519\u8BEF", android.widget.Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("\u53D6\u6D88", null)
+                .show();
+    }
 
     private void showAddDialog(@Nullable Bill editBill) {
 

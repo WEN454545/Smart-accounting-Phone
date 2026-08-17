@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="&#x8BBE;&#x7F6E;&#x5F53;&#x6708;&#x6708;&#x5EA6;&#x9884;&#x7B97;&#x603B;&#x989D;"
+                android:text="&#x8BBE;&#x7F6E;&#x672C;&#x6708;&#x53CA;&#x4EE5;&#x540E;&#x6240;&#x6709;&#x6708;&#x4EFD;&#x7684;&#x9884;&#x7B97;"
                 android:textSize="14sp"
                 android:textColor="@color/text_hint"
                 android:layout_marginBottom="16dp"/>

@@ -214,7 +214,16 @@ public class DaySectionedBillAdapter extends RecyclerView.Adapter<DaySectionedBi
 
                 boolean isIncome = "income".equals(bill.getCategory());
                 double amount = Math.abs(bill.getAmount());
-                String amountStr = String.format(Locale.CHINA, "\u00A5%,.2f", amount);
+                String billCurrency = bill.getCurrencySymbol() != null ? bill.getCurrencySymbol() : "\u00A5";
+                double displayAmt = Math.abs(bill.getDisplayAmount());
+                String amountStr;
+                if (billCurrency.equals("\u00A5")) {
+                    amountStr = String.format(Locale.CHINA, "%s%,.2f", billCurrency, displayAmt);
+                } else {
+                    double cnyAmt = Math.abs(bill.getAmount());
+                    amountStr = String.format(Locale.CHINA, "%s%,.2f", billCurrency, displayAmt)
+                            + " (\u00A5" + String.format(Locale.CHINA, "%,.2f", cnyAmt) + ")";
+                }
                 amountText.setText((isIncome ? "+" : "-") + amountStr);
                 amountText.setTextColor(itemView.getContext().getColor(
                         isIncome ? R.color.income : R.color.expense));

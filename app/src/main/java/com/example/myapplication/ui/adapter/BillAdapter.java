@@ -72,7 +72,17 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         holder.meta.setText(metaText);
 
         boolean isIncome = "income".equals(bill.getCategory());
-        holder.amount.setText((isIncome ? "+" : "-") + "\u00A5" + String.format(Locale.CHINA, "%.2f", Math.abs(bill.getAmount())));
+        String billCurrency = bill.getCurrencySymbol() != null ? bill.getCurrencySymbol() : "\u00A5";
+        double displayAmt = Math.abs(bill.getDisplayAmount());
+        String amountText;
+        if (billCurrency.equals("\u00A5")) {
+            amountText = billCurrency + String.format(Locale.CHINA, "%.2f", displayAmt);
+        } else {
+            double cnyAmt = Math.abs(bill.getAmount());
+            amountText = billCurrency + String.format(Locale.CHINA, "%.2f", displayAmt)
+                    + " (\u00A5" + String.format(Locale.CHINA, "%.2f", cnyAmt) + ")";
+        }
+        holder.amount.setText((isIncome ? "+" : "-") + amountText);
         holder.amount.setTextColor(holder.itemView.getContext().getColor(isIncome ? R.color.income : R.color.expense));
 
         int bgColor = getBgColorForType(bill.getType());

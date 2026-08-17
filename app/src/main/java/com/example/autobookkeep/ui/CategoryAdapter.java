@@ -2,9 +2,12 @@ package com.example.autobookkeep.ui;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,9 +15,15 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.util.CategoryIconHelper;
 
 import java.util.List;
 
+/**
+ * Adapter for the category grid in the auto-bookkeeping confirmation window.
+ * Shows each category as a compact icon + label item.
+ * Uses PNG icons from CategoryIconHelper when available, emoji fallback otherwise.
+ */
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
     private final Context context;
@@ -28,6 +37,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private final int unselectedColor;
     private final int selectedTextColor;
     private final int unselectedTextColor;
+    private final float density;
 
     public interface OnCategoryClickListener {
         void onCategoryClick(String category);
@@ -42,6 +52,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         this.categories = categories;
         this.selectedCategory = currentCategory;
         this.listener = listener;
+        this.density = context.getResources().getDisplayMetrics().density;
 
         this.selectedColor = ContextCompat.getColor(context, R.color.app_blue);
         this.selectedTextColor = ContextCompat.getColor(context, R.color.cat_selected_text);
@@ -76,55 +87,68 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_category_button, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_window_category, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String category = categories.get(position);
-
-        GradientDrawable background = new GradientDrawable();
-        background.setShape(GradientDrawable.RECTANGLE);
-
-        if (isDetailed) {
-            holder.tvIcon.setText(category);
-            ViewGroup.LayoutParams lp = holder.tvIcon.getLayoutParams();
-            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            holder.tvIcon.setLayoutParams(lp);
-            int paddingH = (int) (12 * context.getResources().getDisplayMetrics().density);
-            int paddingV = (int) (6 * context.getResources().getDisplayMetrics().density);
-            holder.tvIcon.setPadding(paddingH, paddingV, paddingH, paddingV);
-            holder.tvIcon.setTextSize(14);
-            holder.tvIcon.setTypeface(null, android.graphics.Typeface.NORMAL);
-            background.setCornerRadius(50 * context.getResources().getDisplayMetrics().density);
-        } else {
-            if (category != null && !category.isEmpty()) {
-                holder.tvIcon.setText(category);
-            } else {
-                holder.tvIcon.setText("");
-            }
-            ViewGroup.LayoutParams lp = holder.tvIcon.getLayoutParams();
-            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-            lp.height = (int) (50 * context.getResources().getDisplayMetrics().density);
-            holder.tvIcon.setLayoutParams(lp);
-            int paddingH = (int) (12 * context.getResources().getDisplayMetrics().density);
-            holder.tvIcon.setPadding(paddingH, 0, paddingH, 0);
-            holder.tvIcon.setTextSize(18);
-            holder.tvIcon.setTypeface(null, android.graphics.Typeface.BOLD);
-            background.setCornerRadius(16 * context.getResources().getDisplayMetrics().density);
-        }
-
         boolean isSelected = category.equals(selectedCategory);
-        if (isSelected) {
-            background.setColor(selectedColor);
-            holder.tvIcon.setTextColor(selectedTextColor);
+
+        // Set label text
+        holder.tvLabel.setText(category);
+
+        // Bind icon: PNG icon if available, otherwise emoji fallback
+        int iconResId = CategoryIconHelper.getIconResId(category);
+        int bgColorRes = getBgColorForCategory(category);
+        int bgColor = ContextCompat.getColor(context, bgColorRes);
+
+        float cornerRadius = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 10f, context.getResources().getDisplayMetrics());
+
+        if (iconResId != 0) {
+            // Show PNG icon
+            holder.ivIcon.setImageResource(iconResId);
+            holder.ivIcon.setVisibility(View.VISIBLE);
+            holder.tvEmoji.setVisibility(View.GONE);
+            GradientDrawable iconBg = new GradientDrawable();
+            iconBg.setShape(GradientDrawable.RECTANGLE);
+            iconBg.setCornerRadius(cornerRadius);
+            iconBg.setColor(bgColor);
+            holder.ivIcon.setBackground(iconBg);
         } else {
-            background.setColor(unselectedColor);
-            holder.tvIcon.setTextColor(unselectedTextColor);
+            // Show emoji fallback
+            String emoji = getEmojiForCategory(category);
+            holder.tvEmoji.setText(emoji);
+            holder.tvEmoji.setVisibility(View.VISIBLE);
+            holder.ivIcon.setVisibility(View.GONE);
+            GradientDrawable emojiBg = new GradientDrawable();
+            emojiBg.setShape(GradientDrawable.RECTANGLE);
+            emojiBg.setCornerRadius(cornerRadius);
+            emojiBg.setColor(bgColor);
+            holder.tvEmoji.setBackground(emojiBg);
         }
-        holder.tvIcon.setBackground(background);
+
+        // Apply selected state to the container
+        GradientDrawable containerBg = new GradientDrawable();
+        containerBg.setShape(GradientDrawable.RECTANGLE);
+        float containerRadius = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 12f, context.getResources().getDisplayMetrics());
+        containerBg.setCornerRadius(containerRadius);
+        if (isSelected) {
+            containerBg.setColor(selectedColor);
+            holder.tvLabel.setTextColor(selectedTextColor);
+        } else {
+            containerBg.setColor(unselectedColor);
+            holder.tvLabel.setTextColor(unselectedTextColor);
+        }
+        holder.itemView.setBackground(containerBg);
+
+        // Apply compact padding
+        int padH = (int) (6 * density);
+        int padV = (int) (4 * density);
+        holder.itemView.setPadding(padH, padV, padH, padV);
 
         holder.itemView.setOnClickListener(v -> {
             selectedCategory = category;
@@ -147,12 +171,74 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return categories.size();
     }
 
+    /**
+     * Returns the emoji string for a given category name (fallback when no PNG icon).
+     */
+    private String getEmojiForCategory(String type) {
+        if (type == null) return "\uD83D\uDCB3";
+        switch (type) {
+            // expense
+            case "\u9910\u996E": return "\uD83C\uDF54";       // food
+            case "\u8D2D\u7269": return "\uD83D\uDED2";       // shopping
+            case "\u4F4F\u623F": return "\uD83C\uDFE0";       // housing
+            case "\u4EA4\u901A": return "\uD83D\uDE95";       // transport
+            case "\u65C5\u884C": return "\u2708\uFE0F";       // travel
+            case "\u901A\u8BAF": return "\uD83D\uDCF1";       // communication
+            case "\u5A31\u4E50": return "\uD83C\uDFAC";       // entertainment
+            case "\u4EBA\u60C5": return "\uD83C\uDF81";       // social
+            case "\u533B\u7597": return "\uD83D\uDC8A";       // medical
+            case "\u6559\u80B2": return "\uD83D\uDCDA";       // education
+            case "\u7F8E\u5BB9": return "\uD83D\uDC84";       // beauty
+            case "\u5176\u4ED6": return "\uD83D\uDCE6";       // other
+            // income
+            case "\u8F6C\u8D26": return "\uD83D\uDCB8";       // transfer
+            case "\u7EA2\u5305": return "\uD83E\uDDE7";       // redpacket
+            case "\u9000\u6B3E": return "\u21A9\uFE0F";       // refund
+            case "\u4E8C\u624B\u4EA4\u6613": return "\uD83D\uDCC8"; // secondhand
+            case "\u5176\u4ED6\u6536\u5165": return "\uD83D\uDCB0"; // other income
+            default: return "\uD83D\uDCB3";
+        }
+    }
+
+    /**
+     * Returns the background color resource for a given category name.
+     */
+    private int getBgColorForCategory(String type) {
+        if (type == null) return R.color.cat_other;
+        switch (type) {
+            // expense
+            case "\u9910\u996E": return R.color.cat_food;
+            case "\u8D2D\u7269": return R.color.cat_shopping;
+            case "\u4F4F\u623F": return R.color.cat_housing;
+            case "\u4EA4\u901A": return R.color.cat_transport;
+            case "\u65C5\u884C": return R.color.cat_travel;
+            case "\u901A\u8BAF": return R.color.cat_communication;
+            case "\u5A31\u4E50": return R.color.cat_entertainment;
+            case "\u4EBA\u60C5": return R.color.cat_social;
+            case "\u533B\u7597": return R.color.cat_medical;
+            case "\u6559\u80B2": return R.color.cat_education;
+            case "\u7F8E\u5BB9": return R.color.cat_beauty;
+            case "\u5176\u4ED6": return R.color.cat_other;
+            // income
+            case "\u8F6C\u8D26": return R.color.cat_transfer;
+            case "\u7EA2\u5305": return R.color.cat_redpacket;
+            case "\u9000\u6B3E": return R.color.cat_refund;
+            default: return R.color.cat_other;
+        }
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvIcon;
+        FrameLayout iconContainer;
+        TextView tvEmoji;
+        ImageView ivIcon;
+        TextView tvLabel;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvIcon = itemView.findViewById(R.id.tv_category_icon);
+            iconContainer = itemView.findViewById(R.id.fl_category_icon_container);
+            tvEmoji = itemView.findViewById(R.id.tv_category_emoji);
+            ivIcon = itemView.findViewById(R.id.iv_category_icon);
+            tvLabel = itemView.findViewById(R.id.tv_category_label);
         }
     }
 }

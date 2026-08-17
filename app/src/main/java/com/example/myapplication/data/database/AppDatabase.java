@@ -13,7 +13,7 @@ import com.example.myapplication.data.entity.Bill;
 import com.example.myapplication.data.entity.Budget;
 import com.example.myapplication.data.entity.User;
 
-@Database(entities = {Bill.class, Budget.class, User.class}, version = 2, exportSchema = false)
+@Database(entities = {Bill.class, Budget.class, User.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
 

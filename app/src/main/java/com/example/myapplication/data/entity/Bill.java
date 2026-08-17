@@ -17,6 +17,8 @@ public class Bill {
     private String source;
     private String category;
     private long userId;
+    private String currencySymbol = "\u00A5";
+    private double originalAmount = 0;
 
     public Bill() {}
 
@@ -24,12 +26,41 @@ public class Bill {
     public Bill(String type, double amount, long timestamp, String location, String note, String source, String category, long userId) {
         this.type = type;
         this.amount = amount;
+        this.originalAmount = amount;
         this.timestamp = timestamp;
         this.location = location;
         this.note = note;
         this.source = source;
         this.category = category;
         this.userId = userId;
+    }
+
+    @Ignore
+    public Bill(String type, double amount, long timestamp, String location, String note, String source, String category, long userId, String currencySymbol) {
+        this.type = type;
+        this.amount = amount;
+        this.originalAmount = amount;
+        this.timestamp = timestamp;
+        this.location = location;
+        this.note = note;
+        this.source = source;
+        this.category = category;
+        this.userId = userId;
+        this.currencySymbol = currencySymbol != null ? currencySymbol : "\u00A5";
+    }
+
+    @Ignore
+    public Bill(String type, double amount, long timestamp, String location, String note, String source, String category, long userId, String currencySymbol, double originalAmount) {
+        this.type = type;
+        this.amount = amount;
+        this.originalAmount = originalAmount;
+        this.timestamp = timestamp;
+        this.location = location;
+        this.note = note;
+        this.source = source;
+        this.category = category;
+        this.userId = userId;
+        this.currencySymbol = currencySymbol != null ? currencySymbol : "\u00A5";
     }
 
     public long getId() { return id; }
@@ -58,4 +89,19 @@ public class Bill {
 
     public long getUserId() { return userId; }
     public void setUserId(long userId) { this.userId = userId; }
+
+    public String getCurrencySymbol() { return currencySymbol != null ? currencySymbol : "\u00A5"; }
+    public void setCurrencySymbol(String currencySymbol) { this.currencySymbol = currencySymbol != null ? currencySymbol : "\u00A5"; }
+
+    public double getOriginalAmount() { return originalAmount; }
+    public void setOriginalAmount(double originalAmount) { this.originalAmount = originalAmount; }
+
+    /**
+     * Returns the display amount: originalAmount for foreign currency, amount for CNY.
+     */
+    public double getDisplayAmount() {
+        String c = getCurrencySymbol();
+        if (c == null || c.equals("\u00A5")) return amount;
+        return originalAmount != 0 ? originalAmount : amount;
+    }
 }

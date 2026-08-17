@@ -242,6 +242,8 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
     private List<AssetAccount> loadedAssets = new ArrayList<>();
+    private List<com.example.myapplication.data.entity.User> loadedUsers = new ArrayList<>();
+    private long selectedWindowUserId = -1;
 
 
 
@@ -1829,83 +1831,64 @@ public class SelectToSpeakService extends AccessibilityService {
 
             if (config == null) config = new AssistantConfig(this);
 
-            if (true) {
+            // Load users into the Spinner for user selection
+            spAsset.setVisibility(View.VISIBLE);
+            final android.widget.ArrayAdapter<String> userAdapter =
+                    new android.widget.ArrayAdapter<>(themeContext,
+                            R.layout.item_spinner_user);
+            userAdapter.setDropDownViewResource(R.layout.item_spinner_user_dropdown);
+            spAsset.setAdapter(userAdapter);
+            com.example.autobookkeep.util.AssetSpinnerAdapter.limitDropDownHeight(spAsset);
 
-                spAsset.setVisibility(View.VISIBLE);
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                java.util.List<com.example.myapplication.data.entity.User> users =
+                        com.example.myapplication.data.database.AppDatabase
+                                .getInstance(getApplicationContext())
+                                .userDao().getAllUsersSync();
 
-                com.example.autobookkeep.util.AssetSpinnerAdapter adapter = new com.example.autobookkeep.util.AssetSpinnerAdapter(themeContext);
+                loadedUsers.clear();
+                if (users != null) loadedUsers.addAll(users);
 
-                spAsset.setAdapter(adapter);
+                // Determine default selected user
+                long defaultUserId = config.getAutoTrackUserId();
+                if (defaultUserId <= 0) {
+                    SessionManager sm = new SessionManager(this);
+                    defaultUserId = sm.isLoggedIn() ? sm.getUserId() : 1;
+                }
 
-                com.example.autobookkeep.util.AssetSpinnerAdapter.limitDropDownHeight(spAsset);
+                final long finalDefaultUserId = defaultUserId;
 
-
-
-                AppDatabase.databaseWriteExecutor.execute(() -> {
-
-                    // 【修改】同时加载资产(0)和负债(1)
-
-                    List<AssetAccount> assets = AppDatabase.getDatabase(this).assetAccountDao().getAssetsByTypeSync(0);
-
-                    List<AssetAccount> liabilities = AppDatabase.getDatabase(this).assetAccountDao().getAssetsByTypeSync(1);
-
-
-
-                    loadedAssets.clear();
-
-                    AssetAccount noAsset = new AssetAccount(getString(R.string.svc_no_asset), 0, 0);
-
-                    noAsset.id = 0;
-
-                    loadedAssets.add(noAsset);
-
-
-
-                    if (assets != null) loadedAssets.addAll(assets);
-
-                    if (liabilities != null) loadedAssets.addAll(liabilities);
-
-
-
-                    int targetAssetId = (matchedAssetId > 0) ? matchedAssetId : config.getDefaultAssetId();
-
-
-
-                    // 【删除】或注释掉 List<String> names 相关的遍历代码
-
-
-
-                    handler.post(() -> {
-
-                        adapter.clear();
-
-                        // 【修改】直接把 loadedAssets (实体类列表) 丢给 Adapter
-
-                        adapter.addAll(loadedAssets);
-
-                        adapter.notifyDataSetChanged();
-
-                        for (int i = 0; i < loadedAssets.size(); i++) {
-
-                            if (loadedAssets.get(i).id == targetAssetId) {
-
-                                spAsset.setSelection(i);
-
-                                break;
-
-                            }
-
+                handler.post(() -> {
+                    userAdapter.clear();
+                    for (int i = 0; i < loadedUsers.size(); i++) {
+                        com.example.myapplication.data.entity.User u = loadedUsers.get(i);
+                        userAdapter.add(u.getUsername());
+                    }
+                    userAdapter.notifyDataSetChanged();
+                    int defaultPos = 0;
+                    for (int i = 0; i < loadedUsers.size(); i++) {
+                        if (loadedUsers.get(i).getId() == finalDefaultUserId) {
+                            defaultPos = i;
+                            break;
                         }
-
-                    });
-
+                    }
+                    if (defaultPos < loadedUsers.size()) {
+                        spAsset.setSelection(defaultPos);
+                        selectedWindowUserId = loadedUsers.get(defaultPos).getId();
+                    }
                 });
+            });
 
-            } else {
-
-                spAsset.setVisibility(View.GONE);
-
-            }
+            spAsset.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    if (position < loadedUsers.size()) {
+                        selectedWindowUserId = loadedUsers.get(position).getId();
+                    }
+                }
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
 
 
 
@@ -1939,11 +1922,11 @@ public class SelectToSpeakService extends AccessibilityService {
 
 
 
-                    int assetIdInt = 0;
+                    int assetIdInt = (matchedAssetId > 0) ? matchedAssetId : 0;
 
-                    if (spAsset.getSelectedItemPosition() < loadedAssets.size()) {
+                    if (spAsset.getSelectedItemPosition() < loadedUsers.size()) {
 
-                        assetIdInt = loadedAssets.get(spAsset.getSelectedItemPosition()).id;
+                        selectedWindowUserId = loadedUsers.get(spAsset.getSelectedItemPosition()).getId();
 
                     }
 
@@ -2521,7 +2504,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 同步到 Working 项目的 bill_database
 
-            syncToWorkingAppDb(t);
+            syncToWorkingAppDb(t, selectedWindowUserId);
 
 
 
@@ -2537,7 +2520,7 @@ public class SelectToSpeakService extends AccessibilityService {
 
      */
 
-    private void syncToWorkingAppDb(Transaction t) {
+    private void syncToWorkingAppDb(Transaction t, long windowSelectedUserId) {
 
         try {
 
@@ -2563,7 +2546,16 @@ public class SelectToSpeakService extends AccessibilityService {
 
             bill.setType(t.category != null ? t.category : getString(R.string.svc_cat_other));
 
-            bill.setAmount(t.amount);
+            String billCurrency = t.currencySymbol != null && !t.currencySymbol.isEmpty() ? t.currencySymbol : "\u00A5";
+            bill.setCurrencySymbol(billCurrency);
+            if (billCurrency.equals("\u00A5")) {
+                bill.setAmount(t.amount);
+                bill.setOriginalAmount(t.amount);
+            } else {
+                double cnyAmount = com.example.autobookkeep.util.CurrencyUtils.convertToCNY(t.amount, billCurrency);
+                bill.setAmount(cnyAmount);
+                bill.setOriginalAmount(t.amount);
+            }
 
             bill.setTimestamp(t.date);
 
@@ -2575,7 +2567,13 @@ public class SelectToSpeakService extends AccessibilityService {
 
             // 获取配置的记账用户 ID，未配置则使用当前登录用户
 
-            long trackUserId = config.getAutoTrackUserId();
+            long trackUserId = windowSelectedUserId;
+
+            if (trackUserId <= 0) {
+
+                trackUserId = config.getAutoTrackUserId();
+
+            }
 
             if (trackUserId > 0) {
 
