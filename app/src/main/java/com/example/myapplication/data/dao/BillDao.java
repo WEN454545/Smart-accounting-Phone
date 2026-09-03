@@ -51,4 +51,13 @@ public interface BillDao {
 
     @Query("DELETE FROM bills WHERE userId = :userId")
     int deleteAllBills(long userId);
+
+    /** Renames a category across all bills (all users, category presets are global). */
+    @Query("UPDATE bills SET type = :newName WHERE type = :oldName")
+    int renameCategory(String oldName, String newName);
+
+    /** Returns recent bill category names whose note contains the keyword (for CSV import inference). */
+    @Query("SELECT type FROM bills WHERE userId = :userId AND category = :billCategory " +
+           "AND note LIKE '%' || :keyword || '%' ORDER BY timestamp DESC LIMIT :limit")
+    List<String> getCategoriesByNoteKeyword(long userId, String billCategory, String keyword, int limit);
 }

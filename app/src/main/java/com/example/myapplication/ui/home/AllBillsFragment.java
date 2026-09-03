@@ -62,6 +62,14 @@ public class AllBillsFragment extends Fragment implements BillAdapter.OnBillClic
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // Rebind bill icons: icon changes in settings only touch SharedPreferences,
+        // which does not retrigger the bill LiveData.
+        if (adapter != null) adapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void onBillClick(Bill bill) {
         AddBillDialog dialog = new AddBillDialog();
         dialog.setEditBill(bill);

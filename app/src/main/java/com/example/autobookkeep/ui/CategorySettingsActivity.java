@@ -129,6 +129,9 @@ public class CategorySettingsActivity extends AppCompatActivity {
                 return;
             }
             list.set(position, newName);
+            // Sync: migrate custom icon mapping and rename the category on all historical bills
+            CategoryManager.renameCategoryIcon(this, oldName, newName);
+            com.example.myapplication.MyApplication.getRepository().renameCategory(oldName, newName);
             saveAndRefresh(isExpense);
             dialog.dismiss();
         });
@@ -154,6 +157,8 @@ public class CategorySettingsActivity extends AppCompatActivity {
         dialogView.findViewById(R.id.btn_confirm).setOnClickListener(v -> {
             List<String> list = isExpense ? expenseList : incomeList;
             list.remove(position);
+            // Clean up the orphaned custom icon mapping
+            CategoryManager.setCategoryIcon(this, name, null);
             saveAndRefresh(isExpense);
             dialog.dismiss();
             Toast.makeText(this, "\u5DF2\u5220\u9664", Toast.LENGTH_SHORT).show();

@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 
 
-**智能记账 (Smart Bookkeeping)** — an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, statistical charts, multi-user support, and automatic bill detection via accessibility service.
+**智能记账 (Smart Bookkeeping, v2.1.1)** — an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, statistical charts, multi-user support, and automatic bill detection via accessibility service.
 
 
 
@@ -76,7 +76,7 @@ app/src/main/java/com/example/myapplication/
 │   │   ├── Budget.java             — Room @Entity: yearMonth (PK), totalBudget, createdAt, userId
 │   │   └── User.java               — Room @Entity: id, username, password, isAdmin, createdAt
 │   ├── dao/
-│   │   ├── BillDao.java            — CRUD + LiveData queries (userId-filtered: getBillsBetween, getIncomeBetween, getExpenseBetween, getExpenseByType, getIncomeByType, getDailySum, deleteBillsBefore, deleteAllBills)
+│   │   ├── BillDao.java            — CRUD + LiveData queries (userId-filtered: getBillsBetween, getIncomeBetween, getExpenseBetween, getExpenseByType, getIncomeByType, getDailySum, deleteBillsBefore, deleteAllBills, renameCategory)
 │   │   ├── BudgetDao.java          — insert (REPLACE), update, getBudget by yearMonth + userId
 │   │   ├── UserDao.java            — CRUD + login, getAdminUser, getAllUsers, getAllUsersSync
 │   │   ├── TypeSum.java            — Result POJO: type, total (for pie chart)
@@ -86,7 +86,7 @@ app/src/main/java/com/example/myapplication/
 │   ├── notification/
 │   │   └── BudgetNotificationHelper.java — Budget overrun notifications
 │   ├── repository/
-│   │   └── BillRepository.java     — Data access layer wrapping DAOs with ExecutorService, includes user management
+│   │   └── BillRepository.java     — Data access layer wrapping DAOs with ExecutorService, includes user management and category rename sync
 │   ├── NotificationSettings.java   — Notification rule configuration
 │   └── SessionManager.java         — Login session persistence (SharedPreferences)
 ├── ui/
@@ -102,12 +102,12 @@ app/src/main/java/com/example/myapplication/
 │   │   ├── AllBillsFragment.java   — All bills view grouped by year-month, with back navigation
 │   │   └── AllBillsViewModel.java  — ViewModel for all bills
 │   ├── calendar/
-│   │   ├── CalendarFragment.java   — LinearLayout-based calendar grid with prev/next month nav, income/expense per day, color-coded cells
+│   │   ├── CalendarFragment.java   — LinearLayout-based calendar grid with prev/next month nav, income/expense per day, color-coded cells; calendar grid + selected-day bill list scroll together in a NestedScrollView (page-level scrolling, top month bar fixed)
 │   │   └── CalendarViewModel.java  — Manages month state, uses MediatorLiveData for income/expense/dailySums
 │   ├── stats/
 │   │   ├── StatsFragment.java      — PieChart + BarChart + TrendBarView with week/month/year period tabs; data from Room
 │   │   ├── StatsViewModel.java     — Period enum (WEEK/MONTH/YEAR), uses MediatorLiveData for expenseByType + dailySums
-│   │   └── CsvImportPreviewActivity.java — CSV import preview and confirmation
+│   │   └── CsvImportPreviewActivity.java — CSV import preview and confirmation (columns: date,type,category,amount,note; category optional - empty category auto-inferred from built-in note keyword table, then history vote, fallback Other)
 │   ├── profile/
 │   │   └── ProfileFragment.java    — Avatar (with crop via CropImageActivity), username display, CSV import/export + template download, user management entry (admin), budget notification settings (with warning percent), background personalization (home/calendar/login/dialog-bill/home-header/profile targets), transaction style picker (standard/island), color scheme picker (Teal Sakura/Lavender Dream/Ocean Mint), cache clear, logout
 │   ├── crop/
@@ -124,7 +124,7 @@ app/src/main/java/com/example/myapplication/
 │       └── TrendBarView.java       — Custom trend bar chart view
 └── util/
 
-    ├── CategoryIconHelper.java     — Maps bill category names to PNG drawable icon resources
+    ├── CategoryIconHelper.java     — Category icon registry: custom icon map -> 10 legacy PNG defaults -> emoji fallback (30-icon neutral pool incl. 20 vector icons, new icons unbound by default)
 
     ├── ColorSchemeManager.java     — Color scheme switching (Teal Sakura / Lavender Dream / Ocean Mint) with persistence; provides theme resId, primary/primary-dark colors per scheme
 
@@ -161,7 +161,7 @@ app/src/main/java/com/example/autobookkeep/
 │   ├── AutoAssetManager.java       — Asset account auto-management
 │   ├── AutoTrackLogManager.java    — Scan log management
 │   ├── AssetSpinnerAdapter.java    — Asset dropdown spinner adapter
-│   ├── CategoryManager.java        — Category CRUD and preferences
+│   ├── CategoryManager.java        — Category CRUD, preferences, custom icon mapping and rename migration
 │   ├── CurrencyUtils.java          — Currency formatting and conversion
 │   └── KeywordManager.java         — Screen keyword matching for auto-categorization
 ├── viewmodel/
@@ -259,6 +259,10 @@ Category colors (cat_food, cat_transport, cat_shopping, cat_entertainment, cat_h
 - **MediatorLiveData for dynamic queries** — CalendarViewModel and StatsViewModel use MediatorLiveData to wrap data sources that change when month/period changes; old source is removed before adding new one to avoid stale observers
 
 - **Calendar uses nested LinearLayout** — CalendarFragment builds the calendar grid using nested LinearLayouts (vertical rows + horizontal columns) with layout_weight for equal distribution; more reliable than GridLayout for dynamic content
+- **Calendar page-level scrolling** - fragment_calendar.xml wraps the calendar card, selected-day bar and bill list in a NestedScrollView (fillViewport); the top month bar stays fixed; rv_day_bills uses wrap_content + nestedScrollingEnabled=false so bills flow with the page scroll
+- **Category rename sync** - renaming a category in CategorySettingsActivity updates historical bills for ALL users via BillDao.renameCategory (through BillRepository.renameCategory) and migrates the custom icon mapping to the new name; deleting a category clears its orphan icon mapping
+- **Icon change refresh** - icon changes only touch SharedPreferences (no DB write), so bill LiveData does not re-emit; Home/AllBills/Calendar fragments rebind icons via adapter.notifyDataSetChanged() in onResume
+- **CSV import encoding auto-detection** - CsvImportPreviewActivity reads the whole file first, tries a strict UTF-8 decode and falls back to GB18030 (superset of GBK) because CSVs saved by Excel on Chinese Windows are GBK; note: keep doc files UTF-8, the Edit tool may re-encode whole files as GBK
 
 - **Multi-user isolation** — All bill/budget queries are filtered by userId; SessionManager persists current login session
 
@@ -268,7 +272,7 @@ Category colors (cat_food, cat_transport, cat_shopping, cat_entertainment, cat_h
 
 - **Transaction confirmation window** — uses `showConfirmWindow` as a style dispatcher (standard/island styles); `showStandardConfirmWindow` handles the full standard window logic directly without going through the dispatcher to avoid circular calls
 
-- **Category icons** — [CategoryIconHelper.java](app/src/main/java/com/example/myapplication/util/CategoryIconHelper.java) maps category names to PNG drawable resources; falls back to emoji display when no icon exists
+- **Category icons** — [CategoryIconHelper.java](app/src/main/java/com/example/myapplication/util/CategoryIconHelper.java) binding priority: user custom icon map (CategoryManager, key_category_icon_map) -> 10 legacy PNG defaults -> emoji fallback; the 20 newer vector icons (ic_cat_housing, ic_cat_pet, ...) form a neutral pool with NO default binding - a category shows a custom icon only after explicit selection in CategorySettingsActivity
 - **Color scheme switching** — ColorSchemeManager persists selected scheme (Teal Sakura / Lavender Dream / Ocean Mint) in SharedPreferences; MyApplication loads theme resId at startup; MainActivity calls setTheme(MyApplication.getThemeResId()) before super.onCreate
 - **Background personalization** — ProfileFragment lets users pick image/video backgrounds for multiple screens (home, calendar, login, dialog-bill, home-header, profile); URIs stored in SharedPreferences (profile_settings) keys like home_bg_uri, cal_bg_uri, login_bg_uri, dialog_bill_bg_uri, home_header_bg_uri
 - **Transaction confirmation style** — SharedPreferences key transaction_style ("standard" / "island") controls confirmation window style; SelectToSpeakService reads via ProfileFragment.STYLE_STANDARD / STYLE_ISLAND constants

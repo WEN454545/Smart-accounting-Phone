@@ -255,6 +255,9 @@ public class HomeFragment extends Fragment implements BillAdapter.OnBillClickLis
     public void onResume() {
         super.onResume();
         loadHomeHeaderBackground();
+        // Rebind bill icons: icon changes in settings only touch SharedPreferences,
+        // which does not retrigger the bill LiveData.
+        if (adapter != null) adapter.notifyDataSetChanged();
     }
 
     private static final int REQUEST_CODE_NOTIFICATION = 2001;

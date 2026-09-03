@@ -14,6 +14,7 @@ import com.example.myapplication.data.entity.Bill;
 import com.example.myapplication.data.entity.Budget;
 import com.example.myapplication.data.entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,6 +49,29 @@ public class BillRepository {
 
     public void delete(Bill bill) {
         executor.execute(() -> billDao.delete(bill));
+    }
+
+    /**
+     * Renames a category on all historical bills (all users).
+     * Live observers refresh automatically via Room invalidation.
+     */
+    public void renameCategory(String oldName, String newName) {
+        if (oldName == null || newName == null || oldName.equals(newName)) return;
+        executor.execute(() -> billDao.renameCategory(oldName, newName));
+    }
+
+    /**
+     * Blocking note-keyword category lookup used by CSV import inference.
+     * Caller must be off the main thread (CSV parsing already runs in a worker thread).
+     */
+    public List<String> getCategoriesByNoteKeywordSync(long userId, String billCategory,
+                                                       String keyword, int limit) {
+        try {
+            return executor.submit(() ->
+                    billDao.getCategoriesByNoteKeyword(userId, billCategory, keyword, limit)).get();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 
     public LiveData<List<Bill>> getAllBills(long userId) {

@@ -99,8 +99,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         // Set label text
         holder.tvLabel.setText(category);
 
-        // Bind icon: PNG icon if available, otherwise emoji fallback
-        int iconResId = CategoryIconHelper.getIconResId(category);
+        // Bind icon: custom icon if set, then built-in icon, otherwise emoji fallback
+        int iconResId = CategoryIconHelper.getIconResId(context, category);
         int bgColorRes = getBgColorForCategory(category);
         int bgColor = ContextCompat.getColor(context, bgColorRes);
 

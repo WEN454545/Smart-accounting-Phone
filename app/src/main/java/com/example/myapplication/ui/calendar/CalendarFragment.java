@@ -139,6 +139,9 @@ public class CalendarFragment extends Fragment implements BillAdapter.OnBillLong
         super.onResume();
         loadCalendarBackground();
         viewModel.reloadMonthData();
+        // Rebind bill icons: icon changes in settings only touch SharedPreferences,
+        // which does not retrigger the bill LiveData.
+        if (billAdapter != null) billAdapter.notifyDataSetChanged();
     }
 
     private void loadCalendarBackground() {
