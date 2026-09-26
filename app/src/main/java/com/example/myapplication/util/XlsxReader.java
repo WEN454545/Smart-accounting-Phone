@@ -113,7 +113,7 @@ public class XlsxReader {
             if (!isExpense && !isIncome) continue; // 中性交易 / 空 / 其他
 
             String dateStr = toDateTime(cell(col, r, "交易时间"));
-            String amount = cell(col, r, "金额(元)").replace("¥", "").replace("￥", "").trim();
+            String amount = cell(col, r, "金额(元)").replace("?", "").replace("￥", "").trim();
             // note: prefer the merchant name, fall back to the product; "/" placeholders are ignored
             String note = cell(col, r, "交易对方");
             if (note.isEmpty() || "/".equals(note)) note = cell(col, r, "商品");
@@ -182,9 +182,13 @@ public class XlsxReader {
                 double days = Double.parseDouble(s);
                 long ms = (long) ((days - EXCEL_EPOCH_OFFSET_DAYS) * DAY_MS);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
-                // WeChat bills state "all times are UTC+08:00" (note in every
-                // export) - render the fixed wall time regardless of device TZ
-                sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+08:00"));
+                // The serial->ms conversion treats the serial's wall time as UTC,
+                // so format with UTC to recover the original wall time exactly.
+                // (WeChat bills state "all times are UTC+08:00" - the serial is
+                // the UTC+8 wall clock itself; formatting in GMT+8 here would
+                // double-shift the time by +8h. CsvImportPreviewActivity later
+                // parses this string with GMT+8 to store the correct epoch.)
+                sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
                 return sdf.format(new Date(ms));
             } catch (NumberFormatException e) {
                 return "";
