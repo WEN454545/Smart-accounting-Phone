@@ -33,12 +33,23 @@ public interface TransactionDao {
     Double getTotalAmountByType(long start, long end, int type);
 
     /**
-     * Query historical categories by merchant or product keyword (fuzzy match on note/remark).
-     * Used to infer category for newly recognized bills based on past records.
-     * Ordered by date DESC so the most recent records take priority in voting.
+     * Returns full transactions matching the keyword, ordered by date DESC.
+     * Used for merged recency-weighted category learning together with the main bill_database.
      */
-    @Query("SELECT category FROM transactions WHERE type = :type AND category IS NOT NULL AND category != '' " +
+    @Query("SELECT * FROM transactions WHERE type = :type AND category IS NOT NULL AND category != '' " +
             "AND (note LIKE '%' || :keyword || '%' OR remark LIKE '%' || :keyword || '%') " +
             "ORDER BY date DESC LIMIT :limit")
-    List<String> getCategoriesByKeywordSync(int type, String keyword, int limit);
+    List<Transaction> getTransactionsByKeywordSync(int type, String keyword, int limit);
+
+    /** Renames a category across all auto-tracked transactions (kept in sync with BillDao.renameCategory). */
+    @Query("UPDATE transactions SET category = :newName WHERE category = :oldName")
+    int renameCategory(String oldName, String newName);
+
+    /** Clears all auto-tracked transactions (learning records), used when the user wipes all bills. */
+    @Query("DELETE FROM transactions")
+    void deleteAll();
+
+    /** Deletes auto-tracked transactions older than the given time (kept in sync with deleteBillsBefore). */
+    @Query("DELETE FROM transactions WHERE date < :beforeTime")
+    int deleteBefore(long beforeTime);
 }

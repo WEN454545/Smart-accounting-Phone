@@ -39,6 +39,7 @@
     <color name="header_mask">#88000000</color>
     <color name="placeholder_bg">#2a2a2a</color>
     <color name="bg_light">#2a2a2a</color>
+    <color name="chip_unselected">#2a2a2a</color>
 
     <!-- 分类颜色（深色模式） -->
     <color name="cat_food">#422006</color>

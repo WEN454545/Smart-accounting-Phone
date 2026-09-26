@@ -28,9 +28,11 @@ public class BillRepository {
     private final BillDao billDao;
     private final BudgetDao budgetDao;
     private final UserDao userDao;
+    private final Application app;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public BillRepository(Application application) {
+        app = application;
         AppDatabase db = AppDatabase.getInstance(application);
         billDao = db.billDao();
         budgetDao = db.budgetDao();
@@ -103,7 +105,13 @@ public class BillRepository {
     }
 
     public void deleteAllBills(long userId) {
-        executor.execute(() -> billDao.deleteAllBills(userId));
+        executor.execute(() -> {
+            billDao.deleteAllBills(userId);
+            // Wipe auto-tracked transactions (the learning data source) so cleared
+            // bills cannot keep influencing category learning afterwards
+            com.example.autobookkeep.database.AppDatabase.getDatabase(app)
+                    .transactionDao().deleteAll();
+        });
     }
 
     public int deleteBillsBefore(long userId, long beforeTime) {
@@ -111,6 +119,9 @@ public class BillRepository {
         try {
             Thread t = new Thread(() -> {
                 result[0] = billDao.deleteBillsBefore(userId, beforeTime);
+                // Keep the auto-track learning pool consistent with the wiped bills
+                com.example.autobookkeep.database.AppDatabase.getDatabase(app)
+                        .transactionDao().deleteBefore(beforeTime);
             });
             t.start();
             t.join();

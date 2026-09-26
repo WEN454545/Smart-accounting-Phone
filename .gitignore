@@ -1,15 +1,28 @@
 *.iml
 .gradle
 /local.properties
+local.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+
+# signing keys & release artifacts - never upload
+*.jks
+*.keystore
+*.apk
+app/release/
+apk使用方法.txt
+build_err.txt
+sim_out.txt
+
+# AI tool local config
+.trae/

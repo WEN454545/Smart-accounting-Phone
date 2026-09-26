@@ -132,6 +132,13 @@ public class CategorySettingsActivity extends AppCompatActivity {
             // Sync: migrate custom icon mapping and rename the category on all historical bills
             CategoryManager.renameCategoryIcon(this, oldName, newName);
             com.example.myapplication.MyApplication.getRepository().renameCategory(oldName, newName);
+            // Keep the auto-bookkeeping database in sync so category learning
+            // does not keep recommending the old (renamed) category name
+            if (!newName.equals(oldName)) {
+                com.example.autobookkeep.database.AppDatabase.databaseWriteExecutor.execute(() ->
+                        com.example.autobookkeep.database.AppDatabase.getDatabase(this)
+                                .transactionDao().renameCategory(oldName, newName));
+            }
             saveAndRefresh(isExpense);
             dialog.dismiss();
         });

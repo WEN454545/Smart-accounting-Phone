@@ -60,4 +60,9 @@ public interface BillDao {
     @Query("SELECT type FROM bills WHERE userId = :userId AND category = :billCategory " +
            "AND note LIKE '%' || :keyword || '%' ORDER BY timestamp DESC LIMIT :limit")
     List<String> getCategoriesByNoteKeyword(long userId, String billCategory, String keyword, int limit);
+
+    /** Returns recent bills whose note contains the keyword, ordered by time DESC (for auto-bookkeeping category learning). */
+    @Query("SELECT * FROM bills WHERE userId = :userId AND category = :billCategory " +
+           "AND note LIKE '%' || :keyword || '%' ORDER BY timestamp DESC LIMIT :limit")
+    List<Bill> getBillsByNoteKeywordSync(long userId, String billCategory, String keyword, int limit);
 }

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -10,25 +12,36 @@ android {
         applicationId = "com.example.myapplication"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
-        versionName = "2.1.1"
+        versionCode = 4
+        versionName = "2.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Signing credentials are loaded from local.properties (gitignored, never uploaded)
+    val keystoreProps = Properties().apply {
+        val f = rootProject.file("local.properties")
+        if (f.exists()) f.inputStream().use { load(it) }
+    }
+
     signingConfigs {
         create("release") {
-            storeFile = file("../smartbook.jks")
-            storePassword = "smartbook2026"
-            keyAlias = "smartbook"
-            keyPassword = "smartbook2026"
+            val storePath = keystoreProps.getProperty("smartbook.storeFile")
+            if (storePath != null) {
+                storeFile = file(storePath)
+                storePassword = keystoreProps.getProperty("smartbook.storePassword")
+                keyAlias = keystoreProps.getProperty("smartbook.keyAlias")
+                keyPassword = keystoreProps.getProperty("smartbook.keyPassword")
+            }
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
+            if (keystoreProps.getProperty("smartbook.storeFile") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

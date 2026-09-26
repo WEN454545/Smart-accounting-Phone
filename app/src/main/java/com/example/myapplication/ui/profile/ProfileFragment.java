@@ -1058,7 +1058,13 @@ public class ProfileFragment extends Fragment {
     private void importCSV() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("text/*");
+        // Base type must be */* when using EXTRA_MIME_TYPES, otherwise .xlsx
+        // (application/vnd...spreadsheetml.sheet) is greyed out in the picker
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+                "text/comma-separated-values", "text/csv", "text/plain", "text/*",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.ms-excel", "application/octet-stream"});
         startActivityForResult(intent, REQUEST_CODE_IMPORT_CSV);
     }
 

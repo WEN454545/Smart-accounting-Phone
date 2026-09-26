@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 content = """<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">智能记账</string>
+    <string name="app_name">绝希</string>
     <string name="action_settings">设置</string>
     <string name="accessibility_service_description">自动记账无障碍服务：用于自动识别微信、支付宝、拼多多等App的支付页面</string>
     <string name="usage_tips">使用步骤：\n1. 开启无障碍服务\n2. 开启悬浮窗权限\n3. 打开支付应用\n4. 确认并记录账单</string>
@@ -32,7 +32,7 @@ content = """<?xml version="1.0" encoding="utf-8"?>
     <string name="add_keyword">+ 添加</string>
 
     <string name="accessibility_title">无障碍服务未开启</string>
-    <string name="accessibility_message">请在系统设置中开启智能记账的无障碍服务</string>
+    <string name="accessibility_message">请在系统设置中开启绝希的无障碍服务</string>
     <string name="accessibility_btn">去设置</string>
 
     <string name="track_enabled">已开启屏幕自动记账</string>
@@ -98,7 +98,7 @@ content = """<?xml version="1.0" encoding="utf-8"?>
     <string name="add_bill_note_hint">输入备注</string>
     <string name="add_bill_save">保存</string>
 
-    <string name="login_title">智能记账</string>
+    <string name="login_title">绝希</string>
     <string name="login_subtitle">登录您的账号</string>
     <string name="login_username">用户名</string>
     <string name="login_password">密码</string>

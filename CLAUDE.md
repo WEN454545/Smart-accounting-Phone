@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 
 
-**智能记账 (Smart Bookkeeping, v2.1.1)** — an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, statistical charts, multi-user support, and automatic bill detection via accessibility service.
+**绝希 (Smart Bookkeeping, v2.2.1)** — an Android bill-tracking app written in Java. Tracks income/expenses with monthly budget management, calendar view, statistical charts, multi-user support, and automatic bill detection via accessibility service.
 
 
 
